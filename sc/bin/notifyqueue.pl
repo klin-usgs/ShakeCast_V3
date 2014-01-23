@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 #
 ### notifyqueue: Scan for Notifications and Queue Them
@@ -94,6 +94,7 @@ BEGIN {
 use Carp;
 
 use SC;
+use SC::Server;
 
 use XML::Simple;
 use XML::Parser;
@@ -357,8 +358,7 @@ select 'PENDING',
        e.event_version,
  	   udm.delivery_address,
        %SYSDATE%
-  from (notification_request n left join facility_notification_request fn
-            on n.notification_request_id = fn.notification_request_id),
+  from notification_request n,
        event e,
        user_delivery_method udm
  where (n.shakecast_user not in (select shakecast_user from geometry_user_profile)
@@ -367,7 +367,6 @@ select 'PENDING',
    and e.seq > ?
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is null)
    and (n.limit_value is null or e.magnitude >= n.limit_value)
-   and fn.facility_id is null
    and (   (n.notification_type = 'NEW_EVENT' and e.event_status in ('normal', 'released')
             and e.initial_version = 1)
         or (n.notification_type = 'UPD_EVENT' and e.event_status in ('normal', 'released')
@@ -450,7 +449,7 @@ select 'PENDING',
    and (n.disabled = 0 or n.disabled is null)
    and p.product_id = ?
    and p.shakemap_id = s.shakemap_id and p.shakemap_version = s.shakemap_version
-   and s.event_id = e.event_id and s.event_version = e.event_version
+   and s.event_id = e.event_id
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is null)
    and t.notification_type = n.notification_type
    and t.notification_class = 'product'
@@ -458,6 +457,7 @@ select 'PENDING',
    and (n.limit_value is null or n.limit_value = 0 or e.magnitude >= n.limit_value)
    and fn.facility_id is null
    and p.superceded_timestamp is null
+   and e.superceded_timestamp is null
 __SQL__
     ;
 
@@ -495,7 +495,7 @@ select 'PENDING',
    and (n.disabled = 0 or n.disabled is null)
    and p.product_id = ?
    and p.shakemap_id = s.shakemap_id and p.shakemap_version = s.shakemap_version
-   and s.event_id = e.event_id and s.event_version = e.event_version
+   and s.event_id = e.event_id
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is null)
    and t.notification_type = n.notification_type
    and t.notification_class = 'product'
@@ -508,6 +508,7 @@ select 'PENDING',
         f.lon_max >= p.lon_min and
         f.lon_min <= p.lon_max)
    and p.superceded_timestamp is null
+   and e.superceded_timestamp is null
 __SQL__
     ;
 
@@ -613,7 +614,7 @@ select 'PENDING',
    and p.product_id = ?
    and g.profile_id = ?
    and p.shakemap_id = s.shakemap_id and p.shakemap_version = s.shakemap_version
-   and s.event_id = e.event_id and s.event_version = e.event_version
+   and s.event_id = e.event_id
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is null)
    and t.notification_type = n.notification_type
    and t.notification_class = 'product'
@@ -621,6 +622,7 @@ select 'PENDING',
    and (n.limit_value is null or n.limit_value = 0 or p.max_value >= n.limit_value)
    and gfp.facility_id is null
    and p.superceded_timestamp is null
+   and e.superceded_timestamp is null
 __SQL__
     ;
 
@@ -656,7 +658,7 @@ select 'PENDING',
    and p.product_id = ?
    and g.profile_id = ?
    and p.shakemap_id = s.shakemap_id and p.shakemap_version = s.shakemap_version
-   and s.event_id = e.event_id and s.event_version = e.event_version
+   and s.event_id = e.event_id
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is null)
    and t.notification_type = n.notification_type
    and t.notification_class = 'product'
@@ -669,14 +671,17 @@ select 'PENDING',
         f.lon_max >= p.lon_min and
         f.lon_min <= p.lon_max)
    and p.superceded_timestamp is null
+   and e.superceded_timestamp is null
 __SQL__
     ;
 
-my @event_scans = (\$SQL_BASIC_EVENTS, \$SQL_FACILITY_EVENTS);
+#my @event_scans = (\$SQL_BASIC_EVENTS, \$SQL_FACILITY_EVENTS);
+my @event_scans = (\$SQL_BASIC_EVENTS);
 my @product_scans = (\$SQL_BASIC_PRODUCTS, \$SQL_FACILITY_PRODUCTS);
 my @system_scans = (\$SQL_SYSTEM_EVENTS);
 
-my @event_scans_profile = (\$SQL_BASIC_EVENTS_PROFILE, \$SQL_FACILITY_EVENTS_PROFILE);
+#my @event_scans_profile = (\$SQL_BASIC_EVENTS_PROFILE, \$SQL_FACILITY_EVENTS_PROFILE);
+my @event_scans_profile = (\$SQL_BASIC_EVENTS_PROFILE);
 my @product_scans_profile = (\$SQL_BASIC_PRODUCTS_PROFILE, \$SQL_FACILITY_PRODUCTS_PROFILE);
 my @system_scans_profile = (\$SQL_SYSTEM_EVENTS_PROFILE);
 
@@ -716,14 +721,15 @@ select 'PENDING',
    and s.shakemap_version = ?
    and g.grid_id = ?
    and s.superceded_timestamp is null
-   and s.event_id = e.event_id and s.event_version = e.event_version
+   and e.superceded_timestamp is null
+   and s.event_id = e.event_id
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is null)
    and g.grid_id = sh.grid_id
    and (s.shakemap_id = g.shakemap_id and
         s.shakemap_version = g.shakemap_version)
    and sh.facility_id = fn.facility_id
    and fn.notification_request_id = n.notification_request_id
-   and sh.value_%VALNO% >= n.limit_value
+   and (n.limit_value is null or sh.value_%VALNO% >= n.limit_value)
 __SQL__
 ;
 
@@ -760,14 +766,15 @@ select 'PENDING',
    and s.shakemap_version = ?
    and g.grid_id = ?
    and s.superceded_timestamp is null
-   and s.event_id = e.event_id and s.event_version = e.event_version
+   and e.superceded_timestamp is null
+   and s.event_id = e.event_id
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is null)
    and g.grid_id = sh.grid_id
    and (s.shakemap_id = g.shakemap_id and
         s.shakemap_version = g.shakemap_version)
    and sh.facility_id = fn.facility_id
    and fn.profile_id = n.profile_id
-   and sh.value_%VALNO% >= n.limit_value
+   and (n.limit_value is null or sh.value_%VALNO% >= n.limit_value)
 __SQL__
 ;
 
@@ -809,7 +816,8 @@ select 'PENDING',
    and s.shakemap_version = ?
    and g.grid_id = ?
    and s.superceded_timestamp is null
-   and s.event_id = e.event_id and s.event_version = e.event_version
+   and e.superceded_timestamp is null
+   and s.event_id = e.event_id
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is NULL)
    and g.grid_id = sh.grid_id
    and (s.shakemap_id = g.shakemap_id and
@@ -817,7 +825,8 @@ select 'PENDING',
    and sh.facility_id = fn.facility_id
    and fn.notification_request_id = n.notification_request_id
    and sh.facility_id = ff.facility_id
-   and n.damage_level = ff.damage_level;
+   and n.damage_level = ff.damage_level
+   and (n.limit_value is null or sh.value_%VALNO% >= n.limit_value)
 __SQL__
     ;
 
@@ -856,7 +865,8 @@ select 'PENDING',
    and s.shakemap_version = ?
    and g.grid_id = ?
    and s.superceded_timestamp is null
-   and s.event_id = e.event_id and s.event_version = e.event_version
+   and e.superceded_timestamp is null
+   and s.event_id = e.event_id
    and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is NULL)
    and g.grid_id = sh.grid_id
    and (s.shakemap_id = g.shakemap_id and
@@ -865,6 +875,7 @@ select 'PENDING',
    and fn.profile_id = n.profile_id
    and sh.facility_id = ff.facility_id
    and n.damage_level = ff.damage_level
+   and (n.limit_value is null or sh.value_%VALNO% >= n.limit_value)
 __SQL__
     ;
 
@@ -1257,15 +1268,19 @@ sub scan_for_grids {
 		for my $grd_seq ($last_seq+1 .. $max_seq) {
 			my $event_p = get_grid_id($grd_seq);
 			if ($event_p) {
-				my $rc = local_product($event_p->[0], $event_p->[1]);
-				vvpr "$event_p queued for local product" if ($rc == 0);
-				my $pdf_path = $config->{'RootDir'} . '/bin/sc_pdf.pl';
-				my $epi_path = $config->{'RootDir'} . '/bin/seis_plot_gm.pl';
-				my $fsh_path = $config->{'RootDir'} . '/bin/facility_shaking_history_plot.pl';
+				#my $rc = local_product($event_p->[0], $event_p->[1]);
+				#vvpr "$event_p queued for local product" if ($rc == 0);
+				#SC::Server->this_server->queue_request(
+				#	'sc_pdf', $event_p->[0], $event_p->[1]);
+				#SC->log(0,"SC PDF ".$event_p->[0]." - ".$event_p->[1]);
+	
+				#my $pdf_path = $config->{'RootDir'} . '/bin/sc_pdf.pl';
+				#my $epi_path = $config->{'RootDir'} . '/bin/seis_plot_gm.pl';
+				#my $fsh_path = $config->{'RootDir'} . '/bin/facility_shaking_history_plot.pl';
 				#$rc = system "$perl $epi_path ". $event_p->[0]. ' '. $event_p->[1];
 				#$rc = system "$perl $fsh_path ". $event_p->[0]. ' '. $event_p->[1];
-				$rc = system "$perl $pdf_path ". $event_p->[0]. ' '. $event_p->[1];
-				vvpr "$event_p queued for summary pdf" if ($rc == 0);
+				#$rc = system "$perl $pdf_path ". $event_p->[0]. ' '. $event_p->[1];
+				#vvpr "$event_p queued for summary pdf" if ($rc == 0);
 			}
 			else {
 				vvpr "no $event_p queued for local product";

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 
 # $Id: scfeed_local.pl 481 2008-10-03 16:49:46Z klin $
@@ -141,6 +141,7 @@ my $scenario = defined $options->{'scenario'} ? 1 : 0;
 my $force_run = defined $options->{'force_run'} ? 1 : 0;
 
 $scenario = 1 if $evid =~ /_se$/i;
+$force_run = 1 if $scenario;
 
 logscr "Unknown argument(s): @ARGV" if (@ARGV);
 
@@ -189,7 +190,7 @@ sub main {
 		sc_grid($evid);
 	}
 
-	exit unless (&shakemap_filter);
+	exit unless (&shakemap_filter || $force_run);
 	# Determine whether this is the first version of this event we
 	# have received or not
 	my $num_recs =

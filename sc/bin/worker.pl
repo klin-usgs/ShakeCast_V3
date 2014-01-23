@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: worker.pl 64 2007-06-05 14:58:38Z klin $
 
@@ -521,7 +521,7 @@ sub comp_gmpe {
 			$dist = dist($event->lat, $event->lon, $fac_lat, $fac_lon);
 			next unless ($dist <= $dist_cutoff);
 			%pgm = $regress->maximum($fac_lat, $fac_lon);
-			next unless ($pgm{pga} >= SC->config->{'MODEL_SHAKING_THRESHOLD'});
+			next unless ($pgm{pga} >= SC->config->{'BASELINE_SHAKING_THRESHOLD'});
 			$sth_i->execute($p->[0], $hwm, $dist, $pgm{pga}, $pgm{pgv}, undef, $pgm{psa03}, $pgm{psa10}, $pgm{psa30});
         }
         SC->log(2, "event facility processing complete");
@@ -608,6 +608,35 @@ sub gs_json {
 }
 
 # send product to a remote server
+sub maintain_event {
+    my ($remote_id, $product_id, $plan_ts, $interval, $repeat) = @_;
+	
+	return (1, $plan_ts, $interval, $repeat) 
+		if ($plan_ts + $interval >= time);
+	
+	my $perl = SC->config->{perlbin};
+	my $root = SC->config->{RootDir};
+	
+	my $rv = `$perl $root/bin/manage_event.pl -maintain 1`;
+	
+	return (1, $plan_ts, $interval, $repeat--);
+
+}
+
+# generate facility damage hash and json
+sub facility_damage_stat {
+    my ($remote_id, $event_id, $event_version) = @_;
+	
+	my $perl = SC->config->{perlbin};
+	my $root = SC->config->{RootDir};
+	
+	my $rv = `$perl $root/bin/facility_damage_stat.pl $event_id $event_version`;
+	
+	return $rv;
+
+}
+
+# send product to a remote server
 sub facility_fragility_stat {
     my ($remote_id, $event_id, $event_version) = @_;
 	
@@ -646,34 +675,63 @@ sub facility_feature_shaking {
 
 }
 
+# generate text-based local ShakeCast products
+sub local_product {
+    my ($remote_id, $event_id, $event_version) = @_;
+	
+	my $perl = SC->config->{perlbin};
+	my $root = SC->config->{RootDir};
+	
+	my $rv = `$perl $root/bin/local_product.pl $event_id $event_version`;
+	
+	return $rv;
+
+}
+
+# send product to a remote server
+sub sc_pdf {
+    my ($remote_id, $event_id, $event_version) = @_;
+	
+	my $perl = SC->config->{perlbin};
+	my $root = SC->config->{RootDir};
+	
+	my $rv = `$perl $root/bin/sc_pdf.pl $event_id $event_version`;
+	
+	return $rv;
+
+}
+
 # send product to a remote server
 sub screen_shot {
     my ($remote_id, $event_id, $event_version) = @_;
 	
 	my $wkhtmltopdf = SC->config->{wkhtmltopdf};
-	my $convert = SC->config->{convert};
 	my $DataRoot = SC->config->{DataRoot};
 	my $url = "http://localhost/html/screenshot.html?event=$event_id-$event_version";
-	my $outjpg = "$DataRoot/$event_id-$event_version/screenshot.jpg";
-	my $outfile = "$DataRoot/$event_id-$event_version/screenshot.pdf";
+	my $outfile = "$DataRoot/$event_id-$event_version/screenshot.jpg";
+	my $filesize = 20*1024;	#20k
+	my $proxy = (SC->config->{ProxyServer}) ? ' -p '.SC->config->{ProxyServer} : '';
 	
-	my $xserver;
-	# We may need the --use-xserver option depending on the OS
-	# $xserver = ($^O eq 'MSWin32') ? '' : '--use-xserver';
-
-	my $rv = `$wkhtmltopdf $xserver --javascript-delay 1000 --width 1024 --height 534 $url $outjpg`;
-	#my $rv = `$wkhtmltopdf $xserver $url $outfile`;
-	#my $rv = `$convert -trim $outfile $outjpg`;
+	my $rv = `/bin/touch $outfile`;
+	$rv = `$wkhtmltopdf --javascript-delay 5000 $proxy --width 1024 --height 534 $url $outfile`;
 	
-	#SC->log(0, "Screen Capture:".$rv);
+	SC->log(0, "Screen Capture: $event_id-$event_version ".$rv);
 
 	#my $perl = SC->config->{perlbin};
 	#my $root = SC->config->{RootDir};
 	
 	#my $rv = `$perl $root/bin/screenshot.pl $event_id $event_version`;
 
-	#return $rv;
-	return 1;
+	if (-e $outfile) {
+		if (-s $outfile > $filesize) {
+			return 1;
+		} else {
+			unlink $outfile;
+			return 0;
+		}
+	} else { 
+		return 0;
+	}
 
 }
 

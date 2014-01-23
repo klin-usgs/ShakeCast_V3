@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 #
 ### notify: Scan the Notification Queue and Deliver Messages
@@ -153,6 +153,8 @@ SELECT e.event_id,
        r.notification_type,
        r.message_format,
        r.limit_value,
+	   r.product_type,
+	   pt.filename,
        r.aggregation_group,
        t.notification_attempts AS max_tries,
        n.facility_id,
@@ -164,7 +166,7 @@ SELECT e.event_id,
         f.lat_min AS facility_lat,    # kwl 20060916   
         f.lon_min AS facility_lon,    # kwl 20060916
        r.aggregate
-  FROM (((((notification n
+  FROM ((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
         r.notification_request_id)
     INNER JOIN notification_type t ON r.notification_type =
@@ -174,6 +176,7 @@ SELECT e.event_id,
     INNER JOIN user_delivery_method d ON r.shakecast_user =
      d.shakecast_user AND r.delivery_method = d.delivery_method)
     LEFT JOIN facility f ON n.facility_id = f.facility_id)
+    LEFT JOIN product_type pt ON r.product_type = pt.product_type)
  WHERE n.shakecast_user = ? AND t.notification_class = 'EVENT'
    AND n.delivery_status IN ('PENDING', 'ERRORS')
    AND (n.next_delivery_timestamp IS NULL OR n.next_delivery_timestamp >= ?)
@@ -227,8 +230,7 @@ SELECT p.product_id,
     INNER JOIN product p ON n.product_id = p.product_id)
     INNER JOIN shakemap s ON p.shakemap_id = s.shakemap_id AND
         p.shakemap_version = s.shakemap_version)
-    INNER JOIN event e ON s.event_id = e.event_id AND s.event_version =
-       e.event_version)
+    INNER JOIN event e ON s.event_id = e.event_id)
     INNER JOIN product_type pt ON p.product_type = pt.product_type)
     INNER JOIN user_delivery_method d ON r.shakecast_user =
      d.shakecast_user AND r.delivery_method = d.delivery_method)
@@ -237,6 +239,7 @@ SELECT p.product_id,
    AND n.delivery_status IN ('PENDING', 'ERRORS')
    AND (n.next_delivery_timestamp IS NULL OR n.next_delivery_timestamp >= ?)
    AND (d.actkey IS NULL OR d.actkey = '')
+   AND e.superceded_timestamp IS NULL
  ORDER BY n.shakecast_user, r. delivery_method, d.delivery_address,
       r.aggregation_group, r.aggregate, n.notification_id
 __SQL__
@@ -265,6 +268,8 @@ SELECT s.shakemap_id,
        r.notification_type,
        r.message_format,
        r.limit_value,
+	   r.product_type,
+	   pt.filename,
        r.aggregation_group,
        t.notification_attempts AS max_tries,
        n.facility_id,
@@ -280,7 +285,7 @@ SELECT s.shakemap_id,
         g.lon_min AS bound_west,        # kwl 20060916
         g.lon_max AS bound_east,        # kwl 20060916
        r.aggregate
-  FROM (((((((notification n
+  FROM ((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
            r.notification_request_id and n.metric = r.metric)
     INNER JOIN notification_type t ON r.notification_type =
@@ -288,15 +293,16 @@ SELECT s.shakemap_id,
     INNER JOIN grid g ON n.grid_id = g.grid_id)
     INNER JOIN shakemap s ON g.shakemap_id = s.shakemap_id AND
         g.shakemap_version = s.shakemap_version)
-    INNER JOIN event e ON s.event_id = e.event_id AND s.event_version =
-       e.event_version)
+    INNER JOIN event e ON s.event_id = e.event_id)
     INNER JOIN user_delivery_method d ON r.shakecast_user =
       d.shakecast_user AND r.delivery_method = d.delivery_method)
     LEFT JOIN facility f ON n.facility_id = f.facility_id)
+    LEFT JOIN product_type pt ON r.product_type = pt.product_type)
    WHERE n.shakecast_user = ? AND t.notification_class = 'GRID'
    AND n.delivery_status IN ('PENDING', 'ERRORS')
    AND (n.next_delivery_timestamp IS NULL OR n.next_delivery_timestamp >= ?)
    AND (d.actkey IS NULL OR d.actkey = '')
+   AND e.superceded_timestamp IS NULL
  ORDER BY n.shakecast_user, r. delivery_method, d.delivery_address,
       r.aggregation_group, r.aggregate, n.notification_id
 __SQL__
@@ -331,6 +337,8 @@ SELECT s.shakemap_id,
        r.notification_type,
        r.message_format,
        r.limit_value,
+	   r.product_type,
+	   pt.filename,
        r.aggregation_group,
        t.notification_attempts AS max_tries,
        n.facility_id,
@@ -346,7 +354,7 @@ SELECT s.shakemap_id,
         g.lon_min AS bound_west,        # kwl 20060916
         g.lon_max AS bound_east,        # kwl 20060916
        r.aggregate
-  FROM (((((((((notification n
+  FROM ((((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
            r.notification_request_id)
     INNER JOIN notification_type t ON r.notification_type =
@@ -354,18 +362,19 @@ SELECT s.shakemap_id,
     INNER JOIN grid g ON n.grid_id = g.grid_id)
     INNER JOIN shakemap s ON g.shakemap_id = s.shakemap_id AND
         g.shakemap_version = s.shakemap_version)
-    INNER JOIN event e ON s.event_id = e.event_id AND s.event_version =
-       e.event_version)
+    INNER JOIN event e ON s.event_id = e.event_id)
     INNER JOIN user_delivery_method d ON r.shakecast_user =
       d.shakecast_user AND r.delivery_method = d.delivery_method)
     INNER JOIN damage_level dl ON r.damage_level = dl.damage_level)
     INNER JOIN facility f ON n.facility_id = f.facility_id)
     INNER JOIN facility_fragility ff ON n.facility_id = ff.facility_id AND
     dl.damage_level = ff.damage_level)
+    LEFT JOIN product_type pt ON r.product_type = pt.product_type)
    WHERE n.shakecast_user = ? AND t.notification_class = 'GRID'
    AND n.delivery_status IN ('PENDING', 'ERRORS')
    AND (n.next_delivery_timestamp IS NULL OR n.next_delivery_timestamp >= ?)
    AND (d.actkey IS NULL OR d.actkey = '')
+   AND e.superceded_timestamp IS NULL
  ORDER BY n.shakecast_user, r. delivery_method, d.delivery_address,
       r.aggregation_group, r.aggregate, n.notification_id
 __SQL__
@@ -425,6 +434,8 @@ SELECT e.event_id,
        r.notification_type,
        r.message_format,
        r.limit_value,
+	   r.product_type,
+	   pt.filename,
        r.aggregation_group,
        t.notification_attempts AS max_tries,
        n.facility_id,
@@ -436,14 +447,15 @@ SELECT e.event_id,
         f.lat_min AS facility_lat,    # kwl 20060916   
         f.lon_min AS facility_lon,    # kwl 20060916
        r.aggregate
-  FROM ((((notification n
-    INNER JOIN profile_notification_request r ON n.notification_request_id =
+  FROM (((((notification n
+    INNER JOIN notification_request r ON n.notification_request_id =
         r.notification_request_id)
     INNER JOIN notification_type t ON r.notification_type =
        t.notification_type)
     INNER JOIN event e ON n.event_id = e.event_id AND n.event_version =
       e.event_version)
     LEFT JOIN facility f ON n.facility_id = f.facility_id)
+    LEFT JOIN product_type pt ON r.product_type = pt.product_type)
  WHERE n.shakecast_user = ? AND t.notification_class = 'EVENT'
    AND r.notification_type = ?
    AND n.delivery_status IN ('PENDING', 'ERRORS')
@@ -490,21 +502,21 @@ SELECT p.product_id,
         f.lon_min AS facility_lon,    # kwl 20060916
        r.aggregate
   FROM (((((((notification n
-    INNER JOIN profile_notification_request r ON n.notification_request_id =
+    INNER JOIN notification_request r ON n.notification_request_id =
            r.notification_request_id)
     INNER JOIN notification_type t ON r.notification_type =
           t.notification_type)
     INNER JOIN product p ON n.product_id = p.product_id)
     INNER JOIN shakemap s ON p.shakemap_id = s.shakemap_id AND
         p.shakemap_version = s.shakemap_version)
-    INNER JOIN event e ON s.event_id = e.event_id AND s.event_version =
-       e.event_version)
+    INNER JOIN event e ON s.event_id = e.event_id)
     INNER JOIN product_type pt ON p.product_type = pt.product_type)
     LEFT JOIN facility f ON n.facility_id = f.facility_id)
  WHERE n.shakecast_user = ? AND t.notification_class = 'PRODUCT'
    AND r.notification_type = ?
    AND n.delivery_status IN ('PENDING', 'ERRORS')
    AND (n.next_delivery_timestamp IS NULL OR n.next_delivery_timestamp >= ?)
+   AND e.superceded_timestamp IS NULL
  ORDER BY n.shakecast_user, r.delivery_method, r.aggregation_group, r.aggregate, n.notification_id
 __SQL__
 
@@ -532,6 +544,8 @@ SELECT s.shakemap_id,
        r.notification_type,
        r.message_format,
        r.limit_value,
+	   r.product_type,
+	   pt.filename,
        r.aggregation_group,
        t.notification_attempts AS max_tries,
        n.facility_id,
@@ -547,21 +561,22 @@ SELECT s.shakemap_id,
         g.lon_min AS bound_west,        # kwl 20060916
         g.lon_max AS bound_east,        # kwl 20060916
        r.aggregate
-  FROM ((((((notification n
-    INNER JOIN profile_notification_request r ON
+  FROM (((((((notification n
+    INNER JOIN notification_request r ON
          n.notification_request_id = r.notification_request_id AND n.metric = r.metric)
     INNER JOIN notification_type t ON r.notification_type =
           t.notification_type)
     INNER JOIN grid g ON n.grid_id = g.grid_id)
     INNER JOIN shakemap s ON g.shakemap_id = s.shakemap_id AND
         g.shakemap_version = s.shakemap_version)
-    INNER JOIN event e ON s.event_id = e.event_id AND s.event_version =
-       e.event_version)
+    INNER JOIN event e ON s.event_id = e.event_id)
     LEFT JOIN facility f ON n.facility_id = f.facility_id)
+    LEFT JOIN product_type pt ON r.product_type = pt.product_type)
    WHERE n.shakecast_user = ? AND t.notification_class = 'GRID'
    AND r.notification_type = ?
    AND n.delivery_status IN ('PENDING', 'ERRORS')
    AND (n.next_delivery_timestamp IS NULL OR n.next_delivery_timestamp >= ?)
+   AND e.superceded_timestamp IS NULL
  ORDER BY n.shakecast_user, r.delivery_method, r.aggregation_group, r.aggregate, n.notification_id
 __SQL__
 
@@ -595,6 +610,8 @@ SELECT s.shakemap_id,
        r.notification_type,
        r.message_format,
        r.limit_value,
+	   r.product_type,
+	   pt.filename,
        r.aggregation_group,
        t.notification_attempts AS max_tries,
        n.facility_id,
@@ -610,23 +627,24 @@ SELECT s.shakemap_id,
         g.lon_min AS bound_west,        # kwl 20060916
         g.lon_max AS bound_east,        # kwl 20060916
        r.aggregate
-  FROM ((((((((notification n
-    INNER JOIN profile_notification_request r ON n.notification_request_id = r.notification_request_id)
+  FROM (((((((((notification n
+    INNER JOIN notification_request r ON n.notification_request_id = r.notification_request_id)
     INNER JOIN notification_type t ON r.notification_type =
           t.notification_type)
     INNER JOIN grid g ON n.grid_id = g.grid_id)
     INNER JOIN shakemap s ON g.shakemap_id = s.shakemap_id AND
         g.shakemap_version = s.shakemap_version)
-    INNER JOIN event e ON s.event_id = e.event_id AND s.event_version =
-       e.event_version)
+    INNER JOIN event e ON s.event_id = e.event_id)
     INNER JOIN damage_level dl ON r.damage_level = dl.damage_level)
     INNER JOIN facility f ON n.facility_id = f.facility_id)
     INNER JOIN facility_fragility ff ON n.facility_id = ff.facility_id AND
     dl.damage_level = ff.damage_level)
+    LEFT JOIN product_type pt ON r.product_type = pt.product_type)
    WHERE n.shakecast_user = ? AND t.notification_class = 'GRID'
    AND r.notification_type = ?
    AND n.delivery_status IN ('PENDING', 'ERRORS')
    AND (n.next_delivery_timestamp IS NULL OR n.next_delivery_timestamp >= ?)
+   AND e.superceded_timestamp IS NULL
  ORDER BY n.shakecast_user, r.delivery_method, r.aggregation_group, r.aggregate, n.notification_id
 __SQL__
 
@@ -649,7 +667,7 @@ SELECT l.log_message_id,
        r.aggregation_group,
        t.notification_attempts AS max_tries
   FROM (((notification n
-    INNER JOIN profile_notification_request r ON n.notification_request_id =
+    INNER JOIN notification_request r ON n.notification_request_id =
         r.notification_request_id)
     INNER JOIN notification_type t ON r.notification_type =
        t.notification_type)
@@ -679,20 +697,24 @@ __SQL__
 SELECT file_name FROM message_format WHERE message_format = ?
 __SQL__
       SELECT_NOTIFICATION_USER => { SQL => <<__SQL__ },
-SELECT distinct shakecast_user FROM notification_request
-    where notification_type = ?
+SELECT distinct su.shakecast_user 
+FROM notification_request nr 
+	inner join shakecast_user su on
+	nr.shakecast_user = su.shakecast_user
+    where nr.notification_type = ?
+	and su.user_type <> "GROUP"
 __SQL__
       SELECT_NOTIFICATION_PROFILE_USER => { SQL => <<__SQL__ },
-SELECT -(pnr.profile_id) as profile_id,
+SELECT nr.shakecast_user as profile_id,
 	group_concat(distinct udm.delivery_address) as delivery_address
-FROM profile_notification_request pnr 
+FROM notification_request nr 
   inner join geometry_user_profile gur on
-  pnr.profile_id = gur.profile_id 
+  nr.shakecast_user = gur.profile_id 
   inner join user_delivery_method udm on
   gur.shakecast_user = udm.shakecast_user
- and pnr.delivery_method  = udm.delivery_method
-    where pnr.notification_type = ?
-  group by udm.delivery_method
+ and nr.delivery_method  = udm.delivery_method
+    where nr.notification_type = ?
+	group by nr.shakecast_user
 __SQL__
       );
 
@@ -1035,7 +1057,7 @@ sub notify {
         }
 		
 		$attachment{$rr->{'PRODUCT_TYPE'}} = 
-			"$config->{DataRoot}/$r->{EVENT_ID}-$r->{EVENT_VERSION}/$rr->{FILENAME}"
+			"$config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/$rr->{FILENAME}"
 			if $rr->{'PRODUCT_TYPE'};
     }
     foreach my $key (keys %stats) {
@@ -1065,7 +1087,7 @@ sub notify {
     return -1 unless defined $a;
     @lines = @$a;
 	$attachment{$r->{'PRODUCT_TYPE'}} = 
-		"$config->{DataRoot}/$r->{EVENT_ID}-$r->{EVENT_VERSION}/$r->{FILENAME}"
+		"$config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/$r->{FILENAME}"
 		if $r->{'PRODUCT_TYPE'};
     }
     vvvpr @lines;
@@ -1127,7 +1149,7 @@ sub scan_for_work {
 			foreach my $notify_type (@{$notification_type{$k}}) {
 				$profile_sth->execute($notify_type);
 				while (my $profile = $profile_sth->fetchrow_hashref('NAME_uc')) {
-					next unless ($profile->{'PROFILE_ID'} < 0);
+					#next unless ($profile->{'PROFILE_ID'} < 0);
 					my ($nt_count, $accepted_count) = scan_one_profile($k.'_PROFILE', $profile, $notify_type);
 					$nt += $nt_count;
 					$accepted += $accepted_count;
@@ -1556,6 +1578,7 @@ sub sendnotification {
     my $subject = shift @$lines;
     my $data = join '', @$lines;
     my @to = split(/,/, $to);
+	my $msg_type = ($delivery_method eq 'EMAIL_HTML') ? 'text/html' : 'text/plain';
 
     undef $delivery_comment;
     #return (0) unless (-e $files);
@@ -1565,30 +1588,30 @@ sub sendnotification {
     my $msg = MIME::Lite->new (
         From => $from,
         To => $from,
-        #CC => $to,
+        BCC => $to,
         Subject => $subject,
-        Type =>'multipart/mixed'
+        Type => $msg_type,
+		Data => $data
     ) or warn( "Error creating multipart container: $!\n", return -1);
 
-    ### Add the text message part
-	my $msg_type = ($delivery_method eq 'EMAIL_HTML') ? 'HTML' : 'TEXT';
-    $msg->attach (
-      Type => $msg_type,
-      Data => $data
-    ) or warn( "Error adding the text message part: $!\n", return -1);
-
-    if ($files) {
-		### Add the pdf file
-		foreach my $file_type (keys %{$files}) {
-			my @fields = split /[\/|\\]/, $files->{$file_type};
-			$msg->attach (
-			   Type => 'AUTO',
-			   Path => $files->{$file_type},
-			   Filename => $fields[$#fields],
-			   Disposition => 'attachment'
-			) or warn ( "Error adding ".$files->{$file_type}.": $!\n", return -1);
-		}
+	### Add the pdf file
+	foreach my $file_type (keys %{$files}) {
+		return 0 unless (-e $files->{$file_type});
+		my @fields = split /[\/|\\]/, $files->{$file_type};
+		my $filename = $fields[$#fields];
+		$filename =~ s/\./\-$fields[$#fields-1]\./;
+		$msg->attach (
+		   Type => 'AUTO',
+		   Path => $files->{$file_type},
+		   Filename => $filename,
+		   Disposition => 'attachment'
+		) or warn ( "Error adding ".$files->{$file_type}.": $!\n", return -1);
 	}
+	
+	unless ($config->{Notification}->{SmtpServer}) {
+		$delivery_comment = $msg->send();
+		return 1;
+	} 
 	
 	my $smtp;
 	if ($config->{Notification}->{Security} eq 'TLS') {

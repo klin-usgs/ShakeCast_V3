@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: dispd.pl 64 2007-06-05 14:58:38Z klin $
 
@@ -613,14 +613,11 @@ sub nonblock {
 # The original version from The Perl Cookbook used fcntl which is not
 # available with Win32 as of 5.6.1, at least.  I got the ioctl call from
 # http://dbforums.com/archives/t314915.html
-    $flags = fcntl($socket, F_GETFL, 0)
-            or die "Can't get flags for socket: $!\n";
-    fcntl($socket, F_SETFL, $flags | O_NONBLOCK)
-            or die "Can't make socket nonblocking: $!\n";
+
 =cut
-    #my $set_it = "1";
-    #my $ioctl_val = 0x80000000 | (4 << 16) | (ord('f') << 8) | 126;
-    #ioctl($socket, $ioctl_val, $set_it) or die "couldn't set nonblocking: $!";
+#    my $set_it = "1";
+#    my $ioctl_val = 0x80000000 | (4 << 16) | (ord('f') << 8) | 126;
+#    ioctl($socket, $ioctl_val, $set_it) or die "couldn't set nonblocking: $!";
     $flags = fcntl($socket, F_GETFL, 0)
             or die "Can't get flags for socket: $!\n";
     fcntl($socket, F_SETFL, $flags | O_NONBLOCK)

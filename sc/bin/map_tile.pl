@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: worker.pl 64 2007-06-05 14:58:38Z klin $
 
@@ -67,7 +67,7 @@
 use strict;
 use warnings;
 
-use File::Path 2.07 qw(make_path remove_tree);
+use File::Path qw(make_path remove_tree);
 use Getopt::Long;
 use IO::File;
 
@@ -122,7 +122,7 @@ my $tile_type = $options{'type'};
 
 SC->initialize() or quit $SC::errstr;
 
-my $icon_dir = SC->config->{'RootDir'}."/docs/images";
+my $icon_dir = "/usr/local/shakecast/sc/docs/images";
 my $tile_size = 256;
 my $min_zoom = ($options{'min_zoom'}) ? $options{'min_zoom'} : 1;
 my $max_zoom = ($options{'max_zoom'}) ? $options{'max_zoom'} : 10;
@@ -171,7 +171,7 @@ if ($options{'rebuild'}) {
 	}
 }
 print time - $^T, "\n";
-exit;
+exit ;
 
 sub in_bound {
 	my ($rect1, $rect2) = @_;
@@ -213,12 +213,12 @@ sub facility_icon {
     }
 	
 	foreach my $icon (@icons) {
-		my $icon_file = (-e "$icon_dir/".lc($icon->{'facility_type'}).".png") ? 
-			"$icon_dir/".lc($icon->{'facility_type'}).".png" :
+		my $icon_file = (-e "$icon_dir/".$icon->{'facility_type'}.".png") ? 
+			"$icon_dir/".$icon->{'facility_type'}.".png" :
 			"$icon_dir/city.png";
-		my $gd_icon = new GD::Image($icon_file);
+		my $gd_icon = new GD::Image->newFromPng($icon_file, 1);
 		#$icon->transparent($white);
-		$gd_icon->interlaced('true');
+		#$gd_icon->interlaced('true');
 		$gd_icons{$icon->{'facility_type'}} = $gd_icon;
 	}
 	return \%gd_icons;
@@ -564,8 +564,8 @@ sub facility_tile {
 		unlink $tile_path;
 	}
 
-	my $im = new GD::Image(256,256);
-	$im->trueColor(1);
+	my $im = GD::Image->newTrueColor(256,256);
+	#$im->trueColor(1);
 	# allocate some colors
 	my $white = $im->colorAllocate(255,255,255);
 	my $purple = $im->colorAllocate(88,20,130);

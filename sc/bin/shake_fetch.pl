@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: shake_fetch.pl 478 2008-09-24 18:47:04Z klin $
 
@@ -99,6 +99,7 @@ GetOptions(
     'event=s',           
     'status',           
     'verbose',           
+    'force_run',           
     'help',             # print help and exit
 
 ) or usage(1);
@@ -113,6 +114,13 @@ $network = 'global' if ($network =~ /us/i);
 my $evid    = $options{'event'} if defined $options{'event'};
 my $status    = defined $options{'status'}  ? 1 : 0;
 my $verbose  = defined $options{'verbose'}  ? 1 : 0;
+my $force_run = (defined $options{'force_run'} || $evid =~ /_se$/) ? 1 : 0;
+
+my $sth_product_list = SC->dbh->prepare(qq{
+    select filename
+      from product_type
+     where product_source="ShakeMap"});
+
 
 
 #######################################################################
@@ -136,7 +144,8 @@ if (@servers) {
 				$rc = 1;
 			}
 		} else {
-			$url = "http://" . $server->dns_address . "/eqcenter/shakemap/$network/shake/$evid/download/";
+			#http://earthquake.usgs.gov/earthquakes/shakemap/sc/shake/11339042/#download
+			$url = "http://earthquake.usgs.gov/earthquakes/shakemap/$network/shake/$evid/download/";
 			main($url, $options{'network'}.$evid);
 		}
 	}
@@ -158,36 +167,32 @@ my	($url, $evid) = @_;
 	$ua->proxy(['http'], $config->{'ProxyServer'})
 		if (defined $config->{'ProxyServer'});
 
-#get current rss
-	my $resp = $ua->get($url);
-	return 0 unless ($resp->is_success);
-	my $data = $resp->content;
-	
-	if (! defined $data) {
-		SC->log("Couldn't get data $evid!");
-		return -1;
-	}
-	my @products = split /\n/, $data;
 	my $data_dir = $config->{'DataRoot'}."/$evid";
 	if (not -e "$data_dir") {
 	  mkpath("$data_dir", 0, 0755) or SC->log("Couldn't create download dir $data_dir");
 	}
 
-	foreach my $product (@products) {
-		my ($product_link, $product) = $product =~ /<a\s+href="([^\" >]*?)">(.*)<\/a>/i;	
-		next unless (defined $product && $product_link eq $product);
+#get current rss
+    my $idp = SC->dbh->selectcol_arrayref($sth_product_list);
+    if (scalar @$idp > 1) {
+	foreach my $product (@$idp) {
+		#my ($product_link, $product) = $product =~ /<a\s+href="([^\" >]*?)">(.*)<\/a>/i;	
+		#next unless (defined $product && $product_link eq $product);
 		my $resp = $ua->get($url.$product);
 		next unless ($resp->is_success);
-		my $sm_product = $resp->content;
 		print "Fetching $evid: $product\n";
+		my $sm_product = $resp->content;
 		next unless (defined $sm_product);
 	    open(GRD, ">$data_dir/$product")  or SC->log("Couldn't save file: $product");
 	    binmode GRD;
 	    print GRD $sm_product;
 	    close(GRD);
 	}
+	}
 	
 	my $cmd = "$perl " .$config->{'RootDir'}."/bin/scfeed_local.pl";
+	$cmd .= ' -force_run ' if $force_run;
+print $cmd,"\n";
 	system ($cmd." -event ".$evid);
 	return 0;
 

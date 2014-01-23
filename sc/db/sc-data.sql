@@ -1104,7 +1104,7 @@ REPLACE INTO `phpbb_themes_name` (`themes_id`, `tr_color1_name`, `tr_color2_name
 
 REPLACE INTO `phpbb_users` (`user_id`, `user_active`, `username`, `user_password`, `user_session_time`, `user_session_page`, `user_lastvisit`, `user_regdate`, `user_level`, `user_posts`, `user_timezone`, `user_style`, `user_lang`, `user_dateformat`, `user_new_privmsg`, `user_unread_privmsg`, `user_last_privmsg`, `user_login_tries`, `user_last_login_try`, `user_emailtime`, `user_viewemail`, `user_attachsig`, `user_allowhtml`, `user_allowbbcode`, `user_allowsmile`, `user_allowavatar`, `user_allow_pm`, `user_allow_viewonline`, `user_notify`, `user_notify_pm`, `user_popup_pm`, `user_rank`, `user_avatar`, `user_avatar_type`, `user_email`, `user_icq`, `user_fullname`, `user_from`, `user_sig`, `user_sig_bbcode_uid`, `user_aim`, `user_yim`, `user_msnm`, `user_occ`, `user_organization`, `user_actkey`, `user_newpasswd`) VALUES 
 (-1, 0, 'Anonymous', '', 0, 0, 0, 1168467455, 0, 0, '0.00', NULL, '', '', 0, 0, 0, 0, 0, NULL, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, NULL, '', 0, '', '', '', '', '', NULL, '', '', '', '', '', '', ''),
-(1, 1, 'scadmin', 'c33cd727cf4697f71cd45ef32328f730', 1182867178, 0, 1182865374, 1168467455, 1, 3, '0.00', 1, 'english', 'D M d, Y g:i a', 0, 0, 1174229798, 0, 0, NULL, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '');
+(1, 1, 'scadmin', '7014be26f3506a3814e0138c268c857cb2dd08832671361487bfd1cbbb6ab657', 1182867178, 0, 1182865374, 1168467455, 1, 3, '0.00', 1, 'english', 'D M d, Y g:i a', 0, 0, 1174229798, 0, 0, NULL, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '');
 
 -- 
 -- Dumping data for table `phpbb_user_group`
@@ -1181,7 +1181,7 @@ REPLACE INTO `product_type` (`PRODUCT_TYPE`, `NAME`, `DESCRIPTION`, `METRIC`, `F
 ('KML', 'ShakeMap KML', NULL, NULL, 'shakemap.kml', '/images/kml.png', 0, 'ShakeMap', 'kwl', '2006-12-01 15:28:29'),
 ('IIOVER_PNG', 'IIOVER_PNG', NULL, NULL, 'ii_overlay.png', NULL, NULL, 'ShakeMap', 'kwl', '2006-12-01 15:28:29'),
 ('IIOVER_JPG', 'IIOVER_JPG', NULL, NULL, 'ii_overlay.jpg', NULL, NULL, 'ShakeMap', 'kwl', '2007-10-12 13:47:41'),
-('PDF_USGS', 'USGS PDF Report', 'USGS PDF Report', NULL, 'shakecast_report_usgs.pdf', '/images/pdf.png', 1, 'ShakeCast', 'kwl', '2011-05-03 07:51:40'),
+('PDF', 'ShakeCast PDF Report', 'ShakeCast PDF Report', NULL, 'shakecast_report.pdf', '/images/pdf.png', 1, 'ShakeCast', 'kwl', '2011-05-03 07:51:40'),
 ('EXPO_KML', 'Exposure KML', NULL, NULL, 'exposure.kml', '/images/kml.png', 1, 'ShakeCast', 'kwl', '2011-05-05 10:53:07'),
 ('INFO_XML', 'Info XML', NULL, NULL, 'info.xml', '/images/xml.png', 1, 'ShakeMap', 'kwl', '2012-03-10 14:09:38'),
 ('DYFI_PDF', 'DYFI PDF', 'DYFI PDF', NULL, 'ciim.pdf', '/images/pdf.png', 1, 'DYFI', 'kwl', '2012-03-03 12:11:44'),
@@ -1211,7 +1211,7 @@ REPLACE INTO `server_status` (`SERVER_STATUS`, `NAME`, `DESCRIPTION`, `UPDATE_US
 -- 
 
 REPLACE INTO `shakecast_user` (`SHAKECAST_USER`, `USER_TYPE`, `USERNAME`, `PASSWORD`, `UPDATE_USERNAME`, `UPDATE_TIMESTAMP`) VALUES 
-(1, 'ADMIN', 'scadmin', 'scadmin', 'cmdadmin', now());
+(1, 'ADMIN', 'scadmin', '7014be26f3506a3814e0138c268c857cb2dd08832671361487bfd1cbbb6ab657', 'cmdadmin', now());
 
 -- 
 -- Dumping data for table `shakemap_status`
@@ -21044,7 +21044,8 @@ REPLACE INTO `station` (`STATION_ID`, `STATION_NETWORK`, `EXTERNAL_STATION_ID`, 
 REPLACE INTO `user_type` (`USER_TYPE`, `NAME`, `DESCRIPTION`, `UPDATE_USERNAME`, `UPDATE_TIMESTAMP`) VALUES 
 ('ADMIN', 'Administrator', 'ShakeCast System Administrators', 'pan', '2003-01-01 00:00:00'),
 ('USER', 'User', 'ShakeCast User', 'pan', '2003-01-01 00:00:00'),
-('SYSTEM', 'System', 'ShakeCast System software', 'pan', '2003-01-01 00:00:00');
+('SYSTEM', 'System', 'ShakeCast System software', 'pan', '2003-01-01 00:00:00'),
+('GROUP', 'Group', 'ShakeCast User Group', 'kwl', '2013-06-02 11:14:05');
 
 -- 
 -- Dumping data for table `yes_no`

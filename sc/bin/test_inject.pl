@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 #
 # $Id: heartbeat.pl 475 2008-09-05 17:14:37Z klin $
@@ -128,19 +128,23 @@ my ($prog, $event, @options) = @ARGV;
 #exit unless $event;
 my ($event_id, $event_version);
 ($event_id, $event_version) = split /-/, $event if ($event);
-    require Dispatch::Client;
 
-    Dispatch::Client::set_logger($SC::logger);
+require Dispatch::Client;
 
-    Dispatch::Client::dispatch(
-	SC->config->{'Dispatcher'}->{'RequestPort'},
-	$prog, SC::Server->this_server->server_id, $event, @options);    
-	#"map_tile", SC::Server->this_server->server_id, "usc000gv4w", 'event_tile');    
-	#"test_product", SC::Server->this_server->server_id, "12345", time, 100, 2);    
-	#SC->config->{'Dispatcher'}->{'RequestPort'},
-	#"facility_regulatory_level", SC::Server->this_server->server_id, "usc0001xgp", 12);    
-	#"gs_json", SC::Server->this_server->server_id, "12345", time, 60, 9999999999);    
-	#SC->config->{'Dispatcher'}->{'RequestPort'},
-	#$prog, SC::Server->this_server->server_id, $event_id, $event_version);    
+Dispatch::Client::set_logger($SC::logger);
+
+Dispatch::Client::dispatch(
+SC->config->{'Dispatcher'}->{'RequestPort'},
+$prog, SC::Server->this_server->server_id, $event, @options);    
+#"map_tile", SC::Server->this_server->server_id, "usc000gv4w", 'event_tile');    
+#"test_product", SC::Server->this_server->server_id, "12345", time, 100, 2);    
+#"maintain_event", SC::Server->this_server->server_id, "12345", time, 60, 1);    
+#SC->config->{'Dispatcher'}->{'RequestPort'},
+#"facility_regulatory_level", SC::Server->this_server->server_id, "usc0001xgp", 12);    
+#"logstats", SC::Server->this_server->server_id, "12345", time, 60, 9999999999);    
+#"logrotate", SC::Server->this_server->server_id, "12345", time, 60, 9999999999);    
+#"gs_json", SC::Server->this_server->server_id, "12345", time, 60, 9999999999);    
+#SC->config->{'Dispatcher'}->{'RequestPort'},
+#$prog, SC::Server->this_server->server_id, $event_id, $event_version);    
 
 exit 0;
