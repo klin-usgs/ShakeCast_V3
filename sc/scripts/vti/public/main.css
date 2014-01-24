@@ -1,0 +1,133 @@
+body {
+    overflow: hidden;
+    background:url("/bg.jpg") no-repeat scroll center center #DDDDDD;
+}
+
+.container, html, body {
+    margin:0px;
+    height: 100%; /* IE treats as min-height */
+    min-height: 100%; /* IE ignores this */
+}
+
+h1 {
+    font-size:300%;
+    padding-bottom:1em;
+}
+
+h2 {
+    font-size:200%;
+    padding-bottom:1em;
+}
+
+h3 {
+    font-size:150%;
+    padding-bottom:1em;
+}
+
+#slide {
+    text-align:center;
+    font: 26px 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif;
+    margin:auto;
+    padding:1em;
+    text-shadow: 0px 1px 2px #777;
+    line-height:180%;
+}
+
+pre {
+    font: 18px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+    width:80%;
+    margin:auto;
+    text-align:left;
+}
+
+.achtung {
+    color:red;
+}
+
+#logo {
+    background:#000;
+    color:#fff;
+    text-align:center;
+    padding:0.5em;
+    position:absolute;
+    right:0px;
+    top:0px;
+    z-index:2;
+}
+
+#status {
+    background:#000;
+    color:#fff;
+    text-align:center;
+    padding:0.5em;
+    position:absolute;
+    left:0px;
+    top:0px;
+    z-index:2;
+}
+
+
+#header,#footer {
+    color:#333;
+    text-align:center;
+    padding:0.5em;
+    position:absolute;
+    left:0px;
+    right:0px;
+    margin:auto;
+    width: 500px;
+}
+
+#header {
+    top:0px;
+}
+
+#footer {
+    bottom:0px;
+}
+
+#chat {
+    background:#000;
+    color:#fff;
+    padding:0.5em;
+    position:absolute;
+    right:0px;
+    bottom:0px;
+    z-index:2;
+}
+
+#chat pre {
+    font-size:12px;
+}
+
+#chat-menu {
+    border-bottom:1px solid #333;
+}
+
+#chat-menu > a:link, a:hover, a:visited {
+    color:#333;
+    text-decoration:none;
+}
+
+.center {
+    text-align:center;
+}
+
+.small {
+    font-size:small;
+}
+
+#websocket-chat-log {
+    height:100px;
+    width: 400px;
+    overflow: auto;
+}
+
+#websocket-chat-input {
+    width:380px;
+}
+
+.two-column {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+}

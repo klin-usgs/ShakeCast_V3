@@ -1,0 +1,63 @@
+#!/usr/local/bin/perl
+
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../../lib";
+
+use Carp;
+
+use CGI;
+use JSON::XS;
+
+use SC;
+use API::Shakemap;
+use SC::Shakemap;
+use API::APIUtil;
+
+SC->initialize;
+my $default_options = API::APIUtil::config_options();
+
+my $self = new CGI;
+my (@args) = split '/', $ENV{PATH_INFO};
+shift @args;
+my $action = shift @args;
+
+print "Content-Type: application/json\n\n";
+if (not defined *{$action} ) {
+} else {
+    SC->log(0, "user: task is $action $args[0]");
+
+	no strict 'refs';
+    # perform the requested action
+    #eval {
+	my $json =  &{ $action }( @args );
+	print JSON::XS->new->utf8->encode(API::APIUtil::stringfy($json));
+    #};
+}
+
+    # Authenticated
+sub from_id {
+	my ($shakemap) = @_;
+
+	my ($shakemap_id, $shakemap_version) = split '-', $shakemap;
+    #my $shakemap_version = $self->param('shakemap_version') || 1;
+	my $shakemap = new API::Shakemap->from_id($shakemap_id, $shakemap_version);
+	if ($shakemap_id =~ /_scte$/) {
+		my $xml = read_xml($shakemap_id, 'event') or exit;
+		$xml =~ s/\?event_version/1/g;
+		my $xml_hash = SC->xml_in($xml);
+		$xml = read_xml($shakemap_id, 'shakemap');
+		$xml =~ s/\?event_version/1/g;
+		my $xml_hash2 = SC->xml_in($xml);
+		$shakemap = $xml_hash2->{'shakemap'};
+		foreach my $key (keys %{$xml_hash->{'event'}}) 
+			{$shakemap->{$key} = $xml_hash->{'event'}->{$key};}
+	}
+
+	return $shakemap;
+
+}
+
+
