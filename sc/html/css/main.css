@@ -31,6 +31,14 @@
 	background-color: #eeeeee;
 }
 
+.sidebar_pane { overflow-y: auto; height:300px;}
+
+#sidebar_fac { overflow-y: scroll; }
+
+#sidebar_prod { overflow-y: scroll; }
+#sidebar { overflow-y: scroll; }
+#fac_shaking { display: none; }
+
 #caption {
 	background-color: #eee;
 	position: relative;
