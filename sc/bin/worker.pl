@@ -627,12 +627,18 @@ sub maintain_event {
 sub facility_damage_stat {
     my ($remote_id, $event_id, $event_version) = @_;
 	
-	my $perl = SC->config->{perlbin};
-	my $root = SC->config->{RootDir};
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/facility_damage_stat.pl $event_id $event_version`;
 	
-	my $rv = `$perl $root/bin/facility_damage_stat.pl $event_id $event_version`;
-	
-	return $rv;
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
 
 }
 
@@ -640,12 +646,18 @@ sub facility_damage_stat {
 sub facility_fragility_stat {
     my ($remote_id, $event_id, $event_version) = @_;
 	
-	my $perl = SC->config->{perlbin};
-	my $root = SC->config->{RootDir};
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/facility_fragility_stat.pl $event_id $event_version`;
 	
-	my $rv = `$perl $root/bin/facility_fragility_stat.pl $event_id $event_version`;
-	
-	return $rv;
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
 
 }
 
@@ -653,12 +665,18 @@ sub facility_fragility_stat {
 sub facility_regulatory_level {
     my ($remote_id, $event_id, $event_version) = @_;
 	
-	my $perl = SC->config->{perlbin};
-	my $root = SC->config->{RootDir};
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/facility_reg_level.pl $event_id $event_version`;
 	
-	my $rv = `$perl $root/bin/facility_reg_level.pl $event_id $event_version`;
-	
-	return $rv;
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
 
 }
 
@@ -666,12 +684,18 @@ sub facility_regulatory_level {
 sub facility_feature_shaking {
     my ($remote_id, $event_id, $event_version) = @_;
 	
-	my $perl = SC->config->{perlbin};
-	my $root = SC->config->{RootDir};
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/facility_feature_shaking.pl $event_id $event_version`;
 	
-	my $rv = `$perl $root/bin/facility_feature_shaking.pl $event_id $event_version`;
-	
-	return $rv;
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
 
 }
 
@@ -679,12 +703,18 @@ sub facility_feature_shaking {
 sub local_product {
     my ($remote_id, $event_id, $event_version) = @_;
 	
-	my $perl = SC->config->{perlbin};
-	my $root = SC->config->{RootDir};
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/local_product.pl $event_id $event_version`;
 	
-	my $rv = `$perl $root/bin/local_product.pl $event_id $event_version`;
-	
-	return $rv;
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
 
 }
 
@@ -692,12 +722,18 @@ sub local_product {
 sub sc_pdf {
     my ($remote_id, $event_id, $event_version) = @_;
 	
-	my $perl = SC->config->{perlbin};
-	my $root = SC->config->{RootDir};
-	
-	my $rv = `$perl $root/bin/sc_pdf.pl $event_id $event_version`;
-	
-	return $rv;
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/sc_pdf.pl $event_id $event_version`;
+    
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
 
 }
 
@@ -705,33 +741,18 @@ sub sc_pdf {
 sub screen_shot {
     my ($remote_id, $event_id, $event_version) = @_;
 	
-	my $wkhtmltopdf = SC->config->{wkhtmltopdf};
-	my $DataRoot = SC->config->{DataRoot};
-	my $url = "http://localhost/html/screenshot.html?event=$event_id-$event_version";
-	my $outfile = "$DataRoot/$event_id-$event_version/screenshot.jpg";
-	my $filesize = 20*1024;	#20k
-	my $proxy = (SC->config->{ProxyServer}) ? ' -p '.SC->config->{ProxyServer} : '';
-	
-	my $rv = `/bin/touch $outfile`;
-	$rv = `$wkhtmltopdf --javascript-delay 5000 $proxy --width 1024 --height 534 $url $outfile`;
-	
-	SC->log(0, "Screen Capture: $event_id-$event_version ".$rv);
-
-	#my $perl = SC->config->{perlbin};
-	#my $root = SC->config->{RootDir};
-	
-	#my $rv = `$perl $root/bin/screenshot.pl $event_id $event_version`;
-
-	if (-e $outfile) {
-		if (-s $outfile > $filesize) {
-			return 1;
-		} else {
-			unlink $outfile;
-			return 0;
-		}
-	} else { 
-		return 0;
-	}
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/screenshot.pl $event_id $event_version`;
+    
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
 
 }
 
@@ -739,12 +760,12 @@ sub screen_shot {
 sub map_tile {
     my ($remote_id, $event_id, $type) = @_;
 	
-	my $perl = SC->config->{perlbin};
-	my $root = SC->config->{RootDir};
-	
-	my $rv = `$perl $root/bin/map_tile.pl -id $event_id -type $type -max_zoom 18`;
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/map_tile.pl -id $event_id -type $type -max_zoom 18`;
 
-	return $rv;
+    return $rv;
 
 }
 
@@ -752,10 +773,10 @@ sub map_tile {
 sub test_product {
     my ($remote_id, $product_id, $plan_ts, $interval, $repeat) = @_;
 	
-	return (1, $plan_ts, $interval, $repeat) 
-		if ($plan_ts + $interval >= time);
-	
-	return (1, $plan_ts, $interval, $repeat--);
+    return (1, $plan_ts, $interval, $repeat) 
+	    if ($plan_ts + $interval >= time);
+    
+    return (1, $plan_ts, $interval, $repeat--);
 
 }
 

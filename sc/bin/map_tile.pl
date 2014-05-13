@@ -122,7 +122,7 @@ my $tile_type = $options{'type'};
 
 SC->initialize() or quit $SC::errstr;
 
-my $icon_dir = "/usr/local/shakecast/sc/docs/images";
+my $icon_dir = SC->config->{'RootDir'}."/images";
 my $tile_size = 256;
 my $min_zoom = ($options{'min_zoom'}) ? $options{'min_zoom'} : 1;
 my $max_zoom = ($options{'max_zoom'}) ? $options{'max_zoom'} : 10;

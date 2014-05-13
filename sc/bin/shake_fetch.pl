@@ -100,6 +100,7 @@ GetOptions(
     'status',           
     'verbose',           
     'force_run',           
+    'scenario',           
     'help',             # print help and exit
 
 ) or usage(1);
@@ -114,6 +115,7 @@ $network = 'global' if ($network =~ /us/i);
 my $evid    = $options{'event'} if defined $options{'event'};
 my $status    = defined $options{'status'}  ? 1 : 0;
 my $verbose  = defined $options{'verbose'}  ? 1 : 0;
+my $scenario  = defined $options{'scenario'}  ? 1 : 0;
 my $force_run = (defined $options{'force_run'} || $evid =~ /_se$/) ? 1 : 0;
 
 my $sth_product_list = SC->dbh->prepare(qq{
@@ -192,9 +194,11 @@ my	($url, $evid) = @_;
 	
 	my $cmd = "$perl " .$config->{'RootDir'}."/bin/scfeed_local.pl";
 	$cmd .= ' -force_run ' if $force_run;
-print $cmd,"\n";
-	system ($cmd." -event ".$evid);
-	return 0;
+	$cmd .= ' -scenario ' if $scenario;
+	$cmd .= " -event ".$evid;
+	SC->log(0, $cmd);
+	my $result =  system($cmd);
+	return $result;
 
 }
 
