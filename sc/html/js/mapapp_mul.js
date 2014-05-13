@@ -107,12 +107,12 @@ MAPAPP = (function() {
         
     function addMarker(position, event) {
         // create a new marker to and display it on the map
-				var epicenterimage  = new google.maps.MarkerImage("./images/epicenter.png",
+				var epicenterimage  = new google.maps.MarkerImage("/images/epicenter.png",
 														new google.maps.Size(25,25),
 														new google.maps.Point(0,0),
 														new google.maps.Point(12,12));				
 														
-				var epicentershadow = new google.maps.MarkerImage("./images/shadow-epicenter.png",
+				var epicentershadow = new google.maps.MarkerImage("/images/shadow-epicenter.png",
 														new google.maps.Size(38,25),
 														new google.maps.Point(0,0),
 														new google.maps.Point(12,12));			

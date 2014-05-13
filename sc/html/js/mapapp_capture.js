@@ -29,28 +29,27 @@ MAPAPP = (function() {
     
     function addMarker(facility) {
 		var lat, lon;
-
+		var icon_type;
+		
 		if (facility.facility_type == "epicenter") {
-			lat = parseFloat(facility.origin_lat);
-			lon = parseFloat(facility.origin_lon);
+			lat = parseFloat(facility.lat);
+			lon = parseFloat(facility.lon);
+			icon_type =  facility.facility_type;
+			icon_type = icon_type.toLowerCase();
 		} else {
-			lat = parseFloat(facility.lat_min);
-			lon = parseFloat(facility.lon_min);
+			lat = parseFloat(facility.latitude);
+			lon = parseFloat(facility.longitude);
+			icon_type =  facility.facility_type + facility.damage_level;
+			icon_type = icon_type.toLowerCase();
 		}
 		//MAPAPP.addMarker(new google.maps.LatLng(lat, lon), domdata);
-		var markerimage  = new google.maps.MarkerImage("/images/" + facility.facility_type + ".png",
+		var markerimage  = new google.maps.MarkerImage("/images/" + icon_type + ".png",
 			new google.maps.Size(25,25),
 			new google.maps.Point(0,0),
 			new google.maps.Point(12,12));				
 			
-		var markershadow = new google.maps.MarkerImage("/images/shadow-" + facility.facility_type + ".png",
-			new google.maps.Size(38,25),
-			new google.maps.Point(0,0),
-			new google.maps.Point(12,12));			
-
 		var marker = new google.maps.Marker({
 			position: new google.maps.LatLng(lat, lon), 
-			shadow: markershadow,
 			icon: markerimage,
 			map: map,
 		});
@@ -63,14 +62,14 @@ MAPAPP = (function() {
         addMarker: addMarker,
 		loadSM: loadSM,
         
-        init: function(position, zoomLevel) {
+        init: function(position, zoomLevel, no_facility) {
 
             // define the required options
             var myOptions = {
                 zoom: zoomLevel ? zoomLevel : DEFAULT_ZOOM,
                 center: position,
-				overviewMapControl: true,
-                overviewMapControlOptions: {opened: true},
+				//overviewMapControl: true,
+                //overviewMapControlOptions: {opened: true},
 
 				disableDefaultUI: true,
 				mapTypeId: google.maps.MapTypeId.TERRAIN,
@@ -81,6 +80,25 @@ MAPAPP = (function() {
                 document.getElementById("map_canvas"),
                 myOptions);
                 
+	    /* var map_questMapLayerOptions = {
+	    getTileUrl: function(tile, zoom) {
+		    //console.debug(X);
+		    //return "/server_event.php?x="+tile.x+"&y="+tile.y+"&zoom="+zoom; },
+		    var tilesAtThisZoom = 1 << zoom;
+		    var tilex = tile.x % tilesAtThisZoom;
+		    if (tilex < 0) {tilex = tilex + tilesAtThisZoom;}
+		    //if (zoom > TILE_ZOOM) {
+			    //return "/scripts/gmap.pl/event/"+tile.x+","+tile.y+","+zoom;
+		    //} else {
+			    return "./tiles/map_quest/"+zoom+"/"+tilex+"/"+tile.y+".png";
+		    //}
+		    },
+	    tileSize: new google.maps.Size(256, 256),
+	    isPng: true
+	    };
+	    map_questMapLayer = new google.maps.ImageMapType(map_questMapLayerOptions);
+	    map.overlayMapTypes.insertAt("0",map_questMapLayer); */
+
 			var detailsMapLayerOptions = {
 			getTileUrl: function(tile, zoom) {
 				//console.debug(X);
@@ -98,7 +116,7 @@ MAPAPP = (function() {
 			};
 			eventMapLayer = new google.maps.ImageMapType(detailsMapLayerOptions);
 			//map.overlayMapTypes.insertAt("0",eventMapLayer);
-			map.overlayMapTypes.insertAt("0", eventMapLayer);
+			map.overlayMapTypes.insertAt("1", eventMapLayer);
 
 			var facilityMapLayerOptions = {
 			getTileUrl: function(tile, zoom) {
@@ -117,7 +135,7 @@ MAPAPP = (function() {
 			isPng: true
 			};
 			facilityMapLayer = new google.maps.ImageMapType(facilityMapLayerOptions);
-			map.overlayMapTypes.insertAt("1",facilityMapLayer);
+			if (!no_facility) map.overlayMapTypes.insertAt("2",facilityMapLayer);
 			//map.overlayMapTypes.insertAt("1",facilityMapLayer);
         },
         

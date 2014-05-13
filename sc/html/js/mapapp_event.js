@@ -9,6 +9,7 @@ MAPAPP = (function() {
     // initialise variables
     var map = null,
 	sm_id = null,
+	allmarker_flag = null,
 	detailMapLayer = null,
 	mgr = null,
 	mc = null,
@@ -106,14 +107,16 @@ MAPAPP = (function() {
 				  fac_feature.setMap(map);
 				}
 			} else {
-				var html_array = ['<div class="ui-block-b fac_sum">',
-					'<ul><li class="fac_summary"><b>Facility ID</b> : ' + data.external_facility_id + ' (' + data.facility_type + ')</li>',
-					'<li class="fac_summary"><b>Name</b> : ' + data.facility_name + '</li>',
-					(data.description) ? '<li class="fac_summary"><b>Description</b> : ' + data.description + '</li>' : '',
-					'<li class="fac_summary"><b>Latitude</b> : ' + data.lat_min + ' / ' + data.lat_max + '</li>',
-					'<li class="fac_summary"><b>Logitude</b> : ' + data.lon_min + ' / ' + data.lon_max + '</li>',
-					'<li class="fac_summary"><b>Last Updated</b> : ' + data.update_timestamp + '</li>',
-					'</ul></div>',
+				var html_array = [
+					'<div  class="panel panel-success"><div class="panel-heading text-center"><h4>Facility Information</h4></div>',
+					'<table class="table table-striped table-responsive">',
+					'<tr><td><b>Facility ID</b></td><td>' + data.external_facility_id + ' (' + data.facility_type + ')</td></tr>',
+					'<tr><td><b>Description</b></td><td>' + data.facility_name + '</td></tr>',
+					(data.description) ? '<tr><td><b>Description</b></td><td>' + data.description + '</td></tr>' : '',
+					'<tr><td><b>Latitude</b></td><td>' + data.lat_min + ' / ' + data.lat_max + '</td></tr>',
+					'<tr><td><b>Logitude</b></td><td>' + data.lon_min + ' / ' + data.lon_max + '</td></tr>',
+					'<tr><td><b>Last Updated</b></td><td>' + data.update_timestamp + '</td></t>',
+					'</table></div>',
 				];
 				infocontent = html_array.join('');
 			}
@@ -142,14 +145,16 @@ MAPAPP = (function() {
 				map: map,
 				optimized: false
 			});
-				var strHtml =  '<h3>M'+ facility.magnitude + '<small> ' + 
-				facility.event_location_description +', ' + facility.event_timestamp + '</small></h3>';				
+				var strHtml = '';
 				if (facility.event_type !="ACTUAL") {strHtml += ' <span class="lead label label-danger pull-right">Earthquake Scenario</span>';}
+				strHtml +=  '<h3>M'+ facility.magnitude + '<small> ' + 
+				facility.event_location_description +', ' + facility.event_timestamp + '</small></h3>';				
 				$("#map_title").html(strHtml).fadeIn("slow");
 			
-			var sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
+			sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
 			var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
+			if (allmarker_flag) dmg_url += '&all=1';
 			$.getJSON(dmg_url, function(summary) {
 				var damage_summary = '<div class="progress">';
 				// Are there even any EQ to display?
@@ -161,15 +166,17 @@ MAPAPP = (function() {
 				damage_summary += '</div>';
 				$("#caption").html(damage_summary);
 			});
-			var html_array = ['<div class="ui-block-b fac_sum">',
-				'<ul><li class="fac_summary"><b>Event ID</b> : ' + facility.event_id + ' (' + facility.event_version + ')</li>',
-				'<li class="fac_summary"><b>Name</b> : ' + facility.event_location_description + '</li>',
-				'<li class="fac_summary"><b>Magnitude</b> : ' + facility.magnitude,
-					(facility.mag_type) ? ' (' + facility.mag_type + ')</li>' : '</li>',
-				'<li class="fac_summary"><b>Location (Lat/Lon)</b> : ' + facility.lat + ' / ' + facility.lon + '</li>',
-				'<li class="fac_summary"><b>Depth</b> : ' + facility.depth + ' km</li>',
-				'<li class="fac_summary"><b>Origin Time</b> : ' + facility.event_timestamp + '</li>',
-				'</ul></div>',
+		var html_array = [
+			'<div  class="panel panel-info"><div class="panel-heading text-center"><h4>Earthquake Information</h4></div>',
+			'<table class="table table-striped table-responsive">',
+			'<tr><td><b>Event ID</b></td><td>' + facility.event_id + '</td></tr>',
+			'<tr><td><b>Description</b></td><td>' + facility.event_location_description + '</td></tr>',
+			'<tr><td><b>Magnitude</b></td><td>' + facility.magnitude,
+			    (facility.mag_type) ? ' (' + facility.mag_type + ')</td></tr>' : '</td></tr>',
+			'<tr><td><b>Location (Lat/Lon)</b></td><td>' + facility.lat + ' / ' + facility.lon + '</td></tr>',
+			'<tr><td><b>Depth</b></td><td>' + facility.depth + ' km</td></tr>',
+			'<tr><td><b>Origin Time</b></td><td>' + facility.event_timestamp + '</td></t>',
+			'</table></div>',
 			];
 			infocontent = html_array.join('');
 			google.maps.event.addListener(marker, 'click', 
@@ -182,7 +189,7 @@ MAPAPP = (function() {
 			lat = (parseFloat(facility.lat_min) + parseFloat(facility.lat_max))/2;
 			lon = (parseFloat(facility.lon_min) + parseFloat(facility.lon_max))/2;
 			//MAPAPP.addMarker(new google.maps.LatLng(lat, lon), domdata);
-			 markerimage  = new google.maps.MarkerImage("/images/" + facility.facility_type + ".png",
+			 markerimage  = new google.maps.MarkerImage("/images/" + (facility.facility_type + facility.damage_level).toLowerCase() + ".png",
 				new google.maps.Size(25,25),
 				new google.maps.Point(0,0),
 				new google.maps.Point(12,12));				
@@ -259,25 +266,6 @@ MAPAPP = (function() {
 		eventDiv.appendChild(eventText);
 		ControlDiv.appendChild(eventDiv);
 		
-		facilityDiv = document.createElement('DIV'); 
-		facilityDiv.style.backgroundColor = 'white';
-		facilityDiv.style.borderStyle = 'solid';
-		facilityDiv.style.borderWidth = '1px';
-		facilityDiv.style.cursor = 'pointer';
-		facilityDiv.style.textAlign = 'left';
-		facilityDiv.title = 'Click to toggle station layer';
-		// Set CSS for the control interior
-		var facilityText = document.createElement('DIV');
-		facilityText.style.fontFamily = 'Arial,sans-serif';
-		facilityText.style.fontSize = '12px';
-		facilityText.style.paddingLeft = '5px';
-		facilityText.style.paddingRight = '5px';
-		facilityText.style.paddingTop = '1px';
-		facilityText.style.paddingBottom = '1px';
-		facilityText.innerHTML = 'Facility Layer';
-		facilityDiv.appendChild(facilityText);
-		ControlDiv.appendChild(facilityDiv);
-		
 		var stationDiv = document.createElement('DIV'); 
 		stationDiv.style.backgroundColor = 'white';
 		stationDiv.style.borderStyle = 'solid';
@@ -307,47 +295,63 @@ MAPAPP = (function() {
 		  }
 			  });
 		google.maps.event.addDomListener(stationDiv, 'click', function() {
-		  if (map.overlayMapTypes.getAt("0")) {
-			  map.overlayMapTypes.setAt("0",null);
+		  if (map.overlayMapTypes.getAt("3")) {
+			  map.overlayMapTypes.setAt("3",null);
 			  this.style.backgroundColor = 'white';
 		  } else {
-			  map.overlayMapTypes.setAt("0",stationMapLayer);
+			  map.overlayMapTypes.setAt("3",stationMapLayer);
 			  this.style.backgroundColor = '#aaffaa';
-		  }
-			  });
-		google.maps.event.addDomListener(facilityDiv, 'click', function() {
-		  if (map.overlayMapTypes.getAt("2")) {
-			  map.overlayMapTypes.setAt("2",null);
-			  this.style.backgroundColor = 'white';
-		  } else {
-			  map.overlayMapTypes.setAt("2",facilityMapLayer);
-			  this.style.backgroundColor = '#aaaaff';
 		  }
 			  });
  
     } // watchHash
 
+    function addLegend(facTypes) {
+	if (map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].getArray().length) {
+	    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].removeAt(0);
+	}
+
+	var typeText = '<img src="/images/epicenter.png" /> Earthquake Epicenter<br />';
+	var type_array = [];
+        for (var ii in facTypes) type_array.push(ii);
+	type_array.sort();
+        for (var ii=0; ii< type_array.length; ii++) {
+	    var factype = facTypes[type_array[ii]];
+	    if (factype.facility_count > 0) 
+	    typeText = typeText +
+	    '<img src="' + factype.url + '" /> ' + factype.facility_type + ' : ' +
+	    factype.facility_count + '<br />';
+        } // for
+	var tableDiv = document.createElement('DIV');
+	var tableControl = new LegendControl(tableDiv, map, typeText);
+      
+	tableDiv.index = 1;
+	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(tableDiv);
+    } // watchHash
    
     var module = {
         addMarker: addMarker,
-		loadSM: loadSM,
-		loadInfo: loadInfo,
-		DEFAULT_ZOOM: DEFAULT_ZOOM,
-		infowindow : infowindow,
-		removeMarker : removeMarker,
-		removeMarkers : removeMarkers,
- 		facMarkers : facMarkers,
+	loadSM: loadSM,
+	loadInfo: loadInfo,
+	DEFAULT_ZOOM: DEFAULT_ZOOM,
+	infowindow : infowindow,
+	removeMarker : removeMarker,
+	removeMarkers : removeMarkers,
+	facMarkers : facMarkers,
+        addLegend: addLegend,
        
         init: function(user_options) {
 
 	    if (user_options.DEFAULT_TILE_ZOOM) 
 		    TILE_ZOOM = parseInt(user_options.DEFAULT_TILE_ZOOM);
+	    if (user_options.allmarker_flag) 
+		    allmarker_flag = 1;
 
             // define the required options
             var myOptions = {
 				zoomControl: true,
                 zoom: user_options.DEFAULT_ZOOM ? parseInt(user_options.DEFAULT_ZOOM) : DEFAULT_ZOOM,
-				//scrollwheel: false,
+				scrollwheel: user_options.scrollwheel_zoom_flag ? true : false,
                 center: user_options.lat ? 
 					new google.maps.LatLng(parseInt(user_options.lat),parseInt(user_options.lon)) : 
 					new google.maps.LatLng(35,-120),
@@ -367,7 +371,7 @@ MAPAPP = (function() {
                 document.getElementById("map_canvas"),
                 myOptions);
               
-			addControl();
+			if (!user_options.tab) addControl();
 
 			var detailsMapLayerOptions = {
 			getTileUrl: function(tile, zoom) {
@@ -379,7 +383,7 @@ MAPAPP = (function() {
 				//if (zoom > TILE_ZOOM) {
 					//return "/scripts/gmap.pl/event/"+tile.x+","+tile.y+","+zoom;
 				//} else {
-					return "/html/tiles/event/"+zoom+"/"+tilex+"/"+tile.y+".png";
+					return "./tiles/event/"+zoom+"/"+tilex+"/"+tile.y+".png";
 				},
 			tileSize: new google.maps.Size(256, 256),
 			isPng: true
@@ -400,16 +404,14 @@ MAPAPP = (function() {
 				if (zoom > TILE_ZOOM) {
 				//	return "/scripts/gmap.pl/facility/"+tile.x+","+tile.y+","+zoom;
 				//} else {
-					return "/html/tiles/facility/"+zoom+"/"+tilex+"/"+tile.y+".png";
+					return "./tiles/facility/"+zoom+"/"+tilex+"/"+tile.y+".png";
 				};
 				},
 			tileSize: new google.maps.Size(256, 256),
 			isPng: true
 			};
 	    facilityMapLayer = new google.maps.ImageMapType(facilityMapLayerOptions);
-	    map.overlayMapTypes.insertAt("2",null);
-	    if (user_options.facility_layer_flag)
-	        $(facilityDiv).trigger("click");
+	    if (user_options.facility_layer_flag) map.overlayMapTypes.insertAt("2",facilityMapLayer);
 	    
 			var stationMapLayerOptions = {
 			getTileUrl: function(tile, zoom) {
@@ -421,7 +423,7 @@ MAPAPP = (function() {
 				if (zoom > TILE_ZOOM) {
 				//	return "/scripts/gmap.pl/station/"+tile.x+","+tile.y+","+zoom;
 				//} else {
-					return "/html/tiles/station/"+zoom+"/"+tilex+"/"+tile.y+".png";
+					return "./tiles/station/"+zoom+"/"+tilex+"/"+tile.y+".png";
 				};
 				},
 			tileSize: new google.maps.Size(256, 256),
@@ -429,7 +431,7 @@ MAPAPP = (function() {
 			};
 	    stationMapLayer = new google.maps.ImageMapType(stationMapLayerOptions);
 	    //map.overlayMapTypes.insertAt("1",facilityMapLayer);
-	    map.overlayMapTypes.insertAt("0",null);
+	    map.overlayMapTypes.insertAt("3",null);
 	    if (user_options.station_layer_flag)
 		$(stationDiv).trigger("click");
 	    
@@ -449,33 +451,39 @@ MAPAPP = (function() {
 				google.maps.event.trigger(map, 'click', event);
 			});
 			
-			google.maps.event.addListener(map, 'click', function(event) {
+			google.maps.event.addListener(map, 'rightclick', function(event) {
 				custommarker.setPosition(event.latLng);
 				//var local_url = '/scripts/shaking.pl/shaking_point/' + sm_id +
 				var local_url = '/scripts/r/shaking/shaking_point/' + sm_id +
 					'?longitude=' + event.latLng.lng() + '&latitude=' + event.latLng.lat();
 				$.getJSON(local_url, function(data) {
-				var infoContent = '<button class="btn btn-warning" type="button">No Information at Location (' + 
-					parseFloat(data.latitude).toFixed(4) + ',' + parseFloat(data.longitude).toFixed(4) + 
-					')</button>';
-				if (data.point_shaking) {
-					var point = data.point_shaking;
-					var html_array = [
-						'<p><button class="btn btn-success" type="button">Shaking Estimates for Location (' + 
-						parseFloat(data.latitude).toFixed(4) + ',' + parseFloat(data.longitude).toFixed(4) + 
-						')</button></p>',
-						'<div class="content_wrap">',
-						'<table><tr style="background-color:#eee;">',
-						'<td class="metric"><b>MMI</b><br>' + mmi[parseInt(parseFloat(point.MMI)+0.5)-1] + '</td>',
-						'<td class="metric"><b>PGA</b><br>' + parseFloat(point.PGA).toFixed(2) + '  (%g)</td>',
-						'<td class="metric"><b>PGV</b><br>' + parseFloat(point.PGV).toFixed(2) + ' (cm/s)</td>',
-						(point.PSA03) ? '<td class="metric"><b>PSA03</b><br>' + parseFloat(point.PSA03).toFixed(2) + ' (%g)</td>' : '',
-						(point.PSA10) ? '<td class="metric"><b>PSA10</b><br>' + parseFloat(point.PSA10).toFixed(2) + ' (%g)</td>' : '',
-						(point.PSA30) ? '<td class="metric"><b>PSA30</b><br>' + parseFloat(point.PSA30).toFixed(2) + ' (%g)</td>' : '',
-						'<td class="metric"><b>STDPGA</b><br>' + point.STDPGA + '</td>',
-						'<td class="metric"><b>SVEL</b><br>' + parseInt(point.SVEL) + ' (m/s)</td>',
-						'</tr></table></div>'
-						];
+		var infoContent = '<div  class="panel panel-warning"><div class="panel-heading text-center">' +
+			'<h4>No Information at Location (' + 
+			parseFloat(data.latitude).toFixed(4) + ',' + parseFloat(data.longitude).toFixed(4) + 
+			')</h4></div>';
+		if (data.point_shaking) {
+		    var point = data.point_shaking;
+		    var html_array = [
+			'<div  class="panel panel-success"><div class="panel-heading text-center">',
+			'<h4>Grund Motion Estimates</h4></div>',
+			'<table class="table table-responsive table-striped">',
+			'<tr><td><strong>Loation (Lat/Lon)</strong></td>',
+			'<td>' + parseFloat(data.latitude).toFixed(4) + ' / ' + parseFloat(data.longitude).toFixed(4) + '</td></tr>',
+			'<tr><td><strong>MMI</strong></td>',
+			'<td>' + mmi[parseInt(parseFloat(point.MMI)+0.5)-1] + '</td></tr>',
+			'<td><strong>PGA (%g)</strong></td>',
+			'<td>' + parseFloat(point.PGA).toFixed(2) + '</td></tr>',
+			'<td><strong>PGV (cm/s)</strong></td>',
+			'<td>' + parseFloat(point.PGV).toFixed(2) + '</td></tr>',
+			(point.PSA03) ? '<tr><td><strong>PSA03 (%g)</strong></td><td>' + parseFloat(point.PSA03).toFixed(2) + '</td></tr>' : '',
+			(point.PSA10) ? '<tr><td><strong>PSA10 (%g)</strong></td><td>' + parseFloat(point.PSA10).toFixed(2) + '</td></tr>' : '',
+			(point.PSA30) ? '<tr><td><strong>PSA30 (%g)</strong></td><td>' + parseFloat(point.PSA30).toFixed(2) + '</td></tr>' : '',
+			'<tr><td><strong>STDPGA</strong></td>',
+			'<td>' + point.STDPGA + '</td></tr>',
+			'<td><strong>SVEL (m/s)</strong></td>',
+			'<td>' + parseInt(point.SVEL) + '</td></tr>',
+			'</table></div>'
+			];
 					infoContent = html_array.join('');
 				}
 				infowindow.setContent(infoContent);
@@ -484,7 +492,10 @@ MAPAPP = (function() {
 				});
 			 });
 			 
-			return map;
+	    google.maps.event.addListener(map, 'zoom_changed', function() {
+		MAPAPP.infowindow.close();
+	    });
+	    return map;
         },
         
     };
@@ -492,5 +503,93 @@ MAPAPP = (function() {
     return module;
 })();
 
+
+/**
+ * The HomeControl adds a control to the map that
+ * returns the user to the control's defined home.
+ */
+
+// Define a property to hold the Home state
+LegendControl.prototype.home_ = null;
+
+// Define setters and getters for this property
+LegendControl.prototype.getHome = function() {
+  return this.home_;
+}
+
+LegendControl.prototype.setHome = function(home) {
+  this.home_ = home;
+}
+
+function LegendControl(controlDiv, map, facTypes) {
+ 
+  // We set up a variable for this since we're adding
+  // event listeners later.
+  var control = this;
+  
+  // Set the home property upon construction
+  control.facTypes_ = facTypes;
+ 
+  // Set CSS styles for the DIV containing the control
+  // Setting padding to 5 px will offset the control
+  // from the edge of the map
+  controlDiv.style.padding = '5px';
+ 
+  // Set CSS for the control border
+  var goHomeUI = document.createElement('DIV'); 
+  goHomeUI.style.backgroundColor = 'white';
+  goHomeUI.style.borderStyle = 'solid';
+  goHomeUI.style.borderWidth = '1px';
+  goHomeUI.style.cursor = 'pointer';
+  goHomeUI.style.textAlign = 'left';
+  controlDiv.appendChild(goHomeUI);
+ 
+  // Set CSS for the control interior
+  var goHomeText = document.createElement('DIV');
+  goHomeText.style.fontFamily = 'Arial,sans-serif';
+  goHomeText.style.fontSize = '12px';
+  goHomeText.style.paddingLeft = '4px';
+  goHomeText.style.paddingRight = '4px';
+  goHomeText.innerHTML = 'Facility Cluster<br/><img src="/images/cluster/m1_1.png" /><img src="/images/cluster/m1_100.png" /><img src="/images/cluster/m1_200.png" /><img src="/images/cluster/m1_300.png" /><img src="/images/cluster/m1_400.png" />';
+  goHomeUI.appendChild(goHomeText);
+  
+  // Set CSS for the setHome control border
+  var setHomeUI = document.createElement('DIV');
+  setHomeUI.style.backgroundColor = 'white';
+  setHomeUI.style.borderStyle = 'solid';
+  setHomeUI.style.borderWidth = '1px';
+  setHomeUI.style.cursor = 'pointer';
+  setHomeUI.style.textAlign = 'left';
+  controlDiv.appendChild(setHomeUI);
+ 
+  // Set CSS for the control interior
+  var setHomeText = document.createElement('DIV');
+  setHomeText.style.fontFamily = 'Arial,sans-serif';
+  setHomeText.style.fontSize = '12px';
+  setHomeText.style.paddingLeft = '4px';
+  setHomeText.style.paddingRight = '4px';
+  setHomeText.style.paddingTop = '1px';
+  setHomeText.style.paddingBottom = '1px';
+  setHomeText.innerHTML = facTypes;
+  setHomeUI.appendChild(setHomeText);
+ 
+  // Setup the click event listener for Home:
+  // simply set the map to the control's current home property.
+  //google.maps.event.addDomListener(goHomeUI, 'click', function() {
+  //  var currentHome = control.getHome();
+  //  map.setCenter(currentHome);
+  //});
+  
+  // Setup the click event listener for Set Home:
+  // Set the control's home to the current Map center.
+  //google.maps.event.addDomListener(setHomeUI, 'click', function() {
+    /*var newHome = map.getCenter();
+    control.setHome(newHome);*/
+  //  $('#marker-detail').css('left', '0px');
+  //  scrollTo(0, 1);
+  //});
+
+}
+ 
 
 
