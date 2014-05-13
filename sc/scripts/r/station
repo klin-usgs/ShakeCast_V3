@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl
 
 use strict;
-use warnings;
+#use warnings;
 
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
@@ -10,11 +10,11 @@ use Carp;
 
 use CGI;
 use JSON::XS;
-use Data::Dumper;
 
 use SC;
-use API::Product;
+use API::Damage;
 use API::APIUtil;
+use API::Shaking;
 
 SC->initialize;
 my $default_options = API::APIUtil::config_options();
@@ -28,54 +28,45 @@ my $action = shift @args;
 print "Content-Type: application/json\n\n";
 if (not defined *{$action} ) {
 } else {
-    SC->log(0, "product: task is $action $args[0]");
+    SC->log(0, "damage: task is $action $args[0]");
 
 	no strict 'refs';
     # perform the requested action
     #eval {
 	my $json =  &{ $action }( @args );
 	print JSON::XS->new->utf8->encode(API::APIUtil::stringfy($json));
+    SC->log(0, "damage: task is $json");
     #};
 }
 
     # Authenticated
 sub from_id {
 	my ($shakemap) = @_;
-
 	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
-	my $product = new API::Product->from_id($shakemap_id, $shakemap_version);
+	my @facility;
 
-	return $product;
+	my $type = $self->param('type');
+	my $json = new API::User->from_id($type);
+
+	return $json;
 }
 
-    # Authenticated
-sub product_source_list {
-	my ($shakemap) = @_;
-
-	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
-	my $product = new API::Product->product_source_list();
-
-	return $product;
-}
 
   # / (with authentication)
-sub product_type {
+sub station_type {
 	my ($type) = @_;
+	my $event = new API::Station->station_type_list($type);
+	#$event->{'type'} = $type;
 
-	my $product = new API::Product->product_type_list($type);
-
-	return $product;
+	return $event;
   };
   
-sub toggle {
     # Authenticated
-    my $product_id = $self->param('product_id');
-    my $save_flag = $self->param('save');
-    my $event;
-    $event->{'result'} = new API::Product->toggle_product_display($product_id);
-    $event->{'flag'} = $save_flag;
-	
-    return $event;
-  };
-  
+sub station_list {
+
+	my $station = new API::Station->station_list();
+
+	return $station;
+}
+
 

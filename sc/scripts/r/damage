@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl
 
 use strict;
-use warnings;
+#use warnings;
 
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
@@ -14,12 +14,14 @@ use JSON::XS;
 use SC;
 use API::Damage;
 use API::APIUtil;
+use API::Shaking;
 
 SC->initialize;
 my $default_options = API::APIUtil::config_options();
 
 my $self = new CGI;
-my (@args) = split '/', $ENV{PATH_INFO};
+my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
+my (@args) = split '/', $arg;
 shift @args;
 my $action = shift @args;
 
@@ -40,62 +42,146 @@ if (not defined *{$action} ) {
     # Authenticated
 sub from_id {
 	my ($shakemap) = @_;
-	my ($shakemap_id, $shakemap_version) = split '-', $shakemap;
+	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
 	my @facility;
 
 	my $start = ($self->param('start')) ? ($self->param('start'))-1 : 0;
+    my $length = ($self->param('length')>0) ? $self->param('length') : 
+      ((SC->config->{'high_priority_list'}) ? SC->config->{'high_priority_list'} : 10);
     my $type = $self->param('type');
     my $action = $self->param('action');
-	push @facility, (split ',', $self->param('facility')) 
-		if $self->param('facility');
 	my $options = { 'shakemap_id' => $shakemap_id,
 			'shakemap_version' => $shakemap_version,
-			'start' => $start,
 			'type' => $type,
 			'action' => $action,
-			'facility' => \@facility};
+			};
+	if ($self->param('facility')) {
+	    @facility = split ',', $self->param('facility');
+	    $options->{'facility'} = \@facility; 
+	}
+	if ($action !~ /summary/i) {
+	    $options->{'length'} = $length; 
+	    $options->{'start'} = $start; 
+	}
+
 	my $damage = new API::Damage->from_id($options);
 	$damage->{'type'} = $type;
 	if ($action =~ /summary/i) {
-		$damage = {'count' => $damage->{'count'},
-				'damage_summary' => $damage->{'damage_summary'}
-				};
+	    my $shaking = new API::Shaking->shaking_summary($options);
+	    my $shake_count;
+	    if ($self->param('grey') || $self->param('all')) {
+		foreach my $fac_type (@$shaking) {
+		    $shake_count += $fac_type->{count};
+		}
+		$damage->{'damage_summary'}->{'GREY'} = $shake_count - $damage->{'count'};
+	    } else {
+		$shake_count = $damage->{'count'};
+	    }
+
+	    $damage = {'count' => $shake_count,
+			    'damage_summary' => $damage->{'damage_summary'}
+			    };
 	}
 
 	return ($damage);
 }
 
+    # Authenticated
+sub marker {
+	my ($shakemap) = @_;
+	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
+	my @facility;
+
+	my $start = ($self->param('start')) ? ($self->param('start'))-1 : 0;
+    my $type = $self->param('type');
+    my $action = $self->param('action');
+	my $options = { 'shakemap_id' => $shakemap_id,
+			'shakemap_version' => $shakemap_version,
+			'start' => $start,
+			'type' => $type,
+			'action' => $action,
+			};
+	if ($self->param('facility')) {
+	    @facility = split ',', $self->param('facility');
+	    $options->{'facility'} = \@facility; 
+	}
+	use Storable;
+	my ($damage, %marker);
+	my $hash_file = SC->config->{'DataRoot'}."/$shakemap_id-$shakemap_version/fac_damage_marker.hash";
+	if (-e $hash_file) {
+	    %marker = %{retrieve($hash_file)};
+	} else {
+	    $damage = new API::Damage->from_id($options);
+	    foreach my $fac (@{$damage->{severity_index}}) {
+		$marker{$fac} = {
+		    'latitude' => $damage->{'facility_damage'}->{$fac}->{lat_min},
+		    'longitude' => $damage->{'facility_damage'}->{$fac}->{lon_min},
+		    'damage_level' => $damage->{'facility_damage'}->{$fac}->{damage_level},
+		    'facility_type' => $damage->{'facility_damage'}->{$fac}->{facility_type},
+		    'severity_rank' => $damage->{'facility_damage'}->{$fac}->{severity_rank},
+		}
+	    }
+	}
+	
+	$hash_file = SC->config->{'DataRoot'}."/$shakemap_id-$shakemap_version/fac_grey_marker.hash";
+	if (-e $hash_file) {
+	    my %grey_marker = %{retrieve($hash_file)};
+	    if ($self->param('grey')) {
+		return \%grey_marker;
+	    } elsif ($self->param('all')) {
+		my %all_marker = (%marker, %grey_marker);
+		return \%all_marker;
+	    }
+	}
+	
+	return \%marker;
+}
+
 sub datatables {
 	my ($shakemap) = @_;
     my @facility;
-    my ($shakemap_id, $shakemap_version) = split '-', $shakemap;
-    my $action = $self->param('action');
+	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
+    my $action = $self->param('action') ? $self->param('action') : $action;
     my $start =  ($self->param('start')) ? ($self->param('start'))-1 : 0;
-    my $length = ($self->param('length')) ? $self->param('length') : 
-      (($default_options->{'topics_per_page'}) ? $default_options->{'topics_per_page'} : 200);
+    my $length = ($self->param('length')>0) ? $self->param('length') : 
+      ((SC->config->{'high_priority_list'}) ? SC->config->{'high_priority_list'} : 10);
     my $type = ($self->param('type')) ? uc($self->param('type')) : 'ALL';
 
     my $count;
 
-	push @facility, (split ',', $self->param('facility')) 
-		if $self->param('facility');
 	my $options = { 'shakemap_id' => $shakemap_id,
 			'shakemap_version' => $shakemap_version,
 			'type' => $type,
 			'action' => $action,
-			'start' => $start,
-			'length' => $length,
-			'facility' => \@facility};
+			#'start' => $start,
+			#'length' => $length,
+			};
+	if ($self->param('facility')) {
+	    @facility = split ',', $self->param('facility');
+	    $options->{'facility'} = \@facility; 
+	}
 	my $damage = new API::Damage->from_id($options);
 	$damage->{'type'} = $type;
 	$damage->{"total"} = $damage->{'count'};    
 	$damage->{"start"} = $start;
 	$damage->{"length"} = scalar keys %{$damage->{'facility_damage'}};
 	if ($action =~ /summary/i) {
-		$damage = {'count' => $damage->{'count'},
-				'damage_summary' => $damage->{'damage_summary'}
-				};
+	    my $shaking = new API::Shaking->shaking_summary($options);
+	    my $shake_count;
+	    if ($self->param('grey') || $self->param('all')) {
+		foreach my $fac_type (@$shaking) {
+		    $shake_count += $fac_type->{count};
+		}
+		$damage->{'damage_summary'}->{'GREY'} = $shake_count - $damage->{'count'};
+	    } else {
+		$shake_count = $damage->{'count'};
+	    }
+
+	    $damage = {'count' => $shake_count,
+			    'damage_summary' => $damage->{'damage_summary'}
+			    };
 	}
+
 
 	return $damage;
   };

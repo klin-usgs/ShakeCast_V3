@@ -41,7 +41,7 @@ if (not defined *{$action} ) {
 sub from_id {
 	my ($shakemap) = @_;
 
-	my ($shakemap_id, $shakemap_version) = split '-', $shakemap;
+	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
     #my $shakemap_version = $self->param('shakemap_version') || 1;
 	my $shakemap = new API::Shakemap->from_id($shakemap_id, $shakemap_version);
 	if ($shakemap_id =~ /_scte$/) {

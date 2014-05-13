@@ -40,7 +40,7 @@ if (not defined *{$action} ) {
 sub shaking_summary {
 	my ($shakemap) = @_;
 
-	my ($shakemap_id, $shakemap_version) = split '-', $shakemap;
+	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
 	my $options = { 'shakemap_id' => $shakemap_id,
 			'shakemap_version' => $shakemap_version};
 	my $shaking = new API::Shaking->shaking_summary($options);
@@ -52,7 +52,7 @@ sub shaking_summary {
 sub shaking_point {
 	my ($shakemap) = @_;
 
-	my ($shakemap_id, $shakemap_version) = split '-', $shakemap;
+	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
 	my $longitude = $self->param('longitude');
 	my $latitude = $self->param('latitude');
 	my $options = { 'shakemap_id' => $shakemap_id,

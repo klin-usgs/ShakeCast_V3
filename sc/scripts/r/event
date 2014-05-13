@@ -10,6 +10,9 @@ use Carp;
 
 use CGI;
 use JSON::XS;
+use Data::Dumper;
+use File::Copy;
+use File::Path;
 
 use SC;
 use API::Event;
@@ -26,7 +29,8 @@ my $data_dir = SC->config->{'DataRoot'};
 my $default_options = API::APIUtil::config_options();
 
 my $self = new CGI;
-my (@args) = split '/', $ENV{PATH_INFO};
+my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
+my (@args) = split '/', $arg;
 shift @args;
 my $action = shift @args;
 
@@ -45,9 +49,18 @@ if (not defined *{$action} ) {
 
 
     # Authenticated
+sub event_summary {
+    my $events;
+    my $count;
+		$events = new API::Event->event_summary();
+
+	return $events;
+}
+
+    # Authenticated
 sub event_list {
     my $start = ($self->param('start')) ? ($self->param('start'))-1 : 0;
-    my $length = ($self->param('length')) ? $self->param('length') : 100;
+    my $length = ($self->param('length')) ? $self->param('length') : 100000;
     my $type = ($self->param('type')) ? lc($self->param('type')) : '';
     my $age = $self->param('age') || 'week';
     my $timestamp = age_trans($age);
@@ -69,6 +82,129 @@ sub event_list {
 
 	return $events;
 }
+
+sub erase {
+
+    # Authenticated
+    my @event_list = split ',', $self->param('event_id');
+	my $event_results;
+	foreach my $event_id (@event_list) {
+		$event_id = make_param($event_id);
+		my $event = new API::Event->erase_event($event_id);
+		$event_results->{"id"} = $event_id;
+		$event_results->{"status"} = $event;
+	}
+ 
+	return $event_results;
+  };
+  
+sub toggle {
+
+    # Authenticated
+    my @event_list = split ',', $self->param('event_id');
+	my $event_results;
+	foreach my $event_id (@event_list) {
+		$event_id = make_param($event_id);
+		my $event = new API::Event->toggle_major_event($event_id);
+		$event_results->{$event_id} = $event;
+	}
+	return $event_results;
+  };
+  
+sub trigger_scenario {
+
+    # Authenticated
+    my @event_list = split ',', $self->param('event_id');
+	my $event_results;
+	my $result;
+	foreach my $event_id (@event_list) {
+		$event_id = make_param($event_id);
+		my $shakemap = new API::Event->from_id($event_id);
+		$event_results = $shakemap;
+		my $evt_dir = "$data_dir/".$shakemap->{'shakemap_id'}.'-'.$shakemap->{'shakemap_version'};
+		my $tmp_dir = "$data_dir/temp";
+		rmtree($tmp_dir) if (-e $tmp_dir);
+		$event_results->{'evt_dir'} = $evt_dir;
+		$result = move($evt_dir, $tmp_dir);
+		$event_results->{'move'} = $result;
+		$result = new API::Event->erase_event($event_id);
+		$event_results->{'erase'} = $result;
+		my $cmd = SC->config->{'RootDir'}.'/bin/scfeed_local.pl -verbose -force_run -scenario -event temp';
+		$result = `$cmd`;
+		$event_results->{'scfeed_local'} = $result;
+	}
+	return $event_results;
+  };
+  
+sub inject_test {
+
+    # Authenticated
+    my @event_list = split ',', $self->param('event_id');
+	my $event_results;
+    my $xml;
+    my $event_version = 1;
+    my $event;
+    my $product_dir;
+	
+	foreach my $event_id (@event_list) {
+		$event_id = make_param($event_id);
+		# see if this event already exists in the database
+		$event = SC::Event->current_version($event_id);
+		if ($event) {
+			# must delete any existing events and related data
+			API::Event->erase_test_event($event_id) or quit $SC::errstr;
+		}
+	
+		$xml = read_xml($event_id, 'event') or exit;
+		$xml =~ s/\?event_version/$event_version/g;
+		$event = SC::Event->from_xml($xml) or exit;
+		$event->event_type("TEST"); # make sure it is a TEST!
+		$event->process_new_event;
+		$xml = read_xml($event_id, 'shakemap') or exit;
+		$xml =~ s/\?event_version/$event_version/g;
+		SC::Shakemap->from_xml($xml)->process_new_shakemap;
+		$xml = read_xml($event_id, 'product') or exit;
+		my @product_types = product_types();
+		$event->{'product'} = \@product_types;
+		foreach my $product_type (@product_types) {
+			#next;   # temporarily skip products
+			my $xml2 = $xml;
+			my $product;
+			$xml2 =~ s/\?event_version/$event_version/g;
+			$xml2 =~ s/\?product_type/$product_type/g;
+			SC->log(4, $xml2);
+			$product = SC::Product->from_xml($xml2);
+			unless ($product_dir) {
+				$product_dir = $product->dir_name;
+				SC->log(4, "product dir: $product_dir");
+				unless (-d $product_dir) {
+					eval { mkpath($product_dir) };
+					SC->log(4, "mkpath product dir: $product_dir");
+					#exit if $@;
+				}
+			}
+			SC->log(4, 'product',$product->file_name,
+					   'exists:',$product->product_file_exists);
+			unless ($product->product_file_exists) {
+				my $src = $test_dir.'/'.$product->shakemap_id.'/'.$product->file_name;
+				SC->log(4, "copy from $src");
+				if (-r $src) {
+					copy($src, $product_dir) or SC->log(0,"Copy $src failed: $!");
+				} else {
+					SC->log(0, "missing product file $src");
+				}
+			}
+			$product->process_new_product(SC::Server->this_server)
+				;
+		}
+		my @local_products = local_products();
+		$event->{'local_products'} = \@local_products;
+		foreach my $local_product (@local_products) {
+			copy $test_dir .'/' . $event_id . '/' . $local_product, $product_dir;
+		}
+	}
+	return $event;
+  };
 
     # Authenticated
 sub datatables {
@@ -285,6 +421,12 @@ sub make_test_xml {
     $xml =~ s/shakemap_version="([^"]+)"/shakemap_version="?event_version"/gm;
     $xml =~ s/event_type="[^"]+"/event_type="TEST"/gm;
     $xml =~ s/product_type="[^"]+"/product_type="?product_type"/gm;
+    return $xml;
+}
+
+sub make_param {
+    my ($xml) = @_;
+    $xml =~ s/ /\+/g;
     return $xml;
 }
 
