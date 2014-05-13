@@ -650,7 +650,8 @@ var updateEQFeed = function() {
   //var strUrl = "http://search.twitter.com/search.json?callback=?&rpp=";
   //var strUrl = "/data/eq_product/earthquake.usgs.gov.json";
   //var strUrl = "/shakemap_json.php";
-  var strUrl = "/scripts/event.pl/event_list";
+  //var strUrl = "/scripts/event.pl/event_list";
+  var strUrl = "/scripts/r/event/event_list";
   //var strUrl = "http://earthquake.usgs.gov/earthquakes/feed/geojson/1.0/day";
   //strUrl += $page.data("rpp");
   //strUrl += "&q=from:" + $page.data("twitterUser");
@@ -711,7 +712,8 @@ var updateEQFeed = function() {
         // Store the JSON data for this tweet
         $list.find("a:last").data("EQJSON", JSON.stringify(data[i]));
 		$list.find("span:last").each(function() {
-			var event_sum_url = '/scripts/shaking.pl/shaking_summary/'+data[i].shakemap_id + '-' + data[i].shakemap_version;
+			//var event_sum_url = '/scripts/shaking.pl/shaking_summary/'+data[i].shakemap_id + '-' + data[i].shakemap_version;
+			var event_sum_url = '/scripts/r/shaking/shaking_summary/'+data[i].shakemap_id + '-' + data[i].shakemap_version;
 			//var event_sum_url = '/server_event_summary.php?feed=json&event='+data[i].event_id
 			var evt_row = $(this);
 			$.ajax({
@@ -984,7 +986,8 @@ var updateSCDetail = function() {
 		//		'&zoom=4&size=72x72&maptype=terrain&sensor=false' + 
 		//		'&markers=icon:http://shakecast.awardspace.com/images/epicenter.png|'+mrkcenter+'">';
   //var strUrl = '/server_event_summary.php?feed=json&event=';
-  var strUrl = '/scripts/shakemap.pl/from_id/' + objTweet.shakemap_id + 
+  //var strUrl = '/scripts/shakemap.pl/from_id/' + objTweet.shakemap_id + 
+  var strUrl = '/scripts/r/shakemap/from_id/' + objTweet.shakemap_id + 
 			'-' + objTweet.shakemap_version;
 	//strUrl += objTweet.event_id;
 
@@ -1124,7 +1127,8 @@ var updateSCDetail = function() {
 			strHtml = '<li id="fac-summary">Facility Summary</li>';
 			strHtml += '<div id="fac-summary" class="ui-grid-b damage-summary"></div>';
 			$list.append($(strHtml));
-			$.getJSON("/scripts/damage.pl/from_id/"+objTweet.shakemap_id+"-"+objTweet.shakemap_version,
+			//$.getJSON("/scripts/damage.pl/from_id/"+objTweet.shakemap_id+"-"+objTweet.shakemap_version,
+			$.getJSON("/scripts/r/damage/from_id/"+objTweet.shakemap_id+"-"+objTweet.shakemap_version,
 				function(result) {
 					strHtml = '';
 					//strHtml = '<div class="ui-block-a" style:"width:95%">';

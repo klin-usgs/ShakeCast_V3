@@ -92,7 +92,7 @@
 	    </div>
           </div><!--/.well -->
         </div><!--/span-->
-        <div class="col-md-9">
+        <div class="col-md-10">
             <!-- Main hero unit for a primary marketing message or call to action -->
             <div class="panel panel-default" id="main_pane">
 				<div id="map_title"></div>
@@ -101,7 +101,7 @@
            </div>
 
             <!-- Example row of columns -->
-            <div class="row">
+            <div class="panel panel-default">
 		<div class="accordion"></div>
 	  <button type="button" id="load_more" class="btn btn-primary"></button>
             </div>
@@ -132,16 +132,27 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript">
+      var prefix;
+      var script = '<script type="text/javascript" src="';
+      var loc = new String(window.parent.document.location);
+      if (loc.indexOf("https://")!= -1)
+	prefix = "https://";
+      else
+	prefix = "http://";
+      script += prefix + 'maps.google.com/maps/api/js?sensor=false"><' + '/script>';
+      document.write(script);
+    </script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
-    <script type="text/javascript" src="/js/shakemap.js"></script>
-    <script type="text/javascript" src="/js/loadXML.js"></script>
+    <script type="text/javascript" src="./js/shakemap.js"></script>
+    <script type="text/javascript" src="./js/loadXML.js"></script>
     <script type="text/javascript" src="./js/mapapp_list.js"></script>
     <script type="text/javascript" src="./js/sc_constant.js"></script>
-    <script type="text/javascript" src="/js/storage.js"></script>
+    <script type="text/javascript" src="./js/storage.js"></script>
+    <script type="text/javascript" src="./js/sc_markerclusterer.js"></script>
  
     <script>
       var latlng = new google.maps.LatLng(35,-120);
@@ -151,6 +162,9 @@
       var age = gup('age') ? gup('age') : 'day';
       var eq_des = [];
       var start=0, length=0, total;
+		var markers = [];
+		var markerCluster;
+	        var marker_icon = [];
       //var sm_url = '/scripts/event.pl/datatables';
       var sm_url = '/scripts/r/event/datatables';
 			
@@ -200,9 +214,7 @@
 	    '"><a href="event.html?event=' + event.shakemap_id + '-' + event.shakemap_version,
 	    '"><strong>M'+event.magnitude + '</strong> - ' + event.event_location_description + '</a></h3>',
 	    '<div id="'+ event.shakemap_id + '-' + event.shakemap_version,
-	    '_detail" class="content_wrap">',
-	    '<table><tr style="background-color:#eee;">',
-	    '</tr></table></div>'
+	    '_detail" class="content_wrap"></div>',
 	    ]);
 	  eq_des[event.shakemap_id + '-' + event.shakemap_version] = event;
 	  }
@@ -223,6 +235,11 @@
 	      var sLat = parseFloat(event.lat);
 	      var sLon = parseFloat(event.lon);
 	      google.maps.event.trigger(MAPAPP.facMarkers[event.event_id], 'click');
+	      if (markerCluster) {
+		markerCluster.removeMarkers(markers);
+		markers = [];
+	      }
+	      load_marker(id);
 	  });
   
 	  google.maps.event.trigger(MAPAPP.facMarkers[data[0].event_id], 'click');
@@ -343,6 +360,105 @@
 
       $('#load_more').on('click', fnAccordion);
 
+      function load_marker(sc_id){
+		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+		var sm_url = '/scripts/r/damage/marker/' + sc_id;
+		if (SC_DEF.allmarker_flag) sm_url += '?all=1';
+		$.getJSON(sm_url, function(data) {
+
+		// Are there even any EQ to display?
+		if (typeof data === "undefined") {
+			return;
+		}
+
+		for (var icon_type in marker_icon) {
+		    marker_icon[icon_type].facility_count = 0;
+		} // for
+		for (var fac in data) {
+		  var facility = data[fac];
+		  var latLng = new google.maps.LatLng(facility.latitude,
+		      facility.longitude);
+		  var icon_type =  facility.facility_type + facility.damage_level;
+		  icon_type = icon_type.toLowerCase();
+		  if (typeof marker_icon[icon_type] === "undefined") {
+		      marker_icon[icon_type] =
+			{
+			  url: '/images/' + icon_type + '.png',
+			  // This marker is 20 pixels wide by 32 pixels tall.
+			  size: new google.maps.Size(25, 25),
+			  // The origin for this image is 0,0.
+			  origin: new google.maps.Point(0,0),
+			  // The anchor for this image is the base of the flagpole at 0,32.
+			  anchor: new google.maps.Point(12, 12),
+			  facility_type: facility.facility_type,
+			  facility_count: 1,
+			};
+		  } else {
+		    marker_icon[icon_type].facility_count += 1;
+		  }
+		  var marker = new google.maps.Marker({
+		    position: latLng,
+		    //shadow: markershadow,
+		    icon: marker_icon[icon_type],
+		    facility_id: fac,
+		    facility_type: facility.facility_type,
+		    severity_rank: facility.severity_rank,
+		    facility_name: facility.facility_name,
+		  });
+		  google.maps.event.addListener(marker, 'click', function() {
+				  //console.log(marker.facility_id);
+				  //map.setCenter(marker.getPosition());
+				  MAPAPP.loadInfo(this.facility_id, this.getPosition());
+				  });
+		  
+		  markers.push(marker);
+		}
+		markerCluster = new MarkerClusterer(map, markers,{'zoomOnClick':0});
+		
+		MAPAPP.addLegend(marker_icon);
+		
+		  google.maps.event.addListener(markerCluster, 'clusterclick', function(cluster) {
+		    var cluster_markers = cluster.getMarkers();
+		    var cluster_length = cluster_markers.length;
+		    var marker_index = [];
+		    var cluster_info = SC_DEF.cluster_info ? parseInt(SC_DEF.cluster_info) : 10;
+		    if (cluster_length > cluster_info) {
+		      cluster.getMap().fitBounds(cluster.getBounds());
+		    } else {
+		      var html_array = ['<div class="panel panel-default">',
+					'<div class="panel panel-heading"><b>Clustered Facilities</b></div>',
+					'<div class="list-group" id="info_popup">',
+					];
+		      for (var ii=0; ii < cluster_markers.length; ii++) {
+			html_array.push('<a class="list-group-item" href="#" id="' +
+					cluster_markers[ii].facility_id +
+					'"><b>' + cluster_markers[ii].facility_type + '</b> : ' +
+					cluster_markers[ii].facility_name + '</a>'
+					);
+			marker_index[cluster_markers[ii].facility_id] = ii;
+		      }
+		      html_array.push('<a class="list-group-item" id="all" href="#">' +
+				      '<b>Show All Facilities</b></a></div></div>');
+		      var infocontent = html_array.join('');
+		      MAPAPP.infowindow.setContent(infocontent);
+		      MAPAPP.infowindow.setPosition(cluster.getCenter());
+		      MAPAPP.infowindow.open(map);
+
+		      $("#info_popup>a").on('click', function () {
+			  var id = (this.id);
+			  if (id == 'all') {
+			    for (var mar_ind=0; mar_ind < cluster_length; mar_ind++)
+			      cluster_markers[mar_ind].setMap(map);
+			    MAPAPP.infowindow.close();
+			  } else {
+			  cluster_markers[marker_index[id]].setMap(map);
+			  google.maps.event.trigger(cluster_markers[marker_index[id]], 'click');
+			  }
+		      });
+		    }
+				  });
+		});
+      }
     </script>
 
   </body>

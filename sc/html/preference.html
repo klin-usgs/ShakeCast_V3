@@ -83,6 +83,7 @@
               <li><a class="list-group-item" href="#user-credentials">User Credentials</a></li>
               <li><a class="list-group-item" href="#map-layers">Map Layers</a></li>
               <li><a class="list-group-item" href="#shakemap-list">ShakeMap List</a></li>
+              <li><a class="list-group-item" href="#facility-list">Facility List</a></li>
 	      </ul>
 	    </div>
         </div><!--/span-->
@@ -139,6 +140,7 @@
     <thead>
     <tr>
     <th>Default Zoom</th>
+    <th>Scrollwheel Zoom</th>
     </tr>
     </thead>
     <tbody>
@@ -147,6 +149,7 @@
 	    onchange="$('#map_default_zoom_value').val($(this).val())"/>12
     <input type="text" placeholder="Default Zoom" id="map_default_zoom_value" style="width: 2em;" />
     </td>
+    <td><input type="checkbox" id="scrollwheel_zoom_flag" > </td>
     </tr>
     </tbody>
     </table>
@@ -252,6 +255,40 @@
           </div>
         </section>
 
+        <!-- Facility List
+        ================================================== -->
+        <section id="facility-list">
+          <div class="page-header">
+            <h1>4. Facility List</h1>
+          </div>
+          <p class="lead">Specify Facility list and display settings.</p>
+
+          <div class="row">
+<div class="col-md-8" id="server-form">
+<form>
+  <fieldset>
+    <table class="table table-hover">
+    <thead>
+    <tr>
+    <th>Display Below-threshold Facilities</th>
+    <th>Display Information on Marker Cluster</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td><input type="checkbox" id="allmarker_flag" > </td>
+    <td><input type="text" placeholder="Number of Markers" id="cluster_info" ></td>
+    </tr>
+    </tbody>
+    </table>
+	<button type="button" class="btn config_update">Update</button>
+	<div class="server_result"></div>
+  </fieldset>
+</form>
+          </div>
+          </div>
+        </section>
+
 
 
 
@@ -295,6 +332,7 @@
 	    $("#db_username").val(SC_DEF.user);
 	    $("#db_password").val(SC_DEF.pass);
 	    $("#map_default_zoom").val(parseInt(SC_DEF.DEFAULT_ZOOM));
+	    $("#scrollwheel_zoom_flag").attr('checked', SC_DEF.scrollwheel_zoom_flag);
 	    $("#lat").val(parseFloat(SC_DEF.lat));
 	    $("#lon").val(parseFloat(SC_DEF.lon));
 	    $("#map_default_tile_zoom").val(parseInt(SC_DEF.DEFAULT_TILE_ZOOM));
@@ -309,7 +347,8 @@
 	    $("#event_layer_flag").attr('checked', SC_DEF.event_layer_flag);
 	    $("#facility_layer_flag").attr('checked', SC_DEF.facility_layer_flag);
 	    $("#station_layer_flag").attr('checked', SC_DEF.station_layer_flag);
-
+	    $("#allmarker_flag").attr('checked', SC_DEF.allmarker_flag);
+	    $("#cluster_info").val(SC_DEF.cluster_info);
     	});
 
 
@@ -319,6 +358,7 @@
 		'user': $("#db_username").val(),
 		'pass': $("#db_password").val(),
 		'DEFAULT_ZOOM': $("#map_default_zoom").val(),
+		'scrollwheel_zoom_flag': $("#scrollwheel_zoom_flag").is(':checked'),
 		'lat': $("#lat").val(),
 		'lon': $("#lon").val(),
 		'DEFAULT_TILE_ZOOM': $("#map_default_tile_zoom").val(),
@@ -331,6 +371,8 @@
 		'event_layer_flag': $("#event_layer_flag").is(':checked'),
 		'facility_layer_flag': $("#facility_layer_flag").is(':checked'),
 		'station_layer_flag': $("#station_layer_flag").is(':checked'),
+		'allmarker_flag': $("#allmarker_flag").is(':checked'),
+		'cluster_info': $("#cluster_info").val(),
 	    };
 	    SC_DEF.updateAllItems(param); 
 	    alert("User Preference Saved.");

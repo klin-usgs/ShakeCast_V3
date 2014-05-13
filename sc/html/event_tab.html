@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
 	<link rel="stylesheet" href="./css/jquery-ui-1.8.16.custom.css">
+	<link rel="stylesheet" href="./css/demo_table.css">
 	  
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -67,7 +68,7 @@
   <div class="container">
     <h2>Inventory Details <small>Exposed facility list and detailed information on assessed fragility</small></h2>
     <ol class="breadcrumb">
-      <li class="pull-right"><a href="#" id="tab_link">Table View</a></li>
+      <li class="pull-right"><a href="#" id="tab_link">Map View</a></li>
       <li><a href="index.html">Home</a></li>
       <li><a href="list.html">Earthquakes</a></li>
       <li id="evid"><a href="#">Event</a></li>
@@ -81,6 +82,17 @@
 
       <div class="row">
         <div class="col-md-3">
+          <div class="panel panel-default">
+	    <div class="panel-heading">Inventory Type</div>
+	    <div class="list-group" id="sidebar">
+	    </div>
+          </div><!--/.well -->
+	  
+            <div class="panel panel-default" id="main_pane">
+	    <div class="panel-heading">Mapped Facility</div>
+				<div id="map_canvas" style="width:100px; height:200px;"></div>
+           </div>
+
 	  <!-- Single button
 	  <div class="btn-group">
 	    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
@@ -89,48 +101,28 @@
 	    <ul class="dropdown-menu" role="menu" id="sidebar_prod">
 	    </ul>
 	  </div>
-	   -->
+           -->
 	   
-          <div class="panel panel-default">
-	    <div class="panel-heading">Inventory Type</div>
-	    <div class="list-group" id="sidebar">
-	    </div>
-          </div><!--/.well -->
-	  
-          <div class="panel panel-default">
-	    <div class="panel-heading">High Priority Facilities</div>
-	    <div class="list-group" id="sidebar_fac">
-	    </div>
-          </div><!--/.well -->
-	  
           <div class="panel panel-default">
 	    <div class="panel-heading">Earthquake Product</div>
 	    <div id="sidebar_prod">
 	    </div>
           </div><!--/.well -->
 	  
-	  <!--<button type="button" id="load_more" class="btn btn-primary"></button> -->
         </div><!--/span-->
 	
         <div class="col-md-9">
             <!-- Main hero unit for a primary marketing message or call to action -->
             <div class="panel panel-default" id="main_pane">
 				<div class="panel-heading" id="map_title"></div>
-				<div id="map_canvas" style="width:800px; height:400px;"></div>
  				<div id="caption"></div>
+	    <table cellpadding="0" cellspacing="0" border="0" class="display" id="eq_content_table"></table>
            </div>
-
           <div class="panel panel-default" id="fac_shaking">
 	    <div class="panel-heading"></div>
 	    <div class="panel-body">
 	    </div>
           </div><!--/.well -->
-            <!-- Example row of columns
-            <div class="row">
-		<div class="accordion"></div>
-            </div>
- -->
-
 
 			<div id="spinner" class="spinner ui-widget ui-widget-content ui-corner-all" style="width:50px;background:#fff;height:50px;">
 				<img id="img-spinner" src="/images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
@@ -177,6 +169,7 @@
     <script type="text/javascript" src="./js/sc_constant.js"></script>
     <script type="text/javascript" src="./js/storage.js"></script>
     <script type="text/javascript" src="./js/sc_markerclusterer.js"></script>
+    <script type="text/javascript" src="./js/jquery.dataTables.min.js"></script>
  
     <script>
       var latlng = new google.maps.LatLng(35,-120);
@@ -190,12 +183,15 @@
       //var sm_url = '/scripts/damage.pl/datatables';
       var sm_url = '/scripts/r/damage/datatables';
       var marker_icon = [];
-		var markers = [];
-		    var markers_index = [];
+      var markers = [];
+		var anOpen = [];
+		var oTable;
+
 			
 
       $(window).load(function() {
 	SC_DEF.init();
+	SC_DEF.tab = 1;
 	map = MAPAPP.init(SC_DEF);
 	menu_update();
 	$("#fac_shaking").hide();
@@ -212,29 +208,107 @@
 
 	if (sc_id)  {
 	  $(".breadcrumb #evid").html('<a href="#">'+sc_id+'</a>');
-	  $(".breadcrumb #tab_link").html('<a href="event_tab.html?event='+sc_id+'">Table View</a>');
+	  $(".breadcrumb #tab_link").html('<a href="event.html?event='+sc_id+'">Map View</a>');
 	}
+	
 	
 	load_sm();
 	load_fac();
 	load_prod();
-	load_marker();
+	//load_marker();
       });
 			
 	$(window).resize(function() {
 		//oTable.fnAdjustColumnSizing();
 		//$("#eq_content_table").width($(".row").width());
 		$("#map_canvas").width($("#main_pane").width());
-		$("#map_canvas").height(($("#map_canvas").width())/2);
+		$("#map_canvas").height($("#map_canvas").width());
+		$("#sidebar_prod").height($("#map_canvas").height());
 		//console.log($("#map_canvas").width());
 		google.maps.event.trigger(map, 'resize');
-		$("#sidebar_fac").height($("#map_canvas").height()/2);
-		$("#sidebar_prod").height($("#map_canvas").height()/2);
 		var cont_height = $("#map_canvas").height() + $(".accordion").height();
+		if ($("#sidebar").length) {
+			cont_height = ($("#sidebar").height() > cont_height) ? $("#sidebar").height() : cont_height;
+		}
 		$('html').css('height', cont_height);
 	});
 
       $('#load_more').on('click', fnAccordion);
+
+      function load_fac_table(){
+		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
+		var local_url = '/scripts/r/damage/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
+	  $(".breadcrumb li").last().html(type + ' List');
+		$.getJSON(local_url, function(data) {
+
+			// Are there even any EQ to display?
+			if (typeof data.grid.shakemap_id === "undefined") {
+				return;
+			}
+
+			var eqTable = [];
+			var facility_damage = data.facility_damage;
+			var index = 1;
+			for ( var ind in facility_damage) {
+			var facility = facility_damage[ind];
+
+			eqTable.push(
+				{
+				"index":index++,
+				"id":facility.facility_id,  
+				"facility_id":facility.external_facility_id,  
+				"facility_type":facility.facility_type, 
+				"latitude":facility.lat_min, "longitude":facility.lon_min, 
+				"facility_name":facility.facility_name, 
+				"damage_level":'<span class="label '+label[facility.damage_level]+
+				  '">'+facility.damage_level+'</span>', 
+				"shakemap_version":facility.mmi, 
+				"dist":facility.dist,
+				'severity_rank':facility.severity_rank,
+				'pga':facility.pga,
+				'pgv':facility.pgv,
+				'mmi':facility.mmi,
+				'psa10':facility.psa10,
+				}
+				);
+				
+			}
+var eqDiv = {
+	"bJQueryUI": true,
+	"iDisplayLength": 10,
+	"sScrollY": "100%",
+	"sScrollX": "100%",
+	"aaSorting": [[ 7, "desc" ],[ 3, "desc" ]],
+	"bUseRendered": false,
+	aaData: eqTable, 
+	aoColumns: 
+		[
+		{'sTitle': 'Facility Type',"mDataProp": "facility_type"},
+		{'sTitle': 'Facility Name',"mDataProp": "facility_name"},
+		{'sTitle': 'Epi. Dist.',"mDataProp": "dist"},
+		{'sTitle': 'Priority',"mDataProp": "damage_level"},
+		{'sTitle': 'PGA',"mDataProp": "pga"},
+		{'sTitle': 'PGV',"mDataProp": "pgv"},
+		{'sTitle': 'PSA 1.0s',"mDataProp": "psa10"},
+		{"bVisible": false, 'sTitle': 'Priority',"mDataProp": "severity_rank"},
+	]
+		};
+		if (oTable) oTable.fnDestroy();
+		
+		oTable = $('#eq_content_table').dataTable(eqDiv);
+		
+		oTable.$('tr').click( function () {
+		  var data = oTable.fnGetData( this );
+		  /*if ( $(this).hasClass('row_selected') ) {
+		    $(this).removeClass('row_selected');
+		  } else {
+		    $(this).addClass('row_selected');
+		  }*/
+		  fnAccordion(data.id);
+		  load_marker(data.id);
+		});
+		});
+      }
 
       function fnAccordion(facility_id){
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
@@ -485,6 +559,7 @@
 	      ]);
 
 	    $("#sidebar_prod").append(html_array.join(''));
+	    $("#sidebar_prod").show();
 	  });
 	}
 
@@ -521,66 +596,24 @@
 				  };
 
 			}
-			$("#sidebar").show();
 
- 			$('#sidebar a').on('click', function() {
+			$('#sidebar a').on('click', function() {
 			  $('.facility_type').removeClass("active");
 			  if (this.id != type) {
 			    //MAPAPP.removeMarkers();
 			    start = 0;
-/*
 			    if ($( ".accordion" ).accordion()) {
 	    $( ".accordion" ).accordion('destroy');
 	    $(".accordion h3").unbind('click');
 	    $( ".accordion" ).html('');
 			    }
-*/
 			  }
 			  type = this.id;
 			  $('#'+ type).addClass("active");
-			  load_sibar_fac();
+			  load_fac_table();
 			  });
+	$('#sidebar').show();
 	$('#sidebar a:first').trigger('click');
-
-		});
-		}
-
-      function load_sibar_fac(){
-		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		var local_url = '/scripts/r/damage/from_id/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		if (SC_DEF.allmarker_flag) local_url += '?all=1';
-		$.getJSON(local_url, function(data) {
-
-			// Are there even any EQ to display?
-			if (typeof data.grid.shakemap_id === "undefined") {
-				return;
-			}
-
-			$("#sidebar_fac").html('');
-			var facility_probability = data.facility_probability;
-			var html_array = [];
-			var severity_index = [];
-			if (data.severity_index) {
-				severity_index = data.severity_index.slice(0);
-			} else {
-			for ( var key in data.facility_damage) severity_index.push(key);
-			}
-			for ( var sev_ind =0; sev_ind< severity_index.length; sev_ind++) {
-			var fac_index = severity_index[sev_ind];
-			//MAPAPP.addMarker(data.facility_damage[fac_index]);
-
-			var facility = data.facility_damage[fac_index];
-			$(".breadcrumb li").last().html(facility.facility_type + ' : ' + facility.facility_name);
-			var icon_type =  facility.facility_type + facility.damage_level;
-			icon_type = icon_type.toLowerCase();
-			$("#sidebar_fac").append('<a class="facility_type list-group-item" id="' + facility.facility_id +
-				'" href="#"><img src="/images/' + icon_type + '.png"> ' + facility.facility_name + '</a>');
- 			$('#sidebar_fac #'+facility.facility_id).on('click', function() {
-			  google.maps.event.trigger(markers[markers_index[this.id]], 'click');
-			});
-			}
-			$("#sidebar_fac").show();
-
 
 		});
 		}
@@ -617,26 +650,31 @@
 		});
       }
 
-      function load_marker(){
+      function load_marker(facility_id){
+	
+		if (markers[facility_id]) {
+		  		google.maps.event.trigger(markers[facility_id], 'click');
+				MAPAPP.infowindow.close(map);
+		  return;
+		}
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-		var sm_url = '/scripts/r/damage/marker/' + sc_id;
-		if (SC_DEF.allmarker_flag) sm_url += '?all=1';
-		$.getJSON(sm_url, function(data) {
+		var local_url = '/scripts/r/damage/from_id/' + sc_id + '?facility=' + facility_id;
+		if (SC_DEF.allmarker_flag) local_url += '?all=1';
+		$.getJSON(local_url, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {
 			return;
 		}
-		
-		var count = 0;
 
 		for (var icon_type in marker_icon) {
 		    marker_icon[icon_type].facility_count = 0;
 		} // for
-		for (var fac in data) {
-		  var facility = data[fac];
-		  var latLng = new google.maps.LatLng(facility.latitude,
-		      facility.longitude);
+		var fac_damage = data.facility_damage;
+		for (var fac in fac_damage) {
+		  var facility = fac_damage[fac];
+		  var latLng = new google.maps.LatLng(facility.lat_min,
+		      facility.lon_min);
 		  var icon_type =  facility.facility_type + facility.damage_level;
 		  icon_type = icon_type.toLowerCase();
 		  if (typeof marker_icon[icon_type] === "undefined") {
@@ -662,68 +700,18 @@
 		    facility_id: fac,
 		    facility_type: facility.facility_type,
 		    severity_rank: facility.severity_rank,
-		    facility_name: facility.facility_name,
 		  });
+		  marker.setMap(map);
+				  map.setCenter(marker.getPosition());
+				  markers[facility.facility_id] = marker;
+		  
 		  google.maps.event.addListener(marker, 'click', function() {
 				  //console.log(marker.facility_id);
 				  map.setCenter(marker.getPosition());
 				  MAPAPP.loadInfo(this.facility_id, this.getPosition());
-				  fnAccordion(this.facility_id);
 				  });
 		  
-		  markers.push(marker);
-		  markers_index[fac] = count++;
 		}
-		var markerCluster = new MarkerClusterer(map, markers,{'zoomOnClick':0});
-		
-		marker_icon.sort(function(a, b){
-		    var a1= a.facility_type, b1= b.facility_type;
-		    if(a1== b1) return 0;
-		    return a1> b1? 1: -1;
-		});
-		MAPAPP.addLegend(marker_icon);
-		
-		  google.maps.event.addListener(markerCluster, 'clusterclick', function(cluster) {
-		    var marker_index = [];
-		    var this_cluster = cluster;
-		    var cluster_markers = cluster.getMarkers();
-		    var cluster_length = cluster_markers.length;
-		    var cluster_info = SC_DEF.cluster_info ? parseInt(SC_DEF.cluster_info) : 10;
-		    if (cluster_length > cluster_info) {
-		      cluster.getMap().fitBounds(cluster.getBounds());
-		    } else {
-		      var html_array = ['<div class="panel panel-default">',
-					'<div class="panel panel-heading"><b>Clustered Facilities</b></div>',
-					'<div class="list-group" id="info_popup">',
-					];
-		      for (var ii=0; ii < cluster_markers.length; ii++) {
-			html_array.push('<a class="list-group-item" href="#" id="' +
-					cluster_markers[ii].facility_id +
-					'"><b>' + cluster_markers[ii].facility_type + '</b> : ' +
-					cluster_markers[ii].facility_name + '</a>'
-					);
-			marker_index[cluster_markers[ii].facility_id] = ii;
-		      }
-		      html_array.push('<a class="list-group-item" id="all" href="#">' +
-				      '<b>Show All Facilities</b></a></div></div>');
-		      var infocontent = html_array.join('');
-		      MAPAPP.infowindow.setContent(infocontent);
-		      MAPAPP.infowindow.setPosition(cluster.getCenter());
-		      MAPAPP.infowindow.open(map);
-
-		      $("#info_popup>a").on('click', function () {
-			  var id = (this.id);
-			  if (id == 'all') {
-			    for (var mar_ind=0; mar_ind < cluster_length; mar_ind++)
-			      cluster_markers[mar_ind].setMap(map);
-			    MAPAPP.infowindow.close();
-			  } else {
-			  cluster_markers[marker_index[id]].setMap(map);
-			  google.maps.event.trigger(cluster_markers[marker_index[id]], 'click');
-			  }
-		      });
-		    }
-				  });
 		});
       }
 
