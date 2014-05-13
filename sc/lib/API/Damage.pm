@@ -129,7 +129,7 @@ sub from_id {
 	if ($options->{'action'} =~ /summary/i && -e $hash_summary_file) {
 		$damage = retrieve($hash_summary_file);
 		return $damage ;
-	} elsif (!$options->{'length'} && -e $hash_file) {
+	} elsif (!$options->{'length'} && -e $hash_file && $options->{'action'} !~ /datatables/i) {
 		$damage = retrieve($hash_file);
 		return $damage ;
 	} else {
@@ -143,7 +143,7 @@ sub from_id {
 	#	$damage->{'facility_probability'} = $hashref;
 	#}
 	# fac_attribute method;
-	if ($options->{'start'} || $options->{'length'}) {
+	if (($options->{'start'} || $options->{'length'}) && $options->{'action'} !~ /datatables/i) {
 	$damage->{'facility_probability'} = facility_evaluate_prob($options, $damage->{severity_index});
 	$damage->{'facility_attribute'} = facility_evaluate_attr($evt_dir);
 	}
@@ -170,7 +170,7 @@ sub from_id_damage {
     my $sth;
 	my $shakemap_id = $options->{'shakemap_id'};
 	my $shakemap_version = $options->{'shakemap_version'};
-	my $fac_type_filter;
+	my $fac_type_filter = '';
 	$fac_type_filter = 'AND f.facility_type ="'.$options->{'type'}.'"' 
 		if ($options->{'type'} && lc($options->{'type'}) ne 'all');
 	my $evt_dir = SC->config->{'DataRoot'}."/$shakemap_id-$shakemap_version";
@@ -180,6 +180,11 @@ sub from_id_damage {
 	my $fac_metric = $class->fragility_metric_list($shakemap_id, $shakemap_version);
 	my $metric_str = join ',', map {'fs.value_'.$metric->{$_}.' as '.$_ } keys %$metric;
 	my @facilities;
+	if ($options->{'facility'}) {
+	    $fac_type_filter .= ' AND f.facility_id in (' .
+		join(',', ('?') x scalar @{$options->{'facility'}}) . ') ';
+	    push @args, @{$options->{'facility'}};
+	}
 
     #eval {
 	$sth = SC->dbh->prepare(qq/
@@ -217,7 +222,7 @@ sub from_id_damage {
 		next unless $metric->{$metric_key};
 		my $exe_sql = $class->dosubs($sql, $metric->{$metric_key});
 		$sth = SC->dbh->prepare($exe_sql);
-		my $p = SC->dbh->selectcol_arrayref($sth, undef, $grid{grid_id}, $metric_key);
+		my $p = SC->dbh->selectcol_arrayref($sth, undef, $grid{grid_id}, $metric_key, @args);
 		$damage_count += scalar @$p;
 	}
 

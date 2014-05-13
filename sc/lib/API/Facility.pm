@@ -326,99 +326,129 @@ sub facility_type_list {
 # that have an event_type other than C<TEST>.
 # 
 # Return true/false for success/failure
-sub erase_test_event {
-    my ($class, $event_id) = @_;
+sub erase_type {
+    my ($class, $type) = @_;
 
     my $sth;
-    my $event;
+    my $fac_type;
+    my $rc;
+
     eval {
 	my ($nrec) = SC->dbh->selectrow_array(qq/
 	    select count(*)
-	      from event
-	     where event_id = ?
-               and event_type <> 'TEST'/, undef, $event_id);
-        if ($nrec) {
-            $SC::errstr = "Can't erase events whose type is not TEST";
+	      from facility
+	     where facility_type = ?
+			/, undef, $type);
+        if ($nrec <= 0) {
+            $SC::errstr = "Can't find facility $type in the database";
             return 0;
         }
+	$rc = $nrec;
 
         # Determine the set of grids to be deleted
-        my ($gridp) = SC->dbh->selectcol_arrayref(qq/
-            select grid_id
-              from grid g
-                  inner join shakemap s
-                     on (g.shakemap_id = s.shakemap_id and
-                         g.shakemap_version = s.shakemap_version)
-             where s.event_id = ?/, undef, $event_id);
+        my ($facility_id) = SC->dbh->selectcol_arrayref(qq/
+            select facility_id
+              from facility
+             where facility_type = ?/, undef, $type);
 
-         # Delete grids and associated values
-         my $sth_del_grid = SC->dbh->prepare(qq/
-             delete from grid
-              where grid_id = ?/);
-         my $sth_del_value = SC->dbh->prepare(qq/
-             delete from grid_value
-              where grid_id = ?/);
-         foreach my $grid_id (@$gridp) {
-             $sth_del_value->execute($grid_id);
-             $sth_del_grid->execute($grid_id);
+         foreach my $fac_id (@$facility_id) {
+             $class->erase_facility($fac_id);
          }
 
-         # Determine the set of shakemaps to be deleted
-         my ($smp) = SC->dbh->selectall_arrayref(qq/
-             select shakemap_id,
-                    shakemap_version
-               from shakemap
-              where event_id = ?/, undef, $event_id);
-
-         # Delete products
-         $sth = SC->dbh->prepare(qq/
-             delete from product
-              where shakemap_id = ?
-                and shakemap_version = ?/);
-         foreach my $k (@$smp) {
-             $sth->execute(@$k);
-             my $shakemap = SC::Shakemap->from_id(@$k);
-             my $dir = $shakemap->product_dir;
-             SC->log(0, "dir: $dir");
-             if (-d $dir) {
-                 opendir DIR, $dir;
-                 my $file;
-                 while (my $file = readdir DIR) {
-                     SC->log(0, "file: $file");
-                     next unless -f "$dir/$file";
-                     unlink "$dir/$file"
-                         or SC->log(0, "unlink $dir/$file failed: $!");
-                 }
-                 closedir DIR;
-                 rmdir $dir
-                     or SC->log(0, "rmdir $dir failed: $!");
-             }
-         }
-
-         # Delete associated shakemap metrics
-         $sth = SC->dbh->prepare(qq/
-             delete from shakemap_metric
-              where shakemap_id = ?
-                and shakemap_version = ?/);
-         foreach my $k (@$smp) {
-             $sth->execute(@$k);
-         }
-
-         # Delete shakemaps
-         SC->dbh->do(qq/
-             delete from shakemap
-              where event_id = ?/, undef, $event_id);
-
-         # Delete events
-         SC->dbh->do(qq/
-             delete from event
-              where event_id = ?/, undef, $event_id);
     };
     if ($@) {
 	$SC::errstr = $@;
 	return 0;
     }
-    return 1;
+    return $rc;
+}
+
+
+# Delete all events, shakemaps, grids, and products related to a given
+# event ID.  Product files and product directories will be deleted, too.
+# This method will log an error and do nothing for events
+# that have an event_type other than C<TEST>.
+# 
+# Return true/false for success/failure
+sub erase_facility {
+    my ($class, $facility_id) = @_;
+
+    my $sth;
+    my $fac_type;
+    my $rc;
+
+    eval {
+	my ($nrec) = SC->dbh->selectrow_array(qq/
+	    select count(*)
+	      from facility
+	     where facility_id = ?
+			/, undef, $facility_id);
+        if ($nrec <= 0) {
+            $SC::errstr = "Can't find facility $facility_id in the database";
+            return 0;
+        }
+	$rc = $nrec;
+
+         # Delete grids and associated values
+         my $sth_del_facility_attribute = SC->dbh->prepare(qq/
+             delete from facility_attribute
+              where facility_id = ?/);
+         my $sth_del_facility_feature = SC->dbh->prepare(qq/
+             delete from facility_feature
+              where facility_id = ?/);
+         my $sth_del_facility_fragility = SC->dbh->prepare(qq/
+             delete from facility_fragility
+              where facility_id = ?/);
+         my $sth_del_facility_fragility_model = SC->dbh->prepare(qq/
+             delete from facility_fragility_model
+              where facility_id = ?/);
+         my $sth_del_facility_fragility_probability = SC->dbh->prepare(qq/
+             delete from facility_fragility_probability
+              where facility_id = ?/);
+         my $sth_del_facility_model = SC->dbh->prepare(qq/
+             delete from facility_model
+              where facility_id = ?/);
+         my $sth_del_facility_model_shaking = SC->dbh->prepare(qq/
+             delete from facility_model_shaking
+              where facility_id = ?/);
+         my $sth_del_facility_notification_request = SC->dbh->prepare(qq/
+             delete from facility_notification_request
+              where facility_id = ?/);
+         my $sth_del_facility_process = SC->dbh->prepare(qq/
+             delete from facility_process
+              where facility_id = ?/);
+         my $sth_del_facility_shaking = SC->dbh->prepare(qq/
+             delete from facility_shaking
+              where facility_id = ?/);
+         my $sth_del_geometry_facility_profile = SC->dbh->prepare(qq/
+             delete from geometry_facility_profile
+              where facility_id = ?/);
+         my $sth_del_station_facility = SC->dbh->prepare(qq/
+             delete from station_facility
+              where facility_id = ?/);
+         my $sth_del_facility = SC->dbh->prepare(qq/
+             delete from facility
+              where facility_id = ?/);
+
+	$sth_del_facility_attribute->execute($facility_id);
+	$sth_del_facility_feature->execute($facility_id);
+	$sth_del_facility_fragility->execute($facility_id);
+	$sth_del_facility_fragility_model->execute($facility_id);
+	$sth_del_facility_fragility_probability->execute($facility_id);
+	$sth_del_facility_model->execute($facility_id);
+	$sth_del_facility_model_shaking->execute($facility_id);
+	$sth_del_facility_notification_request->execute($facility_id);
+	$sth_del_facility_process->execute($facility_id);
+	$sth_del_facility_shaking->execute($facility_id);
+	$sth_del_geometry_facility_profile->execute($facility_id);
+	$sth_del_station_facility->execute($facility_id);
+	$sth_del_facility->execute($facility_id);
+    };
+    if ($@) {
+	$SC::errstr = $@;
+	return 0;
+    }
+    return $rc;
 }
 
 

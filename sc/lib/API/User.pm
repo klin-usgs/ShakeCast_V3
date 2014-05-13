@@ -129,10 +129,11 @@ sub newer_than {
 }
 
 sub validate {
-    my ($class, $username, $password) = @_;
+    my ($class, $username, $password, $admin) = @_;
     undef $SC::errstr;
     my ($sth, $p);
     $password = sha256_hex($password);
+    my @argv;
     my $sql = qq/
 	select shakecast_user
 	    FROM 
@@ -140,11 +141,15 @@ sub validate {
 	    where username = ?
 		and password = ?
 	/;
+    if ($admin) {
+	$sql .= ' and user_type = "ADMIN"';
+    }
     eval {
 	$sth = SC->dbh->prepare($sql);
 	$p = SC->dbh->selectcol_arrayref($sth, undef,
 	    $username, $password);
     };
+
     if (scalar @$p > 0) {
 	return 1;
     } else {
@@ -201,9 +206,12 @@ sub from_id {
 	
 	my @geometry_user_profile;
 	$sth = SC->dbh->prepare(qq/
-	    select *
-	      from geometry_user_profile
-	     where shakecast_user = ?
+	    select gp.profile_name
+	    from geometry_profile gp inner join shakecast_user su
+		on gp.profile_name = su.username
+	    where su.shakecast_user = (select profile_id
+		from geometry_user_profile
+		where shakecast_user = ?)
 		 /);
 	$sth->execute($shakecast_user);
 	while ($p = $sth->fetchrow_hashref('NAME_lc')) {
@@ -211,6 +219,22 @@ sub from_id {
 	    push @geometry_user_profile, \%h;
 	}
 	$user->{'geometry_user_profile'} = \@geometry_user_profile;
+	
+	my @geometry_facility_profile;
+	$sth = SC->dbh->prepare(qq/
+	    select count(gfp.facility_id) as count, gp.geom
+	      from geometry_profile gp inner join geometry_facility_profile gfp
+		on gp.profile_id = gfp.profile_id
+		inner join shakecast_user su
+		on gp.profile_name = su.username
+	     where su.shakecast_user = ?
+		 /);
+	$sth->execute($shakecast_user);
+	while ($p = $sth->fetchrow_hashref('NAME_lc')) {
+	    my %h = %$p;
+	    push @geometry_facility_profile, \%h;
+	}
+	$user->{'geometry_facility_profile'} = \@geometry_facility_profile;
 	
     };
     if ($@) {
@@ -321,99 +345,159 @@ sub user_type_list {
 # that have an event_type other than C<TEST>.
 # 
 # Return true/false for success/failure
-sub erase_test_event {
-    my ($class, $event_id) = @_;
+sub erase_type {
+    my ($class, $user_type) = @_;
 
     my $sth;
-    my $event;
+    my $fac_type;
+    my $rc;
+
     eval {
 	my ($nrec) = SC->dbh->selectrow_array(qq/
 	    select count(*)
-	      from event
-	     where event_id = ?
-               and event_type <> 'TEST'/, undef, $event_id);
-        if ($nrec) {
-            $SC::errstr = "Can't erase events whose type is not TEST";
+	      from shakecast_user
+              where user_type = ?
+			/, undef, $user_type);
+        if ($nrec <= 0) {
+            $SC::errstr = "Can't find user $user_type in the database";
             return 0;
         }
+	$rc = $nrec;
 
         # Determine the set of grids to be deleted
-        my ($gridp) = SC->dbh->selectcol_arrayref(qq/
-            select grid_id
-              from grid g
-                  inner join shakemap s
-                     on (g.shakemap_id = s.shakemap_id and
-                         g.shakemap_version = s.shakemap_version)
-             where s.event_id = ?/, undef, $event_id);
-
-         # Delete grids and associated values
-         my $sth_del_grid = SC->dbh->prepare(qq/
-             delete from grid
-              where grid_id = ?/);
-         my $sth_del_value = SC->dbh->prepare(qq/
-             delete from grid_value
-              where grid_id = ?/);
-         foreach my $grid_id (@$gridp) {
-             $sth_del_value->execute($grid_id);
-             $sth_del_grid->execute($grid_id);
+         my $sth = SC->dbh->prepare(qq/
+             select shakecast_user, username
+	     from shakecast_user
+              where user_type = ?/);
+	$sth->execute($user_type);
+	while (my $p = $sth->fetchrow_hashref('NAME_lc')) {
+	    $class->erase_user($p->{shakecast_user});
+	    $class->erase_group($p->{username}) if ($p->{username} =~ /group/i);
          }
 
-         # Determine the set of shakemaps to be deleted
-         my ($smp) = SC->dbh->selectall_arrayref(qq/
-             select shakemap_id,
-                    shakemap_version
-               from shakemap
-              where event_id = ?/, undef, $event_id);
-
-         # Delete products
-         $sth = SC->dbh->prepare(qq/
-             delete from product
-              where shakemap_id = ?
-                and shakemap_version = ?/);
-         foreach my $k (@$smp) {
-             $sth->execute(@$k);
-             my $shakemap = SC::Shakemap->from_id(@$k);
-             my $dir = $shakemap->product_dir;
-             SC->log(0, "dir: $dir");
-             if (-d $dir) {
-                 opendir DIR, $dir;
-                 my $file;
-                 while (my $file = readdir DIR) {
-                     SC->log(0, "file: $file");
-                     next unless -f "$dir/$file";
-                     unlink "$dir/$file"
-                         or SC->log(0, "unlink $dir/$file failed: $!");
-                 }
-                 closedir DIR;
-                 rmdir $dir
-                     or SC->log(0, "rmdir $dir failed: $!");
-             }
-         }
-
-         # Delete associated shakemap metrics
-         $sth = SC->dbh->prepare(qq/
-             delete from shakemap_metric
-              where shakemap_id = ?
-                and shakemap_version = ?/);
-         foreach my $k (@$smp) {
-             $sth->execute(@$k);
-         }
-
-         # Delete shakemaps
-         SC->dbh->do(qq/
-             delete from shakemap
-              where event_id = ?/, undef, $event_id);
-
-         # Delete events
-         SC->dbh->do(qq/
-             delete from event
-              where event_id = ?/, undef, $event_id);
     };
     if ($@) {
 	$SC::errstr = $@;
 	return 0;
     }
-    return 1;
+    return $rc;
+}
+
+
+# Delete all events, shakemaps, grids, and products related to a given
+# event ID.  Product files and product directories will be deleted, too.
+# This method will log an error and do nothing for events
+# that have an event_type other than C<TEST>.
+# 
+# Return true/false for success/failure
+sub erase_user {
+    my ($class, $user_id) = @_;
+
+    my $sth;
+    my $fac_type;
+    my $rc;
+
+    eval {
+	my ($nrec) = SC->dbh->selectrow_array(qq/
+	    select count(*)
+	      from shakecast_user
+              where shakecast_user = ?
+			/, undef, $user_id);
+        if ($nrec <= 0) {
+            $SC::errstr = "Can't find user $user_id in the database";
+            return 0;
+        }
+	$rc = $nrec;
+
+         # Delete grids and associated values
+         my $sth_del_user_delivery_method = SC->dbh->prepare(qq/
+             delete from user_delivery_method
+              where shakecast_user = ?/);
+         my $sth_del_geometry_user_profile = SC->dbh->prepare(qq/
+             delete from geometry_user_profile
+              where shakecast_user = ?/);
+         my $sth_del_shakecast_user = SC->dbh->prepare(qq/
+             delete from shakecast_user
+              where shakecast_user = ?/);
+
+	$sth_del_user_delivery_method->execute($user_id);
+	$sth_del_geometry_user_profile->execute($user_id);
+	$sth_del_shakecast_user->execute($user_id);
+    };
+    if ($@) {
+	$SC::errstr = $@;
+	return 0;
+    }
+    return $rc;
+}
+
+
+# Delete all events, shakemaps, grids, and products related to a given
+# event ID.  Product files and product directories will be deleted, too.
+# This method will log an error and do nothing for events
+# that have an event_type other than C<TEST>.
+# 
+# Return true/false for success/failure
+sub erase_group {
+    my ($class, $user_id, $username) = @_;
+
+    my $sth;
+    my $fac_type;
+    my $rc;
+
+    eval {
+	my ($nrec) = SC->dbh->selectrow_array(qq/
+	    select count(*)
+	      from geometry_profile
+              where profile_name = ?
+			/, undef, $username);
+        if ($nrec <= 0) {
+            $SC::errstr = "Can't find profile $username in the database";
+            return 0;
+        }
+	$rc = $nrec;
+
+        # Determine the set of grids to be deleted
+        my ($profilep) = SC->dbh->selectcol_arrayref(qq/
+            select profile_id
+              from geometry_profile 
+             where profile_name = ?/, undef, $username);
+
+         # Delete grids and associated values
+         my $sth_del_geometry_profile = SC->dbh->prepare(qq/
+             delete from geometry_profile
+              where profile_id = ?/);
+         my $sth_del_geometry_facility_profile = SC->dbh->prepare(qq/
+             delete from geometry_facility_profile
+              where profile_id = ?/);
+         my $sth_del_profile_notification_request = SC->dbh->prepare(qq/
+             delete from profile_notification_request
+              where profile_id = ?/);
+         foreach my $profile_id (@$profilep) {
+             $sth_del_geometry_profile->execute($profile_id);
+             $sth_del_geometry_facility_profile->execute($profile_id);
+             $sth_del_profile_notification_request->execute($profile_id);
+         }
+
+         my $sth_del_geometry_user_profile = SC->dbh->prepare(qq/
+             delete from geometry_user_profile
+              where profile_id = ?/);
+         my $sth_del_notification_request = SC->dbh->prepare(qq/
+             delete from notification_request
+              where shakecast_user = ?/);
+         my $sth_del_facility_notification_request = SC->dbh->prepare(qq/
+             delete from facility_notification_request
+              where notification_request_id not in (select notification_request_id from
+	      notification_request)/);
+	$sth_del_geometry_user_profile->execute($user_id);
+	$sth_del_notification_request->execute($user_id);
+	$sth_del_facility_notification_request->execute();
+    };
+    if ($@) {
+	$SC::errstr = $@;
+	return 0;
+    }
+    return $rc;
 }
 
 

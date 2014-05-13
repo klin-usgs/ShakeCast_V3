@@ -145,10 +145,50 @@ sub shaking_summary {
     if ($@) {
 	$SC::errstr = $@;
 	return undef;
-    } elsif (not defined @shakings) {
+    } elsif (not  @shakings) {
 	$SC::errstr = "No shaking for id $shakemap_id";
     }
     return \@shakings;
+}
+
+sub marker {
+    my ($class, $options) = @_;
+
+    undef $SC::errstr;
+    my %shakings;
+    my $sth;
+	my $shakemap_id = $options->{'shakemap_id'};
+	my $shakemap_version = $options->{'shakemap_version'};
+	#my $shakemap = new API::Shakemap->from_id($shakemap_id, $shakemap_version);
+	my @facilities;
+
+    eval {
+	$sth = SC->dbh->prepare(qq/
+	    select fs.facility_id, f.facility_type, f.lat_min as latitude,
+		f.lon_min as longitude
+		FROM 
+			grid g INNER JOIN shakemap s ON
+			g.shakemap_id = s.shakemap_id AND g.shakemap_version = s.shakemap_version
+			INNER JOIN facility_shaking fs ON
+			g.grid_id = fs.grid_id
+			INNER JOIN facility f ON
+			fs.facility_id = f.facility_id
+	     where s.shakemap_id = ?
+	       and s.shakemap_version = ?
+		/);
+	$sth->execute($shakemap_id, $shakemap_version);
+	while (my $p = $sth->fetchrow_hashref('NAME_lc')) {
+	    $shakings{$p->{facility_id}} = $p;
+	}
+	$sth->finish;
+    };
+    if ($@) {
+	$SC::errstr = $@;
+	return undef;
+    } elsif (not  %shakings) {
+	$SC::errstr = "No shaking for id $shakemap_id";
+    }
+    return \%shakings;
 }
 
 sub shaking_point {
@@ -743,7 +783,7 @@ sub process_grid {
 		$cells = $hashref->{'cells'};
 	} else {
 		use XML::LibXML::Simple;
-		my $parser = XMLin($file_path);
+		my $parser = SC->sm_twig($file_path);
 		$grid_spec = $parser->{'grid_specification'};
 		$grid_data = $parser->{'grid_data'};
 		$grid_field = $parser->{'grid_field'};

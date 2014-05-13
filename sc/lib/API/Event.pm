@@ -134,6 +134,35 @@ sub event_list {
     return \@list;
 }
 
+sub event_summary {
+    my ($class) = @_;
+    
+    undef $SC::errstr;
+    my @list;
+	
+    my $sql =  qq/
+        select e.event_type, count(e.event_id) as count
+		FROM 
+			(event e inner join shakemap s on e.event_id = s.shakemap_id)
+		GROUP BY
+			e.event_type
+	/;
+	#LIMIT $start, $count
+    eval {
+	my $sth = SC->dbh->prepare($sql);
+	$sth->execute();
+	while (my $p = $sth->fetchrow_hashref('NAME_lc')) {
+	    push @list, $p;
+	}
+	$sth->finish;
+    };
+    if ($@) {
+	$SC::errstr = $@;
+	return undef;
+    }
+    return \@list;
+}
+
 sub ago_str {
     my ($time_str) = @_;
 	my $ago;
@@ -304,6 +333,7 @@ sub erase_event {
 
     my $sth;
     my $event;
+    my $rc;
     eval {
 	my ($nrec) = SC->dbh->selectrow_array(qq/
 	    select count(*)
@@ -314,6 +344,7 @@ sub erase_event {
             $SC::errstr = "Can't find event $event_id in the database";
             return 0;
         }
+	$rc = $nrec;
 
         # Determine the set of grids to be deleted
         my ($gridp) = SC->dbh->selectcol_arrayref(qq/
@@ -425,7 +456,7 @@ sub erase_event {
 	$SC::errstr = $@;
 	return 0;
     }
-    return 1;
+    return $rc;
 }
 
 

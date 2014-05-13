@@ -891,10 +891,10 @@ my ($dest, $evid, %products) = @_;
 	my $info_file = "$dest/info.xml";
 	
 	my $info = XMLin($info_file) if (-e $info_file);
-	my $parser = XMLin($file);;
+	my $parser = SC->sm_twig($file);;
 	%event_spec = %{$parser->{'event'}};
 	%grid_spec = %{$parser->{'grid_specification'}};
-	%shakemap_spec = %{$parser};
+	%shakemap_spec = %{$parser->{'shakemap_grid'}};
 		foreach my $metric (keys %{$parser->{grid_field}}) {
 		$grid_metric[$parser->{grid_field}->{$metric}->{index}-1] = $metric;
 	}

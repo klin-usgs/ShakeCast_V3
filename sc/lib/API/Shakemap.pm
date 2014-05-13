@@ -156,7 +156,7 @@ sub from_id {
 			inner join event e on (s.event_id = e.event_id)
 	     where s.shakemap_id = ?
 	       and s.shakemap_version = ?
-		 order by e.seq, s.shakemap_version DESC
+		 order by e.seq DESC, s.shakemap_version DESC
 		 /);
 	$sth->execute($shakemap_id, $shakemap_version);
 	my $p = $sth->fetchrow_hashref('NAME_lc');

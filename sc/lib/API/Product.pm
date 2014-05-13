@@ -79,7 +79,7 @@ sub BEGIN {
 			product_status product_type
 			product_id generating_server
 			lat_min lon_min lat_max lon_max
-			max_value min_value generating_server
+			max_value min_value 
 			generation_timestamp receive_timestamp
 			update_timestamp product_file_exists
 			name description filename update_username
@@ -269,7 +269,7 @@ sub product_type_list {
 
 # Return true/false for success/failure
 sub toggle_product_display {
-    my ($class, $product_id, $flag) = @_;
+    my ($class, $product_id) = @_;
 
     my $sth;
     my $event;
@@ -283,13 +283,21 @@ sub toggle_product_display {
             return 0;
         }
 
+        # Determine the set of grids to be deleted
+        my ($eventp) = SC->dbh->selectcol_arrayref(qq/
+            select display
+              from product_type
+             where product_type = ?/, undef, $product_id);
+
          # Delete grids and associated values
          my $sth_upd_event = SC->dbh->prepare(qq/
              update product_type
 				set display = ?
 				where product_type = ?/);
-				my $arc_flag = ($flag =~ /false/i) ? undef : 1;
+         foreach my $archivep (@$eventp) {
+				my $arc_flag = ($archivep) ? undef : 1;
              $sth_upd_event->execute($arc_flag, $product_id);
+         }
 
     };
     if ($@) {

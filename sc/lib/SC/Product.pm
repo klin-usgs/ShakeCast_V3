@@ -1325,6 +1325,9 @@ sub process_new_product {
 			
 			SC::Server->this_server->queue_request(
 				'facility_feature_shaking', $self->shakemap_id, $self->shakemap_version);
+			
+			SC::Server->this_server->queue_request(
+				'sc_pdf', $self->shakemap_id, $self->shakemap_version);
 		} else {
 			SC->error($SC::errstr);
 			# XXX might not be correct.  Even though we got an error while

@@ -549,7 +549,7 @@ sub process_new_event {
 				# so catch any problems, log them, and return success.
 				SC::Server->this_server->queue_request(
 					'comp_gmpe', $self->event_id, $self->event_version)
-				if (defined SC->config->{'COMP_GMPE'});
+				if (SC->config->{'COMP_GMPE'});
 			};
 			if ($@) {
 				chomp $@;
