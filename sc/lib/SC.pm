@@ -403,6 +403,32 @@ sub xml_esc {
     return $str;
 }
 
+sub sm_twig {
+  my ($class, $xml_file) = @_;
+
+  use XML::Twig;
+  my $twig= new XML::Twig;                                   # just to be extra clean
+  
+  $twig->parsefile($xml_file);    # build the twig
+  
+  my $root= $twig->root;           # get the root of the twig (stats)
+  my @tags = $root->children;    # get the player list
+  
+  my $xml_twig;
+  $xml_twig->{$root->tag} = $root->atts;
+				   
+  foreach my $tag (@tags)  {
+      if ($tag->tag =~ /grid_data/) {
+	  $xml_twig->{$tag->tag} = $tag->text;
+      } elsif ($tag->tag =~ /grid_field/) {
+	  $xml_twig->{$tag->tag}->{$tag->{'att'}->{'name'}} = $tag->atts;
+      } else {
+	  $xml_twig->{$tag->tag} = $tag->atts;
+      }
+   }
+  return $xml_twig;
+}
+
 sub inform_notifier {
     my ($class, $what) = @_;
 
