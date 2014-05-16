@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Jul 15, 2013 at 02:25 PM
--- Server version: 5.6.10
--- PHP Version: 5.2.17
+-- Generation Time: May 16, 2014 at 07:34 PM
+-- Server version: 5.1.73
+-- PHP Version: 5.3.3
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -19,7 +19,8 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Table structure for table `administrator_role`
 -- 
 
-CREATE TABLE `administrator_role` (
+DROP TABLE IF EXISTS `administrator_role`;
+CREATE TABLE IF NOT EXISTS `administrator_role` (
   `ADMINISTRATOR_ROLE` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -34,7 +35,8 @@ CREATE TABLE `administrator_role` (
 -- Table structure for table `aggregation_counted`
 -- 
 
-CREATE TABLE `aggregation_counted` (
+DROP TABLE IF EXISTS `aggregation_counted`;
+CREATE TABLE IF NOT EXISTS `aggregation_counted` (
   `name` varchar(64) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -44,7 +46,8 @@ CREATE TABLE `aggregation_counted` (
 -- Table structure for table `aggregation_grouped`
 -- 
 
-CREATE TABLE `aggregation_grouped` (
+DROP TABLE IF EXISTS `aggregation_grouped`;
+CREATE TABLE IF NOT EXISTS `aggregation_grouped` (
   `name` varchar(64) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -54,7 +57,8 @@ CREATE TABLE `aggregation_grouped` (
 -- Table structure for table `aggregation_measured`
 -- 
 
-CREATE TABLE `aggregation_measured` (
+DROP TABLE IF EXISTS `aggregation_measured`;
+CREATE TABLE IF NOT EXISTS `aggregation_measured` (
   `name` varchar(64) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -64,7 +68,8 @@ CREATE TABLE `aggregation_measured` (
 -- Table structure for table `config`
 -- 
 
-CREATE TABLE `config` (
+DROP TABLE IF EXISTS `config`;
+CREATE TABLE IF NOT EXISTS `config` (
   `CONFIG_NAME` varchar(255) NOT NULL,
   `CONFIG_VALUE` varchar(255) NOT NULL,
   `SERVICE` varchar(32) NOT NULL DEFAULT '',
@@ -77,7 +82,8 @@ CREATE TABLE `config` (
 -- Table structure for table `damage_level`
 -- 
 
-CREATE TABLE `damage_level` (
+DROP TABLE IF EXISTS `damage_level`;
+CREATE TABLE IF NOT EXISTS `damage_level` (
   `DAMAGE_LEVEL` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -94,7 +100,8 @@ CREATE TABLE `damage_level` (
 -- Table structure for table `delivery_method`
 -- 
 
-CREATE TABLE `delivery_method` (
+DROP TABLE IF EXISTS `delivery_method`;
+CREATE TABLE IF NOT EXISTS `delivery_method` (
   `DELIVERY_METHOD` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -110,7 +117,8 @@ CREATE TABLE `delivery_method` (
 -- Table structure for table `delivery_status`
 -- 
 
-CREATE TABLE `delivery_status` (
+DROP TABLE IF EXISTS `delivery_status`;
+CREATE TABLE IF NOT EXISTS `delivery_status` (
   `DELIVERY_STATUS` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -125,7 +133,8 @@ CREATE TABLE `delivery_status` (
 -- Table structure for table `dispatch_task`
 -- 
 
-CREATE TABLE `dispatch_task` (
+DROP TABLE IF EXISTS `dispatch_task`;
+CREATE TABLE IF NOT EXISTS `dispatch_task` (
   `task_id` int(10) unsigned NOT NULL,
   `request` text,
   `status` varchar(30) DEFAULT NULL,
@@ -143,7 +152,8 @@ CREATE TABLE `dispatch_task` (
 -- Table structure for table `event`
 -- 
 
-CREATE TABLE `event` (
+DROP TABLE IF EXISTS `event`;
+CREATE TABLE IF NOT EXISTS `event` (
   `EVENT_ID` varchar(80) NOT NULL,
   `EVENT_VERSION` int(11) NOT NULL DEFAULT '0',
   `EVENT_STATUS` varchar(10) NOT NULL,
@@ -168,7 +178,7 @@ CREATE TABLE `event` (
   KEY `SEQ` (`SEQ`),
   KEY `EVENT_EVENT_NAME_IDX` (`EVENT_NAME`),
   KEY `EVENT_EVENT_TS_IDX` (`EVENT_TIMESTAMP`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=32148 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=45744 ;
 
 -- --------------------------------------------------------
 
@@ -176,7 +186,8 @@ CREATE TABLE `event` (
 -- Table structure for table `event_status`
 -- 
 
-CREATE TABLE `event_status` (
+DROP TABLE IF EXISTS `event_status`;
+CREATE TABLE IF NOT EXISTS `event_status` (
   `EVENT_STATUS` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -191,7 +202,8 @@ CREATE TABLE `event_status` (
 -- Table structure for table `event_type`
 -- 
 
-CREATE TABLE `event_type` (
+DROP TABLE IF EXISTS `event_type`;
+CREATE TABLE IF NOT EXISTS `event_type` (
   `EVENT_TYPE` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -206,12 +218,13 @@ CREATE TABLE `event_type` (
 -- Table structure for table `facility`
 -- 
 
-CREATE TABLE `facility` (
+DROP TABLE IF EXISTS `facility`;
+CREATE TABLE IF NOT EXISTS `facility` (
   `FACILITY_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `FACILITY_TYPE` varchar(10) NOT NULL,
+  `FACILITY_TYPE` varchar(32) NOT NULL,
   `EXTERNAL_FACILITY_ID` varchar(32) DEFAULT NULL,
   `FACILITY_NAME` varchar(128) DEFAULT NULL,
-  `SHORT_NAME` varchar(10) DEFAULT NULL,
+  `SHORT_NAME` varchar(32) DEFAULT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
   `LAT_MIN` double NOT NULL,
   `LAT_MAX` double NOT NULL,
@@ -224,7 +237,7 @@ CREATE TABLE `facility` (
   KEY `FACILITY_LAT_IDX` (`LAT_MIN`,`LAT_MAX`),
   KEY `FACILITY_SHORT_NAME_IDX` (`SHORT_NAME`),
   KEY `FACILITY_NAME` (`FACILITY_NAME`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=128199 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=173275 ;
 
 -- --------------------------------------------------------
 
@@ -232,7 +245,8 @@ CREATE TABLE `facility` (
 -- Table structure for table `facility_attribute`
 -- 
 
-CREATE TABLE `facility_attribute` (
+DROP TABLE IF EXISTS `facility_attribute`;
+CREATE TABLE IF NOT EXISTS `facility_attribute` (
   `facility_id` int(11) NOT NULL,
   `attribute_name` varchar(20) NOT NULL,
   `attribute_value` varchar(30) DEFAULT NULL,
@@ -245,7 +259,8 @@ CREATE TABLE `facility_attribute` (
 -- Table structure for table `facility_feature`
 -- 
 
-CREATE TABLE `facility_feature` (
+DROP TABLE IF EXISTS `facility_feature`;
+CREATE TABLE IF NOT EXISTS `facility_feature` (
   `FACILITY_ID` int(11) NOT NULL,
   `GEOM_TYPE` varchar(32) DEFAULT NULL,
   `GEOM` mediumtext,
@@ -261,7 +276,8 @@ CREATE TABLE `facility_feature` (
 -- Table structure for table `facility_fragility`
 -- 
 
-CREATE TABLE `facility_fragility` (
+DROP TABLE IF EXISTS `facility_fragility`;
+CREATE TABLE IF NOT EXISTS `facility_fragility` (
   `FACILITY_FRAGILITY_ID` int(11) NOT NULL AUTO_INCREMENT,
   `FACILITY_ID` int(11) NOT NULL,
   `DAMAGE_LEVEL` varchar(10) NOT NULL,
@@ -272,7 +288,7 @@ CREATE TABLE `facility_fragility` (
   `METRIC` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`FACILITY_FRAGILITY_ID`),
   KEY `facility_fragility_facility_ix` (`FACILITY_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=752872 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=890764 ;
 
 -- --------------------------------------------------------
 
@@ -280,11 +296,12 @@ CREATE TABLE `facility_fragility` (
 -- Table structure for table `facility_fragility_model`
 -- 
 
-CREATE TABLE `facility_fragility_model` (
+DROP TABLE IF EXISTS `facility_fragility_model`;
+CREATE TABLE IF NOT EXISTS `facility_fragility_model` (
   `FACILITY_FRAGILITY_MODEL_ID` int(11) NOT NULL AUTO_INCREMENT,
   `FACILITY_ID` int(11) NOT NULL,
   `CLASS` varchar(32) DEFAULT NULL,
-  `COMPONENT` varchar(32) NOT NULL,
+  `COMPONENT` varchar(64) NOT NULL,
   `DAMAGE_LEVEL` varchar(10) NOT NULL,
   `ALPHA` double DEFAULT NULL,
   `BETA` double DEFAULT NULL,
@@ -294,7 +311,7 @@ CREATE TABLE `facility_fragility_model` (
   PRIMARY KEY (`FACILITY_FRAGILITY_MODEL_ID`),
   KEY `facility_fragility_model_facility_ix` (`FACILITY_ID`),
   KEY `CLASS` (`CLASS`,`COMPONENT`,`FACILITY_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1169874 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2401 ;
 
 -- --------------------------------------------------------
 
@@ -302,7 +319,8 @@ CREATE TABLE `facility_fragility_model` (
 -- Table structure for table `facility_fragility_probability`
 -- 
 
-CREATE TABLE `facility_fragility_probability` (
+DROP TABLE IF EXISTS `facility_fragility_probability`;
+CREATE TABLE IF NOT EXISTS `facility_fragility_probability` (
   `FACILITY_ID` int(11) NOT NULL,
   `grid_id` int(11) NOT NULL,
   `FACILITY_FRAGILITY_MODEL_ID` int(11) NOT NULL,
@@ -318,7 +336,8 @@ CREATE TABLE `facility_fragility_probability` (
 -- Table structure for table `facility_model`
 -- 
 
-CREATE TABLE `facility_model` (
+DROP TABLE IF EXISTS `facility_model`;
+CREATE TABLE IF NOT EXISTS `facility_model` (
   `FACILITY_MODEL_ID` int(11) NOT NULL AUTO_INCREMENT,
   `FACILITY_ID` int(11) NOT NULL,
   `GMPE` varchar(32) NOT NULL,
@@ -335,7 +354,8 @@ CREATE TABLE `facility_model` (
 -- Table structure for table `facility_model_shaking`
 -- 
 
-CREATE TABLE `facility_model_shaking` (
+DROP TABLE IF EXISTS `facility_model_shaking`;
+CREATE TABLE IF NOT EXISTS `facility_model_shaking` (
   `facility_id` int(11) NOT NULL,
   `SEQ` int(11) NOT NULL,
   `dist` double DEFAULT NULL,
@@ -358,7 +378,8 @@ CREATE TABLE `facility_model_shaking` (
 -- Table structure for table `facility_notification_request`
 -- 
 
-CREATE TABLE `facility_notification_request` (
+DROP TABLE IF EXISTS `facility_notification_request`;
+CREATE TABLE IF NOT EXISTS `facility_notification_request` (
   `FACILITY_ID` int(11) NOT NULL,
   `NOTIFICATION_REQUEST_ID` int(11) NOT NULL,
   PRIMARY KEY (`FACILITY_ID`,`NOTIFICATION_REQUEST_ID`)
@@ -370,7 +391,8 @@ CREATE TABLE `facility_notification_request` (
 -- Table structure for table `facility_process`
 -- 
 
-CREATE TABLE `facility_process` (
+DROP TABLE IF EXISTS `facility_process`;
+CREATE TABLE IF NOT EXISTS `facility_process` (
   `facility_id` int(11) NOT NULL,
   `process_name` varchar(32) NOT NULL,
   `process_value` varchar(32) DEFAULT NULL,
@@ -383,7 +405,8 @@ CREATE TABLE `facility_process` (
 -- Table structure for table `facility_shaking`
 -- 
 
-CREATE TABLE `facility_shaking` (
+DROP TABLE IF EXISTS `facility_shaking`;
+CREATE TABLE IF NOT EXISTS `facility_shaking` (
   `facility_id` int(11) NOT NULL,
   `grid_id` int(11) NOT NULL,
   `dist` double DEFAULT NULL,
@@ -406,8 +429,9 @@ CREATE TABLE `facility_shaking` (
 -- Table structure for table `facility_type`
 -- 
 
-CREATE TABLE `facility_type` (
-  `FACILITY_TYPE` varchar(10) NOT NULL,
+DROP TABLE IF EXISTS `facility_type`;
+CREATE TABLE IF NOT EXISTS `facility_type` (
+  `FACILITY_TYPE` varchar(32) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
   `UPDATE_USERNAME` varchar(32) DEFAULT NULL,
@@ -421,9 +445,10 @@ CREATE TABLE `facility_type` (
 -- Table structure for table `facility_type_attribute`
 -- 
 
-CREATE TABLE `facility_type_attribute` (
+DROP TABLE IF EXISTS `facility_type_attribute`;
+CREATE TABLE IF NOT EXISTS `facility_type_attribute` (
   `FACILITY_TYPE_ATTRIBUTE_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `FACILITY_TYPE` varchar(10) NOT NULL,
+  `FACILITY_TYPE` varchar(32) NOT NULL,
   `ATTRIBUTE_NAME` varchar(20) NOT NULL,
   `DESCRIPTION` varchar(30) DEFAULT NULL,
   `UPDATE_USERNAME` varchar(32) DEFAULT NULL,
@@ -438,9 +463,10 @@ CREATE TABLE `facility_type_attribute` (
 -- Table structure for table `facility_type_fragility`
 -- 
 
-CREATE TABLE `facility_type_fragility` (
+DROP TABLE IF EXISTS `facility_type_fragility`;
+CREATE TABLE IF NOT EXISTS `facility_type_fragility` (
   `FACILITY_TYPE_FRAGILITY_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `FACILITY_TYPE` varchar(10) NOT NULL,
+  `FACILITY_TYPE` varchar(32) NOT NULL,
   `DAMAGE_LEVEL` varchar(10) NOT NULL,
   `LOW_LIMIT` double DEFAULT NULL,
   `HIGH_LIMIT` double DEFAULT NULL,
@@ -457,7 +483,8 @@ CREATE TABLE `facility_type_fragility` (
 -- Table structure for table `geometry_facility_profile`
 -- 
 
-CREATE TABLE `geometry_facility_profile` (
+DROP TABLE IF EXISTS `geometry_facility_profile`;
+CREATE TABLE IF NOT EXISTS `geometry_facility_profile` (
   `FACILITY_ID` int(11) NOT NULL,
   `PROFILE_ID` int(11) NOT NULL,
   PRIMARY KEY (`FACILITY_ID`,`PROFILE_ID`)
@@ -469,14 +496,15 @@ CREATE TABLE `geometry_facility_profile` (
 -- Table structure for table `geometry_profile`
 -- 
 
-CREATE TABLE `geometry_profile` (
+DROP TABLE IF EXISTS `geometry_profile`;
+CREATE TABLE IF NOT EXISTS `geometry_profile` (
   `PROFILE_ID` int(11) NOT NULL AUTO_INCREMENT,
   `PROFILE_NAME` varchar(128) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
   `GEOM` mediumtext NOT NULL,
   `UPDATED` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`PROFILE_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=75 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=101 ;
 
 -- --------------------------------------------------------
 
@@ -484,7 +512,8 @@ CREATE TABLE `geometry_profile` (
 -- Table structure for table `geometry_user_profile`
 -- 
 
-CREATE TABLE `geometry_user_profile` (
+DROP TABLE IF EXISTS `geometry_user_profile`;
+CREATE TABLE IF NOT EXISTS `geometry_user_profile` (
   `SHAKECAST_USER` int(11) NOT NULL,
   `PROFILE_ID` int(11) NOT NULL,
   PRIMARY KEY (`SHAKECAST_USER`,`PROFILE_ID`)
@@ -496,7 +525,8 @@ CREATE TABLE `geometry_user_profile` (
 -- Table structure for table `grid`
 -- 
 
-CREATE TABLE `grid` (
+DROP TABLE IF EXISTS `grid`;
+CREATE TABLE IF NOT EXISTS `grid` (
   `SHAKEMAP_ID` varchar(80) NOT NULL,
   `SHAKEMAP_VERSION` int(11) NOT NULL,
   `LAT_MIN` double NOT NULL,
@@ -510,7 +540,7 @@ CREATE TABLE `grid` (
   `GRID_ID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`SHAKEMAP_ID`,`SHAKEMAP_VERSION`),
   UNIQUE KEY `GRID_ID_IDX` (`GRID_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3528 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4959 ;
 
 -- --------------------------------------------------------
 
@@ -518,7 +548,8 @@ CREATE TABLE `grid` (
 -- Table structure for table `grid_value`
 -- 
 
-CREATE TABLE `grid_value` (
+DROP TABLE IF EXISTS `grid_value`;
+CREATE TABLE IF NOT EXISTS `grid_value` (
   `GRID_VALUE_ID` int(11) NOT NULL AUTO_INCREMENT,
   `GRID_ID` int(11) NOT NULL,
   `LAT_MIN` double NOT NULL,
@@ -547,7 +578,8 @@ CREATE TABLE `grid_value` (
 -- Table structure for table `lognorm_probability`
 -- 
 
-CREATE TABLE `lognorm_probability` (
+DROP TABLE IF EXISTS `lognorm_probability`;
+CREATE TABLE IF NOT EXISTS `lognorm_probability` (
   `PROBABILITY_ID` int(11) NOT NULL AUTO_INCREMENT,
   `PROBABILITY` double NOT NULL,
   `LOW_LIMIT` double DEFAULT NULL,
@@ -566,7 +598,8 @@ CREATE TABLE `lognorm_probability` (
 -- Table structure for table `log_message`
 -- 
 
-CREATE TABLE `log_message` (
+DROP TABLE IF EXISTS `log_message`;
+CREATE TABLE IF NOT EXISTS `log_message` (
   `LOG_MESSAGE_ID` int(11) NOT NULL AUTO_INCREMENT,
   `LOG_MESSAGE_TYPE` varchar(10) NOT NULL,
   `SERVER_ID` int(11) NOT NULL,
@@ -575,7 +608,7 @@ CREATE TABLE `log_message` (
   `DELIVERY_STATUS` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`LOG_MESSAGE_ID`),
   KEY `SERVER_ID` (`SERVER_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=22133 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=23295 ;
 
 -- --------------------------------------------------------
 
@@ -583,7 +616,8 @@ CREATE TABLE `log_message` (
 -- Table structure for table `log_message_type`
 -- 
 
-CREATE TABLE `log_message_type` (
+DROP TABLE IF EXISTS `log_message_type`;
+CREATE TABLE IF NOT EXISTS `log_message_type` (
   `LOG_MESSAGE_TYPE` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -598,7 +632,8 @@ CREATE TABLE `log_message_type` (
 -- Table structure for table `message_format`
 -- 
 
-CREATE TABLE `message_format` (
+DROP TABLE IF EXISTS `message_format`;
+CREATE TABLE IF NOT EXISTS `message_format` (
   `MESSAGE_FORMAT` int(11) NOT NULL AUTO_INCREMENT,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -615,7 +650,8 @@ CREATE TABLE `message_format` (
 -- Table structure for table `metric`
 -- 
 
-CREATE TABLE `metric` (
+DROP TABLE IF EXISTS `metric`;
+CREATE TABLE IF NOT EXISTS `metric` (
   `SHORT_NAME` varchar(10) NOT NULL,
   `METRIC_ID` int(11) NOT NULL,
   `NAME` varchar(32) NOT NULL,
@@ -631,7 +667,8 @@ CREATE TABLE `metric` (
 -- Table structure for table `notification`
 -- 
 
-CREATE TABLE `notification` (
+DROP TABLE IF EXISTS `notification`;
+CREATE TABLE IF NOT EXISTS `notification` (
   `NOTIFICATION_ID` int(11) NOT NULL AUTO_INCREMENT,
   `NOTIFICATION_REQUEST_ID` int(11) NOT NULL,
   `SHAKECAST_USER` int(11) NOT NULL,
@@ -656,7 +693,7 @@ CREATE TABLE `notification` (
   KEY `NOTIFICATION_EVENT_ID_DX` (`event_id`),
   KEY `NOTIFICATION_QUEUE_TS_IDX` (`QUEUE_TIMESTAMP`),
   KEY `NOTIFICATION_DELIV_TS_IDX` (`DELIVERY_TIMESTAMP`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7902 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=40352 ;
 
 -- --------------------------------------------------------
 
@@ -664,7 +701,8 @@ CREATE TABLE `notification` (
 -- Table structure for table `notification_class`
 -- 
 
-CREATE TABLE `notification_class` (
+DROP TABLE IF EXISTS `notification_class`;
+CREATE TABLE IF NOT EXISTS `notification_class` (
   `NOTIFICATION_CLASS` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -679,7 +717,8 @@ CREATE TABLE `notification_class` (
 -- Table structure for table `notification_request`
 -- 
 
-CREATE TABLE `notification_request` (
+DROP TABLE IF EXISTS `notification_request`;
+CREATE TABLE IF NOT EXISTS `notification_request` (
   `NOTIFICATION_REQUEST_ID` int(11) NOT NULL AUTO_INCREMENT,
   `DAMAGE_LEVEL` varchar(10) DEFAULT NULL,
   `SHAKECAST_USER` int(11) NOT NULL,
@@ -700,7 +739,7 @@ CREATE TABLE `notification_request` (
   `AGGREGATION_GROUP` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`NOTIFICATION_REQUEST_ID`),
   KEY `NR_SHAKECAST_USER_IDX` (`SHAKECAST_USER`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=145 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=237 ;
 
 -- --------------------------------------------------------
 
@@ -708,7 +747,8 @@ CREATE TABLE `notification_request` (
 -- Table structure for table `notification_request_status`
 -- 
 
-CREATE TABLE `notification_request_status` (
+DROP TABLE IF EXISTS `notification_request_status`;
+CREATE TABLE IF NOT EXISTS `notification_request_status` (
   `PARMNAME` varchar(32) NOT NULL,
   `PARMVALUE` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`PARMNAME`)
@@ -720,7 +760,8 @@ CREATE TABLE `notification_request_status` (
 -- Table structure for table `notification_type`
 -- 
 
-CREATE TABLE `notification_type` (
+DROP TABLE IF EXISTS `notification_type`;
+CREATE TABLE IF NOT EXISTS `notification_type` (
   `NOTIFICATION_TYPE` varchar(10) NOT NULL,
   `NOTIFICATION_CLASS` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
@@ -737,7 +778,8 @@ CREATE TABLE `notification_type` (
 -- Table structure for table `permission`
 -- 
 
-CREATE TABLE `permission` (
+DROP TABLE IF EXISTS `permission`;
+CREATE TABLE IF NOT EXISTS `permission` (
   `PERMISSION` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -751,7 +793,8 @@ CREATE TABLE `permission` (
 -- Table structure for table `phpbb_auth_access`
 -- 
 
-CREATE TABLE `phpbb_auth_access` (
+DROP TABLE IF EXISTS `phpbb_auth_access`;
+CREATE TABLE IF NOT EXISTS `phpbb_auth_access` (
   `group_id` mediumint(8) NOT NULL,
   `forum_id` smallint(5) unsigned NOT NULL,
   `auth_view` tinyint(1) NOT NULL,
@@ -776,7 +819,8 @@ CREATE TABLE `phpbb_auth_access` (
 -- Table structure for table `phpbb_banlist`
 -- 
 
-CREATE TABLE `phpbb_banlist` (
+DROP TABLE IF EXISTS `phpbb_banlist`;
+CREATE TABLE IF NOT EXISTS `phpbb_banlist` (
   `ban_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `ban_userid` mediumint(8) NOT NULL,
   `ban_ip` char(8) NOT NULL,
@@ -791,7 +835,8 @@ CREATE TABLE `phpbb_banlist` (
 -- Table structure for table `phpbb_config`
 -- 
 
-CREATE TABLE `phpbb_config` (
+DROP TABLE IF EXISTS `phpbb_config`;
+CREATE TABLE IF NOT EXISTS `phpbb_config` (
   `config_name` varchar(255) NOT NULL,
   `config_value` varchar(255) NOT NULL,
   PRIMARY KEY (`config_name`)
@@ -803,7 +848,8 @@ CREATE TABLE `phpbb_config` (
 -- Table structure for table `phpbb_confirm`
 -- 
 
-CREATE TABLE `phpbb_confirm` (
+DROP TABLE IF EXISTS `phpbb_confirm`;
+CREATE TABLE IF NOT EXISTS `phpbb_confirm` (
   `confirm_id` char(32) NOT NULL,
   `session_id` char(32) NOT NULL,
   `code` char(6) NOT NULL,
@@ -816,7 +862,8 @@ CREATE TABLE `phpbb_confirm` (
 -- Table structure for table `phpbb_disallow`
 -- 
 
-CREATE TABLE `phpbb_disallow` (
+DROP TABLE IF EXISTS `phpbb_disallow`;
+CREATE TABLE IF NOT EXISTS `phpbb_disallow` (
   `disallow_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `disallow_username` varchar(32) NOT NULL,
   PRIMARY KEY (`disallow_id`)
@@ -828,7 +875,8 @@ CREATE TABLE `phpbb_disallow` (
 -- Table structure for table `phpbb_groups`
 -- 
 
-CREATE TABLE `phpbb_groups` (
+DROP TABLE IF EXISTS `phpbb_groups`;
+CREATE TABLE IF NOT EXISTS `phpbb_groups` (
   `group_id` mediumint(8) NOT NULL AUTO_INCREMENT,
   `group_type` tinyint(4) NOT NULL DEFAULT '1',
   `group_name` varchar(40) NOT NULL,
@@ -837,7 +885,7 @@ CREATE TABLE `phpbb_groups` (
   `group_single_user` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`group_id`),
   KEY `group_single_user` (`group_single_user`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=42 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=48 ;
 
 -- --------------------------------------------------------
 
@@ -845,7 +893,8 @@ CREATE TABLE `phpbb_groups` (
 -- Table structure for table `phpbb_posts_text`
 -- 
 
-CREATE TABLE `phpbb_posts_text` (
+DROP TABLE IF EXISTS `phpbb_posts_text`;
+CREATE TABLE IF NOT EXISTS `phpbb_posts_text` (
   `post_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `SHAKEMAP_ID` char(80) NOT NULL,
   `post_subject` char(80) DEFAULT NULL,
@@ -859,7 +908,8 @@ CREATE TABLE `phpbb_posts_text` (
 -- Table structure for table `phpbb_search_results`
 -- 
 
-CREATE TABLE `phpbb_search_results` (
+DROP TABLE IF EXISTS `phpbb_search_results`;
+CREATE TABLE IF NOT EXISTS `phpbb_search_results` (
   `search_id` int(11) unsigned NOT NULL,
   `session_id` char(32) NOT NULL,
   `search_time` int(11) NOT NULL,
@@ -874,7 +924,8 @@ CREATE TABLE `phpbb_search_results` (
 -- Table structure for table `phpbb_sessions`
 -- 
 
-CREATE TABLE `phpbb_sessions` (
+DROP TABLE IF EXISTS `phpbb_sessions`;
+CREATE TABLE IF NOT EXISTS `phpbb_sessions` (
   `session_id` char(32) NOT NULL,
   `session_user_id` mediumint(8) NOT NULL,
   `session_start` int(11) NOT NULL,
@@ -894,7 +945,8 @@ CREATE TABLE `phpbb_sessions` (
 -- Table structure for table `phpbb_sessions_keys`
 -- 
 
-CREATE TABLE `phpbb_sessions_keys` (
+DROP TABLE IF EXISTS `phpbb_sessions_keys`;
+CREATE TABLE IF NOT EXISTS `phpbb_sessions_keys` (
   `key_id` varchar(32) NOT NULL,
   `user_id` mediumint(8) NOT NULL,
   `last_ip` varchar(8) NOT NULL,
@@ -909,7 +961,8 @@ CREATE TABLE `phpbb_sessions_keys` (
 -- Table structure for table `phpbb_themes`
 -- 
 
-CREATE TABLE `phpbb_themes` (
+DROP TABLE IF EXISTS `phpbb_themes`;
+CREATE TABLE IF NOT EXISTS `phpbb_themes` (
   `themes_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `template_name` varchar(30) NOT NULL,
   `style_name` varchar(30) NOT NULL,
@@ -962,7 +1015,8 @@ CREATE TABLE `phpbb_themes` (
 -- Table structure for table `phpbb_themes_name`
 -- 
 
-CREATE TABLE `phpbb_themes_name` (
+DROP TABLE IF EXISTS `phpbb_themes_name`;
+CREATE TABLE IF NOT EXISTS `phpbb_themes_name` (
   `themes_id` smallint(5) unsigned NOT NULL,
   `tr_color1_name` char(50) DEFAULT NULL,
   `tr_color2_name` char(50) DEFAULT NULL,
@@ -1003,7 +1057,8 @@ CREATE TABLE `phpbb_themes_name` (
 -- Table structure for table `phpbb_users`
 -- 
 
-CREATE TABLE `phpbb_users` (
+DROP TABLE IF EXISTS `phpbb_users`;
+CREATE TABLE IF NOT EXISTS `phpbb_users` (
   `user_id` mediumint(8) NOT NULL,
   `user_active` tinyint(1) DEFAULT '1',
   `username` varchar(32) NOT NULL,
@@ -1061,7 +1116,8 @@ CREATE TABLE `phpbb_users` (
 -- Table structure for table `phpbb_user_group`
 -- 
 
-CREATE TABLE `phpbb_user_group` (
+DROP TABLE IF EXISTS `phpbb_user_group`;
+CREATE TABLE IF NOT EXISTS `phpbb_user_group` (
   `group_id` mediumint(8) NOT NULL,
   `user_id` mediumint(8) NOT NULL,
   `user_pending` tinyint(1) DEFAULT NULL,
@@ -1075,7 +1131,8 @@ CREATE TABLE `phpbb_user_group` (
 -- Table structure for table `phpbb_validated`
 -- 
 
-CREATE TABLE `phpbb_validated` (
+DROP TABLE IF EXISTS `phpbb_validated`;
+CREATE TABLE IF NOT EXISTS `phpbb_validated` (
   `validated_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `validated_userid` mediumint(8) NOT NULL,
   `validated_email` varchar(255) DEFAULT NULL,
@@ -1088,7 +1145,8 @@ CREATE TABLE `phpbb_validated` (
 -- Table structure for table `processor_parameter`
 -- 
 
-CREATE TABLE `processor_parameter` (
+DROP TABLE IF EXISTS `processor_parameter`;
+CREATE TABLE IF NOT EXISTS `processor_parameter` (
   `PROCESSOR_NAME` varchar(32) NOT NULL,
   `PARAMETER_NAME` varchar(10) NOT NULL,
   `PARAMETER_VALUE` varchar(255) NOT NULL,
@@ -1102,7 +1160,8 @@ CREATE TABLE `processor_parameter` (
 -- Table structure for table `product`
 -- 
 
-CREATE TABLE `product` (
+DROP TABLE IF EXISTS `product`;
+CREATE TABLE IF NOT EXISTS `product` (
   `SHAKEMAP_ID` varchar(80) NOT NULL,
   `SHAKEMAP_VERSION` int(11) NOT NULL,
   `PRODUCT_TYPE` varchar(10) NOT NULL,
@@ -1122,7 +1181,7 @@ CREATE TABLE `product` (
   `SUPERCEDED_TIMESTAMP` datetime DEFAULT NULL,
   PRIMARY KEY (`SHAKEMAP_ID`,`SHAKEMAP_VERSION`,`PRODUCT_TYPE`),
   KEY `PRODUCT_ID` (`PRODUCT_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=105329 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=140770 ;
 
 -- --------------------------------------------------------
 
@@ -1130,7 +1189,8 @@ CREATE TABLE `product` (
 -- Table structure for table `product_format`
 -- 
 
-CREATE TABLE `product_format` (
+DROP TABLE IF EXISTS `product_format`;
+CREATE TABLE IF NOT EXISTS `product_format` (
   `PRODUCT_FORMAT` double NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -1145,7 +1205,8 @@ CREATE TABLE `product_format` (
 -- Table structure for table `product_status`
 -- 
 
-CREATE TABLE `product_status` (
+DROP TABLE IF EXISTS `product_status`;
+CREATE TABLE IF NOT EXISTS `product_status` (
   `PRODUCT_STATUS` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -1160,7 +1221,8 @@ CREATE TABLE `product_status` (
 -- Table structure for table `product_type`
 -- 
 
-CREATE TABLE `product_type` (
+DROP TABLE IF EXISTS `product_type`;
+CREATE TABLE IF NOT EXISTS `product_type` (
   `PRODUCT_TYPE` varchar(10) NOT NULL,
   `NAME` varchar(32) DEFAULT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -1180,7 +1242,8 @@ CREATE TABLE `product_type` (
 -- Table structure for table `profile_notification_request`
 -- 
 
-CREATE TABLE `profile_notification_request` (
+DROP TABLE IF EXISTS `profile_notification_request`;
+CREATE TABLE IF NOT EXISTS `profile_notification_request` (
   `NOTIFICATION_REQUEST_ID` int(11) NOT NULL AUTO_INCREMENT,
   `DAMAGE_LEVEL` varchar(10) DEFAULT NULL,
   `PROFILE_ID` int(11) NOT NULL,
@@ -1209,7 +1272,8 @@ CREATE TABLE `profile_notification_request` (
 -- Table structure for table `server`
 -- 
 
-CREATE TABLE `server` (
+DROP TABLE IF EXISTS `server`;
+CREATE TABLE IF NOT EXISTS `server` (
   `SERVER_ID` int(11) NOT NULL,
   `DNS_ADDRESS` varchar(128) DEFAULT NULL,
   `IP_ADDRESS` varchar(15) DEFAULT NULL,
@@ -1252,7 +1316,8 @@ CREATE TABLE `server` (
 -- Table structure for table `server_administrator`
 -- 
 
-CREATE TABLE `server_administrator` (
+DROP TABLE IF EXISTS `server_administrator`;
+CREATE TABLE IF NOT EXISTS `server_administrator` (
   `SERVER_ID` int(11) NOT NULL,
   `SHAKECAST_USER` int(11) NOT NULL,
   `ADMINISTRATOR_ROLE` varchar(10) NOT NULL,
@@ -1266,7 +1331,8 @@ CREATE TABLE `server_administrator` (
 -- Table structure for table `server_permission`
 -- 
 
-CREATE TABLE `server_permission` (
+DROP TABLE IF EXISTS `server_permission`;
+CREATE TABLE IF NOT EXISTS `server_permission` (
   `SERVER_ID` int(11) NOT NULL,
   `PERMISSION` varchar(10) NOT NULL,
   `UPDATE_USERNAME` varchar(32) DEFAULT NULL,
@@ -1279,7 +1345,8 @@ CREATE TABLE `server_permission` (
 -- Table structure for table `server_status`
 -- 
 
-CREATE TABLE `server_status` (
+DROP TABLE IF EXISTS `server_status`;
+CREATE TABLE IF NOT EXISTS `server_status` (
   `SERVER_STATUS` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -1294,7 +1361,8 @@ CREATE TABLE `server_status` (
 -- Table structure for table `shakecast_user`
 -- 
 
-CREATE TABLE `shakecast_user` (
+DROP TABLE IF EXISTS `shakecast_user`;
+CREATE TABLE IF NOT EXISTS `shakecast_user` (
   `SHAKECAST_USER` int(11) NOT NULL AUTO_INCREMENT,
   `EMAIL_ADDRESS` varchar(255) DEFAULT NULL,
   `PHONE_NUMBER` varchar(32) DEFAULT NULL,
@@ -1305,7 +1373,7 @@ CREATE TABLE `shakecast_user` (
   `UPDATE_USERNAME` varchar(32) DEFAULT NULL,
   `UPDATE_TIMESTAMP` datetime DEFAULT NULL,
   PRIMARY KEY (`SHAKECAST_USER`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=49 ;
 
 -- --------------------------------------------------------
 
@@ -1313,7 +1381,8 @@ CREATE TABLE `shakecast_user` (
 -- Table structure for table `shakemap`
 -- 
 
-CREATE TABLE `shakemap` (
+DROP TABLE IF EXISTS `shakemap`;
+CREATE TABLE IF NOT EXISTS `shakemap` (
   `SHAKEMAP_ID` varchar(80) NOT NULL,
   `SHAKEMAP_VERSION` int(11) NOT NULL,
   `SHAKEMAP_STATUS` varchar(10) NOT NULL,
@@ -1336,7 +1405,7 @@ CREATE TABLE `shakemap` (
   KEY `SEQ` (`SEQ`),
   KEY `SHAKEMAP_EVENT_ID_IDX` (`EVENT_ID`,`EVENT_VERSION`),
   KEY `SHAKEMAP_LAT_LON_IDX` (`LAT_MIN`,`LON_MAX`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3595 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5079 ;
 
 -- --------------------------------------------------------
 
@@ -1344,7 +1413,8 @@ CREATE TABLE `shakemap` (
 -- Table structure for table `shakemap_metric`
 -- 
 
-CREATE TABLE `shakemap_metric` (
+DROP TABLE IF EXISTS `shakemap_metric`;
+CREATE TABLE IF NOT EXISTS `shakemap_metric` (
   `SHAKEMAP_ID` varchar(80) NOT NULL,
   `SHAKEMAP_VERSION` int(11) NOT NULL,
   `METRIC` varchar(10) NOT NULL,
@@ -1360,7 +1430,8 @@ CREATE TABLE `shakemap_metric` (
 -- Table structure for table `shakemap_parameter`
 -- 
 
-CREATE TABLE `shakemap_parameter` (
+DROP TABLE IF EXISTS `shakemap_parameter`;
+CREATE TABLE IF NOT EXISTS `shakemap_parameter` (
   `SHAKEMAP_ID` varchar(80) NOT NULL,
   `SHAKEMAP_VERSION` int(11) NOT NULL,
   `SRC_MECH` varchar(40) DEFAULT NULL,
@@ -1387,7 +1458,8 @@ CREATE TABLE `shakemap_parameter` (
 -- Table structure for table `shakemap_region`
 -- 
 
-CREATE TABLE `shakemap_region` (
+DROP TABLE IF EXISTS `shakemap_region`;
+CREATE TABLE IF NOT EXISTS `shakemap_region` (
   `SHAKEMAP_REGION` char(2) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -1402,7 +1474,8 @@ CREATE TABLE `shakemap_region` (
 -- Table structure for table `shakemap_status`
 -- 
 
-CREATE TABLE `shakemap_status` (
+DROP TABLE IF EXISTS `shakemap_status`;
+CREATE TABLE IF NOT EXISTS `shakemap_status` (
   `SHAKEMAP_STATUS` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -1417,7 +1490,8 @@ CREATE TABLE `shakemap_status` (
 -- Table structure for table `station`
 -- 
 
-CREATE TABLE `station` (
+DROP TABLE IF EXISTS `station`;
+CREATE TABLE IF NOT EXISTS `station` (
   `STATION_ID` int(11) NOT NULL AUTO_INCREMENT,
   `STATION_NETWORK` varchar(10) NOT NULL,
   `EXTERNAL_STATION_ID` varchar(32) DEFAULT NULL,
@@ -1432,7 +1506,7 @@ CREATE TABLE `station` (
   UNIQUE KEY `STATION_EXT_ID_IDX` (`STATION_NETWORK`,`EXTERNAL_STATION_ID`),
   KEY `LATITUDE` (`LATITUDE`),
   KEY `STATION_NAME` (`STATION_NAME`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=19744 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20451 ;
 
 -- --------------------------------------------------------
 
@@ -1440,7 +1514,8 @@ CREATE TABLE `station` (
 -- Table structure for table `station_facility`
 -- 
 
-CREATE TABLE `station_facility` (
+DROP TABLE IF EXISTS `station_facility`;
+CREATE TABLE IF NOT EXISTS `station_facility` (
   `FACILITY_ID` int(11) NOT NULL,
   `STATION_ID` int(11) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -1455,7 +1530,8 @@ CREATE TABLE `station_facility` (
 -- Table structure for table `station_shaking`
 -- 
 
-CREATE TABLE `station_shaking` (
+DROP TABLE IF EXISTS `station_shaking`;
+CREATE TABLE IF NOT EXISTS `station_shaking` (
   `STATION_ID` int(11) NOT NULL,
   `GRID_ID` int(11) NOT NULL,
   `RECORD_ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -1466,7 +1542,7 @@ CREATE TABLE `station_shaking` (
   `value_5` double DEFAULT NULL,
   `value_6` double DEFAULT NULL,
   PRIMARY KEY (`RECORD_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=206639 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=270219 ;
 
 -- --------------------------------------------------------
 
@@ -1474,7 +1550,8 @@ CREATE TABLE `station_shaking` (
 -- Table structure for table `temp_facility`
 -- 
 
-CREATE TABLE `temp_facility` (
+DROP TABLE IF EXISTS `temp_facility`;
+CREATE TABLE IF NOT EXISTS `temp_facility` (
   `facility_id` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -1484,7 +1561,8 @@ CREATE TABLE `temp_facility` (
 -- Table structure for table `user_delivery_method`
 -- 
 
-CREATE TABLE `user_delivery_method` (
+DROP TABLE IF EXISTS `user_delivery_method`;
+CREATE TABLE IF NOT EXISTS `user_delivery_method` (
   `USER_DELIVERY_METHOD_ID` int(11) NOT NULL AUTO_INCREMENT,
   `SHAKECAST_USER` int(11) NOT NULL,
   `DELIVERY_METHOD` varchar(10) NOT NULL,
@@ -1496,7 +1574,7 @@ CREATE TABLE `user_delivery_method` (
   `UPDATE_TIMESTAMP` datetime DEFAULT NULL,
   PRIMARY KEY (`USER_DELIVERY_METHOD_ID`),
   KEY `USER_DELIVERY_METHOD_ID` (`USER_DELIVERY_METHOD_ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=94 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=215 ;
 
 -- --------------------------------------------------------
 
@@ -1504,7 +1582,8 @@ CREATE TABLE `user_delivery_method` (
 -- Table structure for table `user_type`
 -- 
 
-CREATE TABLE `user_type` (
+DROP TABLE IF EXISTS `user_type`;
+CREATE TABLE IF NOT EXISTS `user_type` (
   `USER_TYPE` varchar(10) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
@@ -1519,7 +1598,8 @@ CREATE TABLE `user_type` (
 -- Table structure for table `yes_no`
 -- 
 
-CREATE TABLE `yes_no` (
+DROP TABLE IF EXISTS `yes_no`;
+CREATE TABLE IF NOT EXISTS `yes_no` (
   `ID` int(11) DEFAULT NULL,
   `NAME` varchar(4) DEFAULT NULL,
   KEY `ID` (`ID`)
