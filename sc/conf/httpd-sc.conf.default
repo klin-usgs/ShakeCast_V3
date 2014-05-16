@@ -1,0 +1,86 @@
+
+
+########################################################
+#
+#	ShakeCast Server
+#
+########################################################
+
+
+DocumentRoot /usr/local/sc/docs
+
+ErrorLog    /usr/local/sc/logs/sc_error.log
+CustomLog   /usr/local/sc/logs/sc_access.log combined
+
+
+<Directory /usr/local/sc>
+    Options None
+    AllowOverride None
+    Order deny,allow
+    AuthType Basic
+    AuthName ShakeCast
+    AuthUserFile /usr/local/sc/userdbs/sc-users
+    # By default forbid everything
+    Deny from all
+</Directory>
+
+<Directory /usr/local/sc/docs>
+    Allow from all
+    require valid-user
+</Directory>
+
+<Directory /usr/local/sc/download>
+    Options +Indexes
+    IndexOptions FancyIndexing FoldersFirst
+    allow from all
+    require valid-user
+</Directory>
+
+# Unrestricted access so we can serve error pages to unauthorized users
+<Directory /usr/local/sc/errordocs>
+    allow from all
+</Directory>
+
+<Directory /usr/local/sc/html>
+    Options +Indexes
+    IndexOptions FancyIndexing FoldersFirst
+    Allow from all
+    require valid-user
+</Directory>
+
+<Directory /usr/local/sc/scripts/c>
+    allow from all
+    require valid-user
+</Directory>
+
+<Directory /usr/local/sc/scripts/s>
+    # Server scripts -- use different password file
+    allow from all
+    AuthName Server
+    AuthUserFile /usr/local/sc/userdbs/sc-servers
+    require valid-user
+</Directory>
+
+# Data file directory is wide open
+<Directory /usr/local/sc/data>
+    Options +Indexes
+    IndexOptions FancyIndexing FoldersFirst
+    Order deny,allow
+    Allow from all
+</Directory>
+
+RewriteEngine on
+
+RewriteRule ^/admin$ /scripts/c/admin/admin.pl			[PT]
+
+ScriptAlias /scripts/		/usr/local/sc/scripts/
+
+Alias /data/			/usr/local/sc/data/
+Alias /errordocs/		/usr/local/sc/errordocs/
+Alias /htdocs/			/usr/local/sc/html/
+
+ErrorDocument 401 /errordocs/401.html
+
+Setenv PERL5LIB /usr/local/sc/lib
+
+
