@@ -1,0 +1,30 @@
+convert existing shakecast (xp) to git
+
+1. download gitextensions from ftp.
+2. shutdown shakecast services
+3. install gitextensions or tortoisegit.
+4. reinstall perl
+5. run system_check.pl
+6. unpack shakecast.zip into a separate folder, 'shakecast_git'
+7. winmerge shakecast_git folder with shakecast folder,
+	bin
+	conf
+	data
+	db
+	docs
+	html
+	lib
+	scripts
+	templates
+	util
+8. update database schema (script)
+9. restart system
+10. registered cron tasks, bin\inject_init.pl, default services include
+	gs_json feed task
+	logstats task
+	logrotate task
+	manage_event maintenance task
+	daily heartbeat task
+	
+	
+	
