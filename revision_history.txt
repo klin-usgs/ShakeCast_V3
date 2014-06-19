@@ -1,0 +1,1800 @@
+# $Id: revision_history.txt 522 2008-10-22 14:11:46Z klin $
+
+Revision: 521
+Author: klin
+Date: 8:01:36 AM, Wednesday, October 22, 2008
+Message:
+Update to clear user-profile tie after user replication.
+Update to purge existing user notification requests before replication.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_user_replication.php
+Modified : /trunk/pc/sc/bin/manage_user.pl
+
+
+Revision: 516
+Author: klin
+Date: 8:56:22 AM, Monday, October 20, 2008
+Message:
+Update for php table sorting.
+----
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/event_list_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/facility_list_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/page_facility_header.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/page_header.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/test_event_create_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/test_event_list_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/user_select_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/eqlist_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/facility_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/search_results.tpl
+Modified : /trunk/pc/sc/docs/language/lang_english/lang_main.php
+
+
+Revision: 513
+Author: klin
+Date: 8:52:51 AM, Monday, October 20, 2008
+Message:
+Update to add sorting function for table.
+----
+Modified : /trunk/pc/sc/docs/includes/functions.php
+Modified : /trunk/pc/sc/docs/admin/admin_event.php
+Modified : /trunk/pc/sc/docs/admin/admin_facility.php
+Modified : /trunk/pc/sc/docs/admin/admin_users.php
+
+
+Revision: 512
+Author: klin
+Date: 8:51:53 AM, Monday, October 20, 2008
+Message:
+1. Update to add table column sorting.
+2. Update to add delete of local test events.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_test_event.php
+
+
+Revision: 510
+Author: klin
+Date: 8:46:47 AM, Monday, October 20, 2008
+Message:
+1. Update to switch table column sorting from javascript to php script.
+2. Bug-fix facility attribute sql.
+----
+Modified : /trunk/pc/sc/docs/facility.php
+
+
+Revision: 509
+Author: klin
+Date: 8:42:02 AM, Monday, October 20, 2008
+Message:
+Update to switch table column sorting from javascript to php script.
+----
+Modified : /trunk/pc/sc/docs/eq_list.php
+Modified : /trunk/pc/sc/docs/event.php
+Modified : /trunk/pc/sc/docs/search.php
+
+
+Revision: 508
+Author: klin
+Date: 8:19:28 AM, Monday, October 20, 2008
+Message:
+Update to change x-axle label.
+----
+Modified : /trunk/pc/sc/bin/facility_shaking_plot.pl
+
+
+Revision: 507
+Author: klin
+Date: 8:18:31 AM, Monday, October 20, 2008
+Message:
+Update to add "order by" argument for sql.
+----
+Modified : /trunk/pc/sc/bin/tester.pl
+Modified : /trunk/pc/sc/bin/admin.pl
+
+
+Revision: 505
+Author: klin
+Date: 3:15:10 PM, Thursday, October 09, 2008
+Message:
+Update to check valid facility type and insert default type fragility settings.
+----
+Modified : /trunk/pc/sc/bin/manage_facility.pl
+
+
+Revision: 504
+Author: klin
+Date: 3:12:22 PM, Thursday, October 09, 2008
+Message:
+Bug-fix field requirement.
+----
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/facility_edit_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/facility_edit_body.tpl
+
+
+Revision: 502
+Author: klin
+Date: 9:32:14 AM, Thursday, October 09, 2008
+Message:
+Update to accommodate additional column values.
+----
+Modified : /trunk/pc/sc/docs/map_xml.php
+
+
+Revision: 501
+Author: klin
+Date: 8:57:47 AM, Thursday, October 09, 2008
+Message:
+Update to add adress to lat/lon lookup.
+----
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/gm_form.tpl
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/gm_form.tpl
+
+
+Revision: 499
+Author: klin
+Date: 1:25:44 PM, Wednesday, October 08, 2008
+Message:
+Update to skip shakemap metrics without value column number.
+Update to skip display of shakemap metrics without value column number.
+----
+Modified : /trunk/pc/sc/bin/notifyqueue.pl
+Modified : /trunk/pc/sc/docs/event.php
+Modified : /trunk/pc/sc/docs/facility.php
+Modified : /trunk/pc/sc/docs/index.php
+Modified : /trunk/pc/sc/docs/map_xml.php
+
+
+Revision: 497
+Author: klin
+Date: 11:39:43 AM, Wednesday, October 08, 2008
+Message:
+Update to fix GRID GRID_XML processing order.
+----
+Modified : /trunk/pc/sc/bin/tester.pl
+
+
+Revision: 496
+Author: klin
+Date: 8:58:57 AM, Wednesday, October 08, 2008
+Message:
+Template update to add GM facility location picker and form validation.
+----
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/facility_edit_body.tpl
+Added : /trunk/pc/sc/docs/templates/Caltrans/admin/gm_form.tpl
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/page_facility_header.tpl
+Modified : /trunk/pc/sc/docs/admin/admin_facility.php
+Added : /trunk/pc/sc/docs/admin/gm_form.php
+Added : /trunk/pc/sc/docs/includes/gen_validatorv31.js
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/facility_edit_body.tpl
+Added : /trunk/pc/sc/docs/templates/subSilver/admin/gm_form.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/page_facility_header.tpl
+
+
+Revision: 495
+Author: klin
+Date: 8:55:18 AM, Wednesday, October 08, 2008
+Message:
+Bug-fix metric sql insert statement.
+----
+Modified : /trunk/pc/sc/db/sc-data.sql
+
+
+Revision: 491
+Author: klin
+Date: 2:06:16 PM, Monday, October 06, 2008
+Message:
+Bug-fix lat/lon to min/max translation when processing facility csv.
+Update admin facility edit/add template.
+Bug-fix facility add/edit/delete page/script.
+----
+Modified : /trunk/pc/sc/bin/manage_facility.pl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/facility_edit_body.tpl
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/facility_edit_body.tpl
+Modified : /trunk/pc/sc/docs/language/lang_english/lang_admin.php
+Modified : /trunk/pc/sc/docs/admin/admin_facility.php
+
+
+Revision: 486
+Author: klin
+Date: 10:57:51 AM, Friday, October 03, 2008
+Message:
+Update to add grid_xml processing with flexible metrics.
+----
+Modified : /trunk/pc/sc/lib/SC/Product.pm
+Modified : /trunk/pc/sc/lib/SC/RSS.pm
+
+
+Revision: 485
+Author: klin
+Date: 10:55:38 AM, Friday, October 03, 2008
+Message:
+Update to add scenario inject option.
+----
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/gs_list_body.tpl
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/gs_list_body.tpl
+Modified : /trunk/pc/sc/docs/admin/admin_fetch.php
+
+
+Revision: 482
+Author: klin
+Date: 10:51:22 AM, Friday, October 03, 2008
+Message:
+Update to enable flexible ShakeMap metrics and to add both SDPGA and SVEL metrics.
+----
+Modified : /trunk/pc/sc/db/sc-create.sql
+Modified : /trunk/pc/sc/db/sc-data.sql
+Modified : /trunk/pc/sc/bin/scfeed_local.pl
+
+
+Revision: 480
+Author: klin
+Date: 12:57:57 PM, Wednesday, September 24, 2008
+Message:
+Update to group facility type into separate folders.
+----
+Modified : /trunk/pc/sc/templates/xml/exposure_kml.tt
+
+
+Revision: 479
+Author: klin
+Date: 12:49:24 PM, Wednesday, September 24, 2008
+Message:
+Update to add proxy support.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_fetch.php
+Modified : /trunk/pc/sc/docs/admin/index.php
+Modified : /trunk/pc/sc/bin/shake_fetch.pl
+
+
+Revision: 477
+Author: klin
+Date: 3:03:26 PM, Monday, September 08, 2008
+Message:
+Update to add log_message table.
+----
+Modified : /trunk/pc/sc/db/sc-create.sql
+
+
+Revision: 476
+Author: klin
+Date: 2:42:47 PM, Friday, September 05, 2008
+Message:
+Added facility attribute to keyword list.
+----
+Modified : /trunk/pc/sc/bin/template.pl
+
+
+Revision: 475
+Author: klin
+Date: 11:14:37 AM, Friday, September 05, 2008
+Message:
+Update to avoid magnitude filtering.
+----
+Modified : /trunk/pc/sc/bin/heartbeat.pl
+
+
+Revision: 474
+Author: klin
+Date: 9:15:47 AM, Friday, August 29, 2008
+Message:
+Update to include ShakeMap Atlas events.
+----
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/gs_list_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/gs_list_body.tpl
+Modified : /trunk/pc/sc/docs/admin/admin_fetch.php
+
+
+Revision: 471
+Author: klin
+Date: 9:12:47 AM, Friday, August 29, 2008
+Message:
+Update to include backup of log_message table.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_db_utilities.php
+
+
+Revision: 470
+Author: klin
+Date: 3:38:04 PM, Thursday, August 28, 2008
+Message:
+Google Earth Plug-in page example.
+Update to display facility by default.
+----
+Added : /trunk/pc/sc/templates/xml/exposure_html.tt
+Modified : /trunk/pc/sc/templates/xml/exposure_kml.tt
+
+
+Revision: 468
+Author: klin
+Date: 8:57:41 AM, Thursday, August 28, 2008
+Message:
+Update to include ShakeMap description.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_fetch.php
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/gs_list_body.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/gs_list_body.tpl
+
+
+Revision: 465
+Author: klin
+Date: 10:23:33 AM, Wednesday, August 27, 2008
+Message:
+Bug-fix javascript syntax.
+----
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/cron_edit_body.tpl
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/cron_edit_body.tpl
+
+
+Revision: 463
+Author: klin
+Date: 9:16:55 AM, Monday, August 25, 2008
+Message:
+Update to change default settings.
+----
+Modified : /trunk/pc/sc/db/sc-data.sql
+
+
+Revision: 462
+Author: klin
+Date: 9:02:48 AM, Monday, August 25, 2008
+Message:
+Add system function test data.
+Add system function test routine.
+----
+Added : /trunk/pc/sc/data/SC_test-1
+Added : /trunk/pc/sc/data/SC_test-1/grid.xml
+Added : /trunk/pc/sc/data/SC_test-1/grid.xyz
+Added : /trunk/pc/sc/data/SC_test-1/grid.xyz.zip
+Added : /trunk/pc/sc/t/scv2.pl
+
+
+Revision: 459
+Author: klin
+Date: 8:45:09 AM, Monday, August 25, 2008
+Message:
+Update to handle system notification request.
+----
+Modified : /trunk/pc/sc/bin/notify.pl
+Modified : /trunk/pc/sc/bin/notifyqueue.pl
+Modified : /trunk/pc/sc/docs/admin/admin_profile_notification.php
+Modified : /trunk/pc/sc/docs/admin/admin_user_notifications.php
+
+
+Revision: 456
+Author: klin
+Date: 8:41:55 AM, Monday, August 25, 2008
+Message:
+Update for system templates.
+----
+Deleted : /trunk/pc/sc/templates/new_event/email_text/default.txt
+Deleted : /trunk/pc/sc/templates/new_event/email_text/default_body.txt
+Deleted : /trunk/pc/sc/templates/new_event/email_text/default_footer.txt
+Deleted : /trunk/pc/sc/templates/new_event/email_text/default_header.txt
+Deleted : /trunk/pc/sc/templates/new_event/email_text/eventcsv_body.txt
+Deleted : /trunk/pc/sc/templates/new_event/email_text/eventcsv_footer.txt
+Deleted : /trunk/pc/sc/templates/new_event/email_text/eventcsv_header.txt
+Deleted : /trunk/pc/sc/templates/new_event/pager/default.txt
+Deleted : /trunk/pc/sc/templates/new_event/pager/default_header.txt
+Deleted : /trunk/pc/sc/templates/new_event/script/default.pl
+Deleted : /trunk/pc/sc/templates/new_event/script/default_header.pl
+Deleted : /trunk/pc/sc/templates/new_event/script/foo.pl
+Modified : /trunk/pc/sc/templates/template_info.cfg
+Replacing : /trunk/pc/sc/templates/new_event/email_html/default.txt
+Deleted : /trunk/pc/sc/templates/new_event/email_html/default.txt.backup
+Modified : /trunk/pc/sc/templates/new_event/email_html/default_header.txt
+Deleted : /trunk/pc/sc/templates/new_event/email_html/shcsrt_header.txt
+
+
+Revision: 452
+Author: klin
+Date: 7:49:55 AM, Wednesday, August 20, 2008
+Message:
+Bug fix submit form id.
+----
+Modified : /trunk/pc/sc/docs/templates/subSilver/admin/facility_list_body.tpl
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/facility_list_body.tpl
+
+
+Revision: 450
+Author: klin
+Date: 1:09:49 PM, Friday, August 15, 2008
+Message:
+Update to switch between GMT and local time.
+----
+Modified : /trunk/pc/sc/docs/includes/functions_selects.php
+Modified : /trunk/pc/sc/docs/language/lang_english/lang_main.php
+Modified : /trunk/pc/sc/lib/SC/RSS.pm
+Modified : /trunk/pc/sc/lib/SC.pm
+Modified : /trunk/pc/sc/bin/scfeed_local.pl
+
+
+Revision: 445
+Author: klin
+Date: 2:41:34 PM, Thursday, August 14, 2008
+Message:
+Add timezone synchronization.
+----
+Modified : /trunk/pc/sc/bin/sync_conf.pl
+
+
+Revision: 444
+Author: klin
+Date: 1:17:18 PM, Thursday, August 14, 2008
+Message:
+Added system notification templates.
+Update to accommodate log_message table.
+----
+Modified : /trunk/pc/sc/db/sc-data.sql
+Modified : /trunk/pc/sc/db/sc-create.sql
+Modified : /trunk/pc/sc/templates/new_event/email_html/default.txt
+Modified : /trunk/pc/sc/templates/new_event/email_html/default_body.txt
+Modified : /trunk/pc/sc/templates/new_event/email_html/default_footer.txt
+Modified : /trunk/pc/sc/templates/new_event/email_html/default_header.txt
+Modified : /trunk/pc/sc/lib/SC.pm
+
+
+Revision: 440
+Author: klin
+Date: 12:54:01 PM, Thursday, August 14, 2008
+Message:
+Update to remove dispatcher worker.
+----
+Modified : /trunk/pc/sc/lib/SC/Product.pm
+Modified : /trunk/pc/sc/bin/sm_inject.pl
+
+
+Revision: 438
+Author: klin
+Date: 12:49:09 PM, Thursday, August 14, 2008
+Message:
+Add exceedance ratio into default sorting order.
+----
+Modified : /trunk/pc/sc/docs/language/lang_english/lang_main.php
+Modified : /trunk/pc/sc/docs/event.php
+
+
+Revision: 437
+Author: klin
+Date: 12:48:21 PM, Thursday, August 14, 2008
+Message:
+Update to support IE6.
+----
+Modified : /trunk/pc/sc/docs/includes/usercp_sendpasswd.php
+Modified : /trunk/pc/sc/docs/includes/usercp_register.php
+Modified : /trunk/pc/sc/docs/includes/usercp_email.php
+Modified : /trunk/pc/sc/docs/includes/usercp_delivery.php
+Modified : /trunk/pc/sc/docs/event_functions.js
+Modified : /trunk/pc/sc/docs/login.php
+Modified : /trunk/pc/sc/docs/map_functions.js
+Modified : /trunk/pc/sc/docs/shakemap.js
+
+
+Revision: 427
+Author: klin
+Date: 10:36:38 AM, Thursday, August 14, 2008
+Message:
+Update to add tracking of server id.
+----
+Modified : /trunk/pc/sc/bin/rssd.pl
+Modified : /trunk/pc/sc/bin/polld.pl
+
+
+Revision: 425
+Author: klin
+Date: 10:33:34 AM, Thursday, August 14, 2008
+Message:
+Add system notification type.
+----
+Modified : /trunk/pc/sc/bin/notifyqueue.pl
+Modified : /trunk/pc/sc/bin/notify.pl
+
+
+Revision: 423
+Author: klin
+Date: 10:25:23 AM, Thursday, August 14, 2008
+Message:
+Update to add profile description tag.
+----
+Modified : /trunk/pc/sc/bin/manage_profile.pl
+
+
+Revision: 422
+Author: klin
+Date: 1:15:12 PM, Thursday, May 01, 2008
+Message:
+Updated pattern matching and check files.
+----
+Modified : /trunk/pc/admin/post_config.pl
+Modified : /trunk/pc/sc/bin/notify.pl
+
+
+Revision: 420
+Author: klin
+Date: 1:09:01 PM, Thursday, May 01, 2008
+Message:
+Updated username and email_address default length.
+----
+Modified : /trunk/pc/sc/db/sc-create.sql
+Modified : /trunk/pc/sc/db/sc-data.sql
+
+
+Revision: 419
+Author: klin
+Date: 12:55:00 PM, Thursday, May 01, 2008
+Message:
+Updated facility ans shakemap sql statement.
+----
+Modified : /trunk/pc/sc/docs/facility.php
+
+
+Revision: 418
+Author: klin
+Date: 12:46:29 PM, Thursday, May 01, 2008
+Message:
+Updated assigned style for template.
+----
+Modified : /trunk/pc/sc/docs/templates/subSilver/facility_header.tpl
+
+
+Revision: 417
+Author: klin
+Date: 11:39:20 AM, Thursday, May 01, 2008
+Message:
+Sample voice notification template for 3n service.
+----
+Added : /trunk/pc/sc/templates/shaking/script/3n.pl
+Added : /trunk/pc/sc/templates/shaking/script/3n_header.pl
+
+
+Revision: 416
+Author: klin
+Date: 11:33:55 AM, Thursday, May 01, 2008
+Message:
+bug-fix csv header line.
+----
+Modified : /trunk/pc/sc/templates/new_event/email_text/eventcsv_header.txt
+
+
+Revision: 412
+Author: klin
+Date: 3:59:35 PM, Monday, March 24, 2008
+Message:
+Update to parse <pubDate> instead of <eq:seconds> tag from ShakeMap RSS data feed.
+Bug-fix url link when version is out of sync.
+Update on facility - event listing order.
+----
+Modified : /trunk/pc/sc/lib/SC/Server.pm
+Modified : /trunk/pc/sc/lib/SC.pm
+Modified : /trunk/pc/sc/docs/language/lang_english/lang_admin.php
+Modified : /trunk/pc/sc/docs/event.php
+
+
+Revision: 408
+Author: klin
+Date: 3:54:13 PM, Monday, March 24, 2008
+Message:
+Improved checking/install of supporting applications and Perl Modules.
+Added post installation configuration script.
+----
+Modified : /trunk/pc/admin/install_perl_packages.bat
+Added : /trunk/pc/admin/post_config.bat
+Added : /trunk/pc/admin/post_config.pl
+Added : /trunk/pc/admin/system_check.pl
+
+
+Revision: 407
+Author: klin
+Date: 10:16:23 AM, Thursday, February 21, 2008
+Message:
+Update to match changes on the GS web.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_fetch.php
+
+
+Revision: 385
+Author: klin
+Date: 11:44:29 AM, Thursday, February 14, 2008
+Message:
+Added check ShakeMap status using recent quake catalog on GS web site.
+Update to use recent quake catalog to check canceled events.
+----
+Modified : /trunk/pc/sc/bin/shake_fetch.pl
+Modified : /trunk/pc/sc/lib/SC/Server.pm
+Modified : /trunk/pc/sc/conf/sc.conf
+
+
+Revision: 382
+Author: klin
+Date: 2:25:24 PM, Wednesday, February 13, 2008
+Message:
+Bug-fix damage matric insertion into notify table.
+Bug-fix missing module definition.
+Bug-fix pagination.
+----
+Modified : /trunk/pc/sc/bin/notifyqueue.pl
+Modified : /trunk/pc/sc/docs/facility.php
+
+
+Revision: 378
+Author: klin
+Date: 1:19:00 PM, Tuesday, February 12, 2008
+Message:
+Enable FACILITY_TYPE filtering.
+Bug-fix to handle only one notification request.
+Default template header update.
+----
+Modified : /trunk/pc/sc/bin/manage_profile.pl
+Modified : /trunk/pc/sc/templates/shaking/email_html/default_header.txt
+
+
+Revision: 373
+Author: klin
+Date: 2:37:44 PM, Friday, February 08, 2008
+Message:
+Disabled metrics not in grid.xyz.
+Update to switch to XML::Parser with stream processing and to expand keywords for templates.
+template update.
+Bug-fix round off error during grid table lookup.
+----
+Modified : /trunk/pc/sc/bin/notifyqueue.pl
+Modified : /trunk/pc/sc/bin/scfeed_local.pl
+Modified : /trunk/pc/sc/bin/template.pl
+Modified : /trunk/pc/sc/lib/SC/RSS.pm
+Modified : /trunk/pc/sc/templates/xml/exposure_csv.tt
+Modified : /trunk/pc/sc/lib/SC/Product.pm
+
+
+Revision: 362
+Author: klin
+Date: 10:08:52 AM, Wednesday, February 06, 2008
+Message:
+Bug-fix template field order.
+Bug-fix to remove user profile association after editing user notification requests.
+----
+Modified : /trunk/pc/sc/templates/xml/exposure_csv.tt
+Modified : /trunk/pc/sc/docs/admin/admin_user_notifications.php
+
+
+Revision: 360
+Author: klin
+Date: 4:01:06 PM, Friday, February 01, 2008
+Message:
+Local Product template update.
+Enable multi-column sorting of event table.
+Default 'damage','grid-value','exceedance ratio','facility_name'.
+Bug-fix lowercase metric and gm popup.
+----
+Added : /trunk/pc/sc/templates/xml/exposure_csv.tt
+Modified : /trunk/pc/sc/templates/xml/exposure_kml.tt
+Modified : /trunk/pc/sc/docs/event.php
+Modified : /trunk/pc/sc/docs/event_functions.js
+
+
+Revision: 349
+Author: klin
+Date: 3:08:36 PM, Wednesday, January 30, 2008
+Message:
+Bug-fix for missing username.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_users.php
+
+
+Revision: 344
+Author: klin
+Date: 3:45:11 PM, Tuesday, January 29, 2008
+Message:
+Update on warning messages.
+Update to carry over local products.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_config.php
+Modified : /trunk/pc/sc/docs/admin/admin_service.php
+Modified : /trunk/pc/sc/bin/tester.pl
+
+
+Revision: 325
+Author: klin
+Date: 1:28:34 PM, Monday, January 28, 2008
+Message:
+Bug-fix two missing tables during backup.
+Bug-fix the logic of sync_conf and database update.
+Correct image url error.
+Update uninstall delete file for revision_history.txt.
+Update for better insert operation.
+----
+Modified : /trunk/pc/sc/docs/admin/admin_db_utilities.php
+Modified : /trunk/pc/sc/docs/admin/admin_config.php
+Modified : /trunk/pc/sc/docs/admin/admin_service.php
+Modified : /trunk/pc/sc/docs/templates/Caltrans/admin/index_navigate.tpl
+Modified : /trunk/pc/sc/docs/templates/subSilver/images/adm_header.jpg
+Modified : /trunk/pc/sc/bin/sync_conf.pl
+
+
+Revision: 316
+Author: klin
+Date: 10:11:58 AM, Friday, January 25, 2008
+Message:
+Fetching ShakeMaps from USGS Web site and run scfeed_local.
+----
+Added : c:/shakecast/sc/bin/shake_fetch.pl
+
+
+Revision: 315
+Author: klin
+Date: 12:34:01 PM, Wednesday, January 23, 2008
+Message:
+Revision # update.
+----
+Modified : c:/shakecast/sc/db/sc-data.sql
+
+
+Revision: 314
+Author: klin
+Date: 11:48:18 AM, Wednesday, January 23, 2008
+Message:
+event template update for subsilver.
+task repeater template update for subsilver.
+Update Caltrans template to include command line options for task repeater.
+----
+Modified : c:/shakecast/sc/docs/templates/subSilver/event_body.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/event_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/admin/cron_edit_body.tpl
+Modified : c:/shakecast/sc/docs/templates/Caltrans/admin/cron_edit_body.tpl
+
+
+Revision: 311
+Author: klin
+Date: 11:39:57 AM, Wednesday, January 23, 2008
+Message:
+Update Caltrans event templates to switch javascript sorting to php.
+Update language descriptions for both event and task repeater page.
+Image for sorting option.
+----
+Modified : c:/shakecast/sc/docs/templates/Caltrans/event_body.tpl
+Modified : c:/shakecast/sc/docs/templates/Caltrans/event_header.tpl
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_admin.php
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_main.php
+Added : c:/shakecast/sc/docs/images/a.png
+Added : c:/shakecast/sc/docs/images/d.png
+
+
+Revision: 308
+Author: klin
+Date: 11:35:05 AM, Wednesday, January 23, 2008
+Message:
+Update admin/admin_cron.php to include command line options for task shake_fetch and tester.
+Update to switch table sorting function from javascript to php.
+Update to check uninitialized threshold value.
+----
+Modified : c:/shakecast/sc/docs/admin/admin_cron.php
+Modified : c:/shakecast/sc/docs/event.php
+Modified : c:/shakecast/sc/bin/sm_inject.pl
+
+
+Revision: 304
+Author: klin
+Date: 10:53:03 AM, Tuesday, January 22, 2008
+Message:
+Image for date picker.
+Updated task repeater language descriptions.
+Task Repeater default template files.
+Task Repeater Caltrans template files.
+New admin task repeater page.
+Update to remove ShakeMap data directory when removing event from database.
+Updated with process option for command line utility 'heartbeat'.
+Bug-fix for error message associated with uninitiated facility attribute.
+----
+Added : c:/shakecast/sc/docs/images/cal.gif
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_admin.php
+Added : c:/shakecast/sc/docs/templates/subSilver/admin/cron_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/subSilver/admin/cron_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/cron_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/cron_list_body.tpl
+Added : c:/shakecast/sc/docs/admin/admin_cron.php
+Modified : c:/shakecast/sc/docs/admin/admin_event.php
+Modified : c:/shakecast/sc/docs/admin/admin_process.php
+Modified : c:/shakecast/sc/docs/admin/admin_db_utilities.php
+
+
+Revision: 293
+Author: klin
+Date: 10:29:32 AM, Tuesday, January 22, 2008
+Message:
+Added language descriptions for task repeater.
+Added supporting functions for select options and date picker for task repeater page.
+----
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_admin.php
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_main.php
+Added : c:/shakecast/sc/docs/includes/datetimepicker.js
+Modified : c:/shakecast/sc/docs/includes/functions.php
+Modified : c:/shakecast/sc/docs/includes/functions_selects.php
+
+
+Revision: 291
+Author: klin
+Date: 10:27:01 AM, Tuesday, January 22, 2008
+Message:
+Update to remove ShakeMap event directory when deleting the event from admin interface.
+----
+Modified : c:/shakecast/sc/docs/includes/functions.php
+
+
+Revision: 289
+Author: klin
+Date: 9:18:15 AM, Tuesday, January 22, 2008
+Message:
+Updated examples of template naming and output variation.
+Update to generate local ShakeCast products based on template definitions inside the template/xml directory.
+Update to fix 'us' and 'global' naming translation.
+Update to generate output filename based on both template name and 'output' option.
+Bug fix 'compress' option checking and log rotating logic.
+----
+Added : c:/shakecast/sc/templates/xml/exposure_kml.tt
+Deleted : c:/shakecast/sc/templates/xml/shakecast.tt
+Deleted : c:/shakecast/sc/templates/xml/kml.tt
+Deleted : c:/shakecast/sc/templates/xml/kml_local.tt
+Added : c:/shakecast/sc/templates/xml/shakecast_xml.tt(Copy from path: c:/shakecast/sc/templates/xml/shakecast.tt, Revision, 203
+Modified : c:/shakecast/sc/bin/notifyqueue.pl
+Modified : c:/shakecast/sc/bin/template.pl
+Modified : c:/shakecast/sc/bin/logrotate.pl
+
+
+Revision: 288
+Author: klin
+Date: 9:14:47 AM, Tuesday, January 22, 2008
+Message:
+Bug fix sql 'drop database' statement.
+Fixed sql statement errors during installation.
+----
+Modified : c:/shakecast/admin/create_sc_db.sql
+Modified : c:/shakecast/sc/db/sc-create.sql
+
+
+Revision: 281
+Author: klin
+Date: 9:34:59 AM, Monday, January 14, 2008
+Message:
+Update to retrieve PHP 5.2.5 for security patch.
+Apache security update to disable TRACE and UserDir.
+Update Apache httpd.conf PHP entries.
+----
+Modified : c:/shakecast/ShakeCast v2.0.nsi
+Modified : c:/shakecast/sc/conf/httpd-sc.conf
+Modified : c:/shakecast/sc/conf/httpd.conf
+
+
+Revision: 276
+Author: klin
+Date: 8:30:19 AM, Monday, January 14, 2008
+Message:
+Update to create sc database sql for clean installation.
+Update to include sc.conf entries into phpbb_config table.
+Update to include 'threshold' config option.
+----
+Modified : c:/shakecast/admin/create_sc_db.sql
+Modified : c:/shakecast/sc/db/sc-create.sql
+Modified : c:/shakecast/sc/db/sc-data.sql
+Modified : c:/shakecast/sc/docs/templates/subSilver/admin/service_body.tpl
+Modified : c:/shakecast/sc/docs/templates/Caltrans/admin/service_body.tpl
+Modified : c:/shakecast/sc/docs/admin/admin_service.php
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_admin.php
+
+
+Revision: 269
+Author: klin
+Date: 7:17:43 AM, Monday, January 14, 2008
+Message:
+Update injection code with threshold settings (percentage based).
+Code maintenance with improved return code checking.
+Code maintenance with updated comment.
+----
+Modified : c:/shakecast/sc/bin/sync_conf.pl
+Modified : c:/shakecast/sc/lib/SC/RSS.pm
+Modified : c:/shakecast/sc/bin/sm_inject.pl
+Modified : c:/shakecast/sc/bin/scfeed_local.pl
+Modified : c:/shakecast/sc/bin/rssd.pl
+Modified : c:/shakecast/sc/bin/manage_user.pl
+Modified : c:/shakecast/sc/bin/manage_profile.pl
+Modified : c:/shakecast/sc/bin/manage_event.pl
+
+
+Revision: 261
+Author: klin
+Date: 1:30:19 PM, Friday, January 11, 2008
+Message:
+Added facility shaking history plot function in search result.
+Add javascript to support shaking history plot of facility search.
+----
+Added : c:/shakecast/sc/bin/facility_shaking_plot.pl
+Added : c:/shakecast/sc/docs/facility_functions.js
+Modified : c:/shakecast/sc/docs/facility.php
+
+
+Revision: 258
+Author: klin
+Date: 11:19:30 AM, Friday, January 11, 2008
+Message:
+Image png update.
+----
+Modified : c:/shakecast/sc/docs/images/campus.png
+Modified : c:/shakecast/sc/docs/images/campusgreen.png
+Modified : c:/shakecast/sc/docs/images/campusorange.png
+Modified : c:/shakecast/sc/docs/images/campusred.png
+Modified : c:/shakecast/sc/docs/images/campusyellow.png
+Modified : c:/shakecast/sc/docs/images/city.png
+Modified : c:/shakecast/sc/docs/images/citygreen.png
+Modified : c:/shakecast/sc/docs/images/cityorange.png
+Modified : c:/shakecast/sc/docs/images/cityred.png
+Modified : c:/shakecast/sc/docs/images/cityyellow.png
+Modified : c:/shakecast/sc/docs/images/sc_all_bar.png
+Modified : c:/shakecast/sc/docs/images/sc_daily_bar.png
+Modified : c:/shakecast/sc/docs/images/sc_monthly_bar.png
+Modified : c:/shakecast/sc/docs/images/sc_weekly_bar.png
+
+
+Revision: 257
+Author: klin
+Date: 11:18:14 AM, Friday, January 11, 2008
+Message:
+Added admin background process page for executing command line management utilities (facility, user, and profile).
+Added a new function to export facility inventory in csv format.
+Updated for improved facility delete and export options.
+Add admin background process page for executing command line utilities and controlling system services.
+Added admin page for configuring system services.  Modifications will be saved in both the database and 'sc.conf'.
+Added new admin page for viewing log files under the log directory.
+Update to enable improved page refresh and execution of command logstats, logrotate, and system service start/stop.
+----
+Added : c:/shakecast/sc/docs/admin/admin_cmd_utilities.php
+Modified : c:/shakecast/sc/docs/admin/admin_db_utilities.php
+Modified : c:/shakecast/sc/docs/admin/admin_facility.php
+Added : c:/shakecast/sc/docs/admin/admin_process.php
+Added : c:/shakecast/sc/docs/admin/admin_service.php
+Added : c:/shakecast/sc/docs/admin/admin_viewer.php
+Modified : c:/shakecast/sc/docs/admin/index.php
+
+
+Revision: 250
+Author: klin
+Date: 10:46:58 AM, Friday, January 11, 2008
+Message:
+Added select menus for loglevel, process filter, # lines, and command line process option.
+Updated to add select menu options for loglevel, log process filter, # lines, manage facility, manage user and manage profile.
+Added language entries for system services and facility export and upload.
+----
+Modified : c:/shakecast/sc/docs/includes/functions_selects.php
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_main.php
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_admin.php
+
+
+Revision: 247
+Author: klin
+Date: 10:36:43 AM, Friday, January 11, 2008
+Message:
+Updated/Added result page of facility search to include shaking history plots.
+Update corresponding template files of facility search from Caltrans to subSilver theme.
+----
+Modified : c:/shakecast/sc/docs/templates/subSilver/facility_body.tpl
+Added : c:/shakecast/sc/docs/templates/subSilver/facility_header.tpl
+Modified : c:/shakecast/sc/docs/templates/Caltrans/facility_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/facility_header.tpl
+
+
+Revision: 245
+Author: klin
+Date: 9:38:16 AM, Friday, January 11, 2008
+Message:
+Added new system service page template.
+Update template to support command line manage utility options.
+Update admin facility_list_body.tpl to support selectable deletion and facility export options.
+Update corresponding templates for the default theme subSilver from Caltrans.
+----
+Modified : c:/shakecast/sc/docs/templates/subSilver/admin/db_utils_restore_body.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/admin/facility_list_body.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/admin/index_body.tpl
+Modified : c:/shakecast/sc/docs/templates/Caltrans/admin/facility_list_body.tpl
+Modified : c:/shakecast/sc/docs/templates/Caltrans/admin/db_utils_restore_body.tpl
+Modified : c:/shakecast/sc/docs/templates/Caltrans/admin/index_body.tpl
+Added : c:/shakecast/sc/docs/templates/subSilver/admin/service_body.tpl
+Added : c:/shakecast/sc/docs/templates/subSilver/admin/viewer_body.tpl
+Added : c:/shakecast/sc/docs/templates/subSilver/admin/viewer_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/service_body.tpl
+
+
+Revision: 240
+Author: klin
+Date: 2:02:03 PM, Tuesday, January 08, 2008
+Message:
+Created admin log viewer page.
+Template files for admin_viewer.pl page.
+----
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/viewer_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/viewer_list_body.tpl
+
+
+Revision: 239
+Author: klin
+Date: 8:55:38 AM, Monday, January 07, 2008
+Message:
+Update sync_conf.pl to synchronize all parameters between sc.conf and database.
+Update heartbeat.pl to work nicely with Windows 'at' command.  Syntax
+at [time] cmd /c "perl c:\ShakeCast/sc/bin/heartbeat.pl"
+----
+Modified : c:/shakecast/sc/bin/sync_conf.pl
+Modified : c:/shakecast/sc/bin/heartbeat.pl
+
+
+Revision: 237
+Author: klin
+Date: 3:20:11 PM, Wednesday, January 02, 2008
+Message:
+Update to carry changes in SMTP settings to sc.conf.
+----
+Modified : c:/shakecast/sc/docs/admin/admin_config.php
+
+
+Revision: 236
+Author: klin
+Date: 3:47:19 PM, Friday, November 30, 2007
+Message:
+Added command line help description.
+Added hostname lookup, copyright info.
+----
+Modified : c:/shakecast/sc/bin/template.pl
+Modified : c:/shakecast/sc/bin/tester.pl
+Modified : c:/shakecast/sc/bin/heartbeat.pl
+
+
+Revision: 233
+Author: klin
+Date: 2:14:38 PM, Wednesday, November 14, 2007
+Message:
+Correct sql grammar error.
+----
+Modified : c:/shakecast/sc/db/sc-create.sql
+
+
+Revision: 232
+Author: klin
+Date: 8:19:27 AM, Friday, November 09, 2007
+Message:
+Update instructions on finalizing ShakeCast.
+----
+Modified : c:/shakecast/README.txt
+Modified : c:/shakecast/revision_history.txt
+Modified : c:/shakecast/windows_install.txt
+
+
+Revision: 229
+Author: klin
+Date: 8:07:26 AM, Wednesday, November 07, 2007
+Message:
+Update primary key for both facility_geometry_profile and geometry_user_profile tables.
+Suggest to add 'group_concat_max_len' variable (default 1024) in MySQL for users with large delivery addresses per notification profile.
+Limit string size of notification comment and loop delivery addresses when sending email.
+----
+Modified : c:/shakecast/sc/db/sc-create.sql
+Modified : c:/shakecast/sc/bin/notify.pl
+
+
+Revision: 225
+Author: klin
+Date: 2:34:38 PM, Tuesday, November 06, 2007
+Message:
+Directory change.  
+Removed dependency of scfeed_local.conf file.
+----
+Modified : c:/shakecast/sc/templates/xml/kml.tt
+Deleted : c:/shakecast/sc/bin/scfeed_local.conf
+Deleted : c:/shakecast/sc/bin/shakecast.tt
+Deleted : c:/shakecast/sc/bin/shakecast_xml.pl
+
+
+#
+# Cut-off date for ShakeCast Version 2
+#
+
+Revision: 223
+Author: klin
+Date: 2:07:08 PM, Tuesday, November 06, 2007
+Message:
+Template update for computing damage level and flexible template blocks. 
+Update default authentication directory and requirement.
+Update default profile settings.
+
+----
+Modified : c:/shakecast/sc/bin/template.pl
+Modified : c:/shakecast/sc/conf/httpd-sc.conf
+Modified : c:/shakecast/sc/userdbs/sc-servers
+Modified : c:/shakecast/sc/userdbs/sc-users
+Modified : c:/shakecast/sc/conf/profile.conf
+
+
+Revision: 203
+Author: klin
+Date: 1:37:23 PM, Tuesday, November 06, 2007
+Message:
+templates for making ShakeCast local products.
+Change directory location for script templates.
+----
+Added : c:/shakecast/sc/templates/xml(Copy from path: c:/shakecast/sc/templates/web, Revision, 123
+Added : c:/shakecast/sc/templates/xml/kml.tt
+Added : c:/shakecast/sc/templates/xml/kml_local.tt
+Added : c:/shakecast/sc/templates/xml/shakecast.tt
+
+
+Revision: 202
+Author: klin
+Date: 9:31:05 AM, Tuesday, November 06, 2007
+Message:
+Update revision data and template info.
+----
+Modified : c:/shakecast/sc/db/sc-data.sql
+
+
+Revision: 201
+Author: klin
+Date: 9:28:00 AM, Tuesday, November 06, 2007
+Message:
+update revision link
+----
+Modified : c:/shakecast/sc/docs/admin/index.php
+
+
+Revision: 200
+Author: klin
+Date: 8:52:30 AM, Monday, November 05, 2007
+Message:
+Update for better profile sorting and processing.
+Update for better mysql query performance.
+----
+Modified : c:/shakecast/sc/bin/notifyqueue.pl
+
+
+Revision: 199
+Author: klin
+Date: 8:50:26 AM, Monday, November 05, 2007
+Message:
+Update for additional ShakeMap product types.
+----
+Modified : c:/shakecast/sc/bin/tester.pl
+
+
+Revision: 198
+Author: klin
+Date: 8:49:46 AM, Monday, November 05, 2007
+Message:
+Update for sorting user notifications.
+----
+Modified : c:/shakecast/sc/bin/notify.pl
+
+
+Revision: 197
+Author: klin
+Date: 8:48:13 AM, Monday, November 05, 2007
+Message:
+Add heartbeat event injection for routine testing of system.
+----
+Added : c:/shakecast/sc/bin/heartbeat.pl
+
+
+Revision: 196
+Author: klin
+Date: 8:44:14 AM, Monday, November 05, 2007
+Message:
+Added ShakeCast user profile and earthquake faq.
+----
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_faq.php
+
+
+Revision: 195
+Author: klin
+Date: 8:43:28 AM, Monday, November 05, 2007
+Message:
+Added user authentication check.
+----
+Modified : c:/shakecast/sc/docs/eq_map.php
+Modified : c:/shakecast/sc/docs/event.php
+
+
+Revision: 190
+Author: klin
+Date: 10:30:56 AM, Friday, November 02, 2007
+Message:
+Add custom Caltrans template.
+----
+Added : c:/shakecast/sc/docs/templates/Caltrans
+Added : c:/shakecast/sc/docs/templates/Caltrans/Caltrans.cfg
+Added : c:/shakecast/sc/docs/templates/Caltrans/Caltrans.css
+Added : c:/shakecast/sc/docs/templates/Caltrans/Copy of index_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/admin_message_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/auth_forum_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/auth_select_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/auth_ug_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/board_config_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/category_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/config_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/confirm_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/damage_level_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/damage_level_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/db_utils_backup_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/db_utils_restore_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/disallow_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/event_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/event_summary_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/facility_attribute_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/facility_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/facility_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/facility_type_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/facility_type_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/forum_admin_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/forum_delete_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/forum_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/forum_prune_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/forum_prune_result_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/forum_prune_select_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/group_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/group_select_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/gs_inject_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/gs_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/index.htm
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/index_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/index_frameset.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/index_navigate.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/jumpbox.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/page_facility_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/page_footer.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/page_gm_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/page_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/profile_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/profile_facility_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/profile_facility_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/profile_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/profile_notification_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/profile_notification_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/profile_notification_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/ranks_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/ranks_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/server_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/server_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/server_password_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/smile_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/smile_import_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/smile_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/styles_addnew_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/styles_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/styles_exporter.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/styles_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/template.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/template_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/template_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/template_view_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/test_event_create_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/test_event_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_avatar_gallery.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_ban_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_email_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_notification_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_notification_select_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_notification_select_body2.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_replication_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/user_select_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/words_edit_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/admin/words_list_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/agreement.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/bbcode.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/confirm_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/dojo.css
+Added : c:/shakecast/sc/docs/templates/Caltrans/eqlist_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/eqlist_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/eqmap_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/eqmap_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/error_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/event_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/event_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/facility_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/faq_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/faq_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/formIE.css
+Added : c:/shakecast/sc/docs/templates/Caltrans/gm_popup_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/gm_popup_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/googlemaps_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/groupcp_info_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/groupcp_pending_info.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/groupcp_user_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/images
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/Thumbs.db
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/bg_nav-site1.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/cellpic.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/cellpic1.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/cellpic2.jpg
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/cellpic3.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/created_by.jpg
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_announce.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_announce_new.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_big.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_hot.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_lock.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_lock_new.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_locked_big.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_new.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_new_big.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_new_hot.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_sticky.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/folder_sticky_new.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/foot_bck.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/hd.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/header.jpg
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/header.psd
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_delete.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_latest_reply.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_mini_faq.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_mini_groups.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_mini_login.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_mini_members.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_mini_message.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_mini_profile.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_mini_register.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_mini_search.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_minipost.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_minipost_new.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/icon_newest_reply.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/index.htm
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/Thumbs.db
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_aim.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_edit.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_email.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_icq_add.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_ip.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_msnm.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_pm.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_profile.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_quote.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_search.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_www.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/icon_yim.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/msg_newpost.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/post.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/reply-locked.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/lang_english/reply.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/login.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/logo_phpBB.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/logo_phpBB_med.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/map_wrap_bottom.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/map_wrap_top.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/msg_inbox.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/msg_outbox.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/msg_savebox.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/msg_sentbox.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/navLeft.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/navRight.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/reset.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/search.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/spacer.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/submit.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/sumbit-1.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/sumbit.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/th_bck.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/topic_delete.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/topic_lock.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/topic_move.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/topic_split.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/topic_unlock.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/tr_bck.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/updateNoteProfiles.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/usgs.jpg
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/usgs_header.jpg
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/vote_lcap.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/vote_rcap.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/voting_bar.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/images/whosonline.gif
+Added : c:/shakecast/sc/docs/templates/Caltrans/index.htm
+Added : c:/shakecast/sc/docs/templates/Caltrans/index_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/index_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/jumpbox.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/login_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/login_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/memberlist_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/message_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/modcp_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/modcp_move.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/modcp_split.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/modcp_viewip.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/overall_footer.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/overall_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/posting_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/posting_poll_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/posting_preview.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/posting_smilies.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/posting_topic_review.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/privmsgs_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/privmsgs_popup.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/privmsgs_preview.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/privmsgs_read_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/profile_add_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/profile_avatar_gallery.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/profile_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/profile_email.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/profile_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/profile_send_email.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/profile_send_pass.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/profile_view_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/sc.css
+Added : c:/shakecast/sc/docs/templates/Caltrans/search_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/search_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/search_results.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/search_results_posts.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/search_results_topics.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/search_username.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/simple_footer.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/simple_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/theme_info.cfg
+Added : c:/shakecast/sc/docs/templates/Caltrans/topic_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/viewforum_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/viewonline_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/viewprofile_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/viewprofile_header.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/viewtopic_body.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/viewtopic_poll_ballot.tpl
+Added : c:/shakecast/sc/docs/templates/Caltrans/viewtopic_poll_result.tpl
+
+
+Revision: 189
+Author: klin
+Date: 10:29:18 AM, Friday, November 02, 2007
+Message:
+Added control for GM marker display.
+----
+Modified : c:/shakecast/sc/docs/event_functions.js
+
+
+Revision: 188
+Author: klin
+Date: 10:28:19 AM, Friday, November 02, 2007
+Message:
+Added ii_overlay.jpg to ii_overlay.png conversion for older ShakeMap.
+----
+Modified : c:/shakecast/sc/docs/event.php
+
+
+Revision: 186
+Author: klin
+Date: 10:12:07 AM, Friday, November 02, 2007
+Message:
+Altered delivery_addresss field for table notification to hold multiple user email addresses.
+----
+Modified : c:/shakecast/sc/db/sc-create.sql
+
+
+Revision: 185
+Author: klin
+Date: 10:09:35 AM, Friday, November 02, 2007
+Message:
+Added profile queuing process.
+Populating delivery_address field in notification table.
+Altered null with 'ALL' field for selecting event type, product type, damage level, and other selections.
+----
+Modified : c:/shakecast/sc/bin/notifyqueue.pl
+
+
+Revision: 184
+Author: klin
+Date: 10:05:30 AM, Friday, November 02, 2007
+Message:
+Update for fixing uninitiated values.
+----
+Modified : c:/shakecast/sc/bin/notify.pl
+
+
+Revision: 183
+Author: klin
+Date: 10:03:16 AM, Friday, November 02, 2007
+Message:
+Update script to provide profile based notification processing.
+Update script to loop through users with custom notification requests.
+----
+Modified : c:/shakecast/sc/bin/notify.pl
+
+
+Revision: 182
+Author: klin
+Date: 3:37:58 PM, Wednesday, October 31, 2007
+Message:
+Updated to display markers over image tiles.
+----
+Modified : c:/shakecast/sc/docs/map_functions.js
+
+
+Revision: 180
+Author: klin
+Date: 12:54:43 PM, Wednesday, October 31, 2007
+Message:
+Increase allowed script execution time.
+Script maintenance.
+Specified MYISAM as default storage engine.
+Rearrange of script category and linking to attribute table.
+Bug-fix on ShakeMap view url.
+Rearrangement of administrator page category.
+----
+Modified : c:/shakecast/sc/docs/admin/admin_config.php
+Modified : c:/shakecast/sc/docs/admin/admin_db_utilities.php
+Modified : c:/shakecast/sc/docs/admin/admin_event.php
+Modified : c:/shakecast/sc/docs/admin/admin_facility.php
+Modified : c:/shakecast/sc/docs/admin/admin_fetch.php
+
+
+Revision: 173
+Author: klin
+Date: 12:45:22 PM, Wednesday, October 31, 2007
+Message:
+Re-write of profile facility notification request management page.
+Re-write of profile notification request management page.
+Script maintenance and update to the update of geometry_facility_profile table
+Added management for notification templates.
+Script for adding new templates to the ShakeCast system
+----
+Modified : c:/shakecast/sc/docs/admin/admin_profile_facility.php
+Modified : c:/shakecast/sc/docs/admin/admin_profile_notification.php
+Modified : c:/shakecast/sc/docs/admin/admin_profile_polygon.php
+Modified : c:/shakecast/sc/docs/admin/admin_template.php
+Added : c:/shakecast/sc/docs/admin/admin_styles.php
+
+
+Revision: 167
+Author: klin
+Date: 11:26:25 AM, Wednesday, October 31, 2007
+Message:
+Added user notification request management scripts for facility notification requests, user settings, and user replications.
+----
+Added : c:/shakecast/sc/docs/admin/admin_user_facility.php
+Added : c:/shakecast/sc/docs/admin/admin_user_notifications.php
+Added : c:/shakecast/sc/docs/admin/admin_user_replication.php
+
+
+Revision: 166
+Author: klin
+Date: 11:16:04 AM, Wednesday, October 31, 2007
+Message:
+Added editing of user delivery methods.
+Update calculation of database size.
+maintenance update with more added keywords
+Added support function for user_delivery_method, event_type, notification_type, message_format, delivery_method, product_type, metric_type, and damage_level.
+set default notification template during installation
+fix for grid_xml typo
+Template config file for notification.
+----
+Modified : c:/shakecast/sc/docs/admin/admin_users.php
+Modified : c:/shakecast/sc/docs/admin/index.php
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_admin.php
+Modified : c:/shakecast/sc/docs/includes/functions.php
+Modified : c:/shakecast/sc/templates/template_info.cfg
+Modified : c:/shakecast/sc/bin/tester.pl
+Added : c:/shakecast/sc/templates/template_info.cfg
+
+
+Revision: 156
+Author: klin
+Date: 10:27:10 AM, Wednesday, October 10, 2007
+Message:
+Updated date/time stamp parsing.
+----
+Modified : c:/shakecast/sc/bin/logstats.pl
+
+
+Revision: 155
+Author: klin
+Date: 1:52:53 PM, Tuesday, September 25, 2007
+Message:
+Applied 15% amplitude adjustment between mean (HAZUS) and peak (ShakeMap) values 
+----
+Modified : c:/shakecast/sc/db/sc-data.sql
+
+
+Revision: 154
+Author: klin
+Date: 10:31:57 AM, Tuesday, September 25, 2007
+Message:
+Update to allow administrator to create user account
+----
+Modified : c:/shakecast/sc/docs/admin/admin_users.php
+Modified : c:/shakecast/sc/docs/includes/usercp_register.php
+Modified : c:/shakecast/sc/docs/language/lang_english/lang_admin.php
+
+
+Revision: 152
+Author: klin
+Date: 8:44:15 AM, Tuesday, September 25, 2007
+Message:
+Fixed white space problem in file path for apache htpasswd
+----
+Modified : c:/shakecast/sc/scripts/c/admin/admin.pl
+
+
+Revision: 151
+Author: klin
+Date: 4:01:30 PM, Thursday, September 20, 2007
+Message:
+Removed dependency of scfeed_local.conf
+----
+Modified : c:/shakecast/sc/bin/scfeed_local.pl
+
+
+Revision: 150
+Author: klin
+Date: 3:44:29 PM, Wednesday, September 19, 2007
+Message:
+Canceled event based on missing entries in RSS data feed (7 days)
+Code maintenance. Update delete option behavior
+----
+Modified : c:/shakecast/sc/lib/SC/Server.pm
+Modified : c:/shakecast/sc/bin/manage_facility.pl
+Modified : c:/shakecast/sc/bin/manage_profile.pl
+
+
+Revision: 148
+Author: klin
+Date: 11:45:51 AM, Tuesday, September 18, 2007
+Message:
+Bug-fix behavior of delete option
+Update replace option mechanism
+----
+Modified : c:/shakecast/sc/bin/manage_facility.pl
+Modified : c:/shakecast/sc/bin/manage_user.pl
+
+
+Revision: 146
+Author: klin
+Date: 1:05:33 PM, Thursday, September 13, 2007
+Message:
+Default map center file.
+Skip error message for non-valid user group information.
+Fixed geometry_user_profile on batch insert
+Fixed multiple profiles import
+Added delivery_address for missing needed methods
+----
+Modified : c:/shakecast/sc/docs/default_sc.js
+Modified : c:/shakecast/sc/docs/admin/admin_users.php
+Modified : c:/shakecast/sc/bin/manage_user.pl
+
+
+Revision: 143
+Author: klin
+Date: 2:41:06 PM, Tuesday, September 04, 2007
+Message:
+Increase processing time limit to 1200 seconds.
+Add ShakeMap region code in both shaking and damage sql query.
+Alias resend option to also realert for compatibility
+----
+Modified : c:/shakecast/sc/docs/admin/admin_test_event.php
+Modified : c:/shakecast/sc/bin/notify.pl
+Modified : c:/shakecast/sc/bin/manage_event.pl
+
+
+Revision: 140
+Author: klin
+Date: 4:37:26 PM, Thursday, August 23, 2007
+Message:
+Aggregate use of center point for all maps.
+----
+Modified : c:/shakecast/sc/docs/admin/profile_gm.js
+Added : c:/shakecast/sc/docs/default_sc.js
+Modified : c:/shakecast/sc/docs/event_functions.js
+Modified : c:/shakecast/sc/docs/gm_popup_functions.js
+Modified : c:/shakecast/sc/docs/index_map_functions.js
+Modified : c:/shakecast/sc/docs/map_functions.js
+Modified : c:/shakecast/sc/docs/templates/subSilver/Copy of index_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/admin/page_gm_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/eqmap_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/event_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/gm_popup_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/index_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/simple_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/topic_header.tpl
+Modified : c:/shakecast/sc/docs/templates/subSilver/viewprofile_header.tpl
+Modified : c:/shakecast/sc/docs/viewprofile_functions.js
+
+
+Revision: 138
+Author: klin
+Date: 3:49:39 PM, Thursday, August 23, 2007
+Message:
+Merge db_credentials for backend AJAX PHPs with main PHP structure.
+----
+Deleted : c:/shakecast/sc/docs/db_credentials.php
+Deleted : c:/shakecast/sc/docs/facility_data.php
+Modified : c:/shakecast/sc/docs/images/sc_all_bar.png
+Modified : c:/shakecast/sc/docs/images/sc_daily_bar.png
+Modified : c:/shakecast/sc/docs/images/sc_monthly_bar.png
+Modified : c:/shakecast/sc/docs/images/sc_weekly_bar.png
+Deleted : c:/shakecast/sc/docs/map_data.php
+Modified : c:/shakecast/sc/docs/map_xml.php
+Modified : c:/shakecast/sc/docs/server.php
+Deleted : c:/shakecast/sc/docs/shakemap_data.php
+Modified : c:/shakecast/sc/docs/shakemap_xml.php
+Modified : c:/shakecast/sc/docs/suggestions.php
+Modified : c:/shakecast/sc/docs/templates/subSilver/images/header.jpg
+
+
+Revision: 136
+Author: klin
+Date: 9:22:24 AM, Monday, August 20, 2007
+Message:
+Allowed users from batch import to log on via web interface.
+Revised default shakecast_user id for scadmin (from 2 to 1)
+Added delivery method check before insert/update.
+----
+Modified : c:/shakecast/sc/bin/manage_user.pl
+Modified : c:/shakecast/sc/bin/update_password.pl
+Modified : c:/shakecast/sc/db/sc-data.sql
+Modified : c:/shakecast/sc/docs/includes/usercp_delivery.php
+
+
+Revision: 133
+Author: klin
+Date: 3:57:36 PM, Friday, August 17, 2007
+Message:
+Update to also handle user password for apache basic authentication
+Sync user password for both php database and apache sc-users data
+Update php exec routine for external perl functions
+----
+Modified : c:/shakecast/sc/bin/update_password.pl
+Modified : c:/shakecast/sc/docs/includes/usercp_activate.php
+Modified : c:/shakecast/sc/docs/includes/usercp_register.php
+Modified : c:/shakecast/sc/docs/includes/usercp_sendpasswd.php
+Modified : c:/shakecast/sc/docs/admin/admin_event.php
+Modified : c:/shakecast/sc/docs/admin/admin_facility.php
+Modified : c:/shakecast/sc/docs/admin/admin_fetch.php
+Modified : c:/shakecast/sc/docs/admin/admin_profile_facility.php
+Modified : c:/shakecast/sc/docs/admin/admin_profile_polygon.php
+Modified : c:/shakecast/sc/docs/admin/admin_server.php
+Modified : c:/shakecast/sc/docs/admin/admin_test_event.php
+Modified : c:/shakecast/sc/docs/admin/profile_response.php
+
+
+Revision: 129
+Author: klin
+Date: 3:50:02 PM, Thursday, August 16, 2007
+Message:
+Added SMTP config syncing between database and sc.conf
+----
+Modified : c:/shakecast/sc/bin/notify.pl
+Added : c:/shakecast/sc/bin/sync_conf.pl
+
+
+Revision: 128
+Author: klin
+Date: 4:16:24 PM, Wednesday, August 15, 2007
+Message:
+Update pagination and add Hawaii region for USGS ShakeMap.
+----
+Modified : c:/shakecast/sc/docs/admin/admin_fetch.php
+Modified : c:/shakecast/sc/docs/images/bridgegreen.png
+Modified : c:/shakecast/sc/docs/images/bridgeorange.png
+Modified : c:/shakecast/sc/docs/images/bridgered.png
+Modified : c:/shakecast/sc/docs/images/bridgeyellow.png
+Modified : c:/shakecast/sc/docs/templates/subSilver/admin/gs_list_body.tpl
+
+
+Revision: 127
+Author: klin
+Date: 4:47:52 PM, Monday, August 13, 2007
+Message:
+Update GM marker control on number displayed and damage state.
+----
+Added : c:/shakecast/sc/docs/images/bridge.png
+Added : c:/shakecast/sc/docs/images/bridgegreen.png
+Added : c:/shakecast/sc/docs/images/bridgeorange.png
+Added : c:/shakecast/sc/docs/images/bridgered.png
+Added : c:/shakecast/sc/docs/images/bridgeyellow.png
+Added : c:/shakecast/sc/docs/images/shadow-bridge.png
+Modified : c:/shakecast/sc/docs/includes/constants.php
+Modified : c:/shakecast/sc/docs/map_functions.js
+Modified : c:/shakecast/sc/docs/server.php
+Modified : c:/shakecast/sc/docs/templates/subSilver/index_body.tpl
+Modified : c:/shakecast/sc/bin/facimport.pl
+Modified : c:/shakecast/sc/bin/manage_facility.pl
+Modified : c:/shakecast/sc/bin/manage_user.pl
+
+

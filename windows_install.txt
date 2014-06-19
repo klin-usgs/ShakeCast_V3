@@ -1,0 +1,252 @@
+# $Id: windows_install.txt 232 2007-11-09 15:19:27Z klin $
+
+Installing ShakeCast on a Windows Platform
+==========================================
+    This document outlines the process of installing ShakeCast on a platform
+    that runs Windows 2000 or Windows XP. The basic steps are:
+
+    1   Install the ShakeCast Server Software.
+
+    2   Install Perl.
+
+    3   Install the MySQL Database System.
+
+    4   Install the Apache Web server.
+
+    5   Configure MySQL, Apache and ShakeCast.
+
+    This document assumes that all of these components will be installed
+    from scratch on the server hardware platform.
+
+  Install the ShakeCast Server Software
+
+    The ShakeCast Server Software is distributed as a single self-installing
+    file named shakecast_install.exe. Executing this file will cause the
+    ShakeCast Server Software to be installed into c:\shakecast. Do *not*
+    choose a different installation location unless you really know what you
+    are doing as the prepackaged installation aides depend on this location.
+
+  Install Perl
+
+    The ShakeCast server has been developed and tested using ActiveState
+    Perl, Version 5.8.8 Build 819. It is possible that other ports of Perl
+    will also work.
+
+    To install Perl, launch the downloaded package 
+	
+	\shakecast\Installer\ActivePerl.msi 
+	
+	during ShakeCast installation.  Otherwise, go to
+
+      http://www.activestate.com/
+
+    and download the current 5.8 version of Perl. Then, perform a default
+    installation.
+
+   Installing Perl Modules
+
+    The ShakeCast server uses several Perl modules that are not part of the
+    core ActiveState Perl distribution. To install these:
+
+      cd \shakecast\admin
+      install_perl_packages
+
+  Install the MySQL Database System
+
+    To install the MySQL Database System, launch the downloaded package
+	
+	\shakecast\Installer\mysql.msi
+	
+	during ShakeCast installation.  Otherwise, go to
+
+      http://www.mysql.com/
+
+    and download the current 5.0 version. The current version of the
+    ShakeCast Server has been tested with version 5.0.41 of MySQL. The
+    so-called *windows essentials* version is sufficient.
+
+    To install, execute the file mysql-5.0.41-essential-win32.msi and select
+    the following when you are given choices:
+
+    1   Setup Type: typical
+
+    2   Sign up with MySQL.com: you may register or skip registration.
+
+    3   Wizard Complete: Configure MySQL now.
+
+    4   MySQL Server Instance Configuration: Standard Configuration
+
+    5   Install as Windows Service
+
+    6   Modify Security Settings: provide a root password of your choice and
+        check "root may only connect from localhost".
+
+   Setup the ShakeCast Database
+
+    Now, create the database, define the tables, and load the initial data.
+    When asked for a password, enter the root password that you defined
+    above.
+
+      cd c:\shakecast\admin
+      create_sc_db
+      create_sc_tables
+      load_sc_data
+
+  Install the Apache Web Server
+
+    To install the Apache Web Server, launch the downloaded package
+	
+	\shakecast\Installer\apache.msi
+	
+	during ShakeCast installation.  Otherwise, go to
+
+      http://httpd.apache.org/
+
+    and download the latest version of the 2.2 server. We are currently
+    using 2.0.59.
+
+    To install, execute the downloaded file and select the following when
+    you are given choices:
+
+    1   It doesn't matter what you enter for the Server Information as you
+        will be editing this later.
+
+    2   Setup Type: Complete
+
+   Configure the Apache Web Server
+
+    Configure Apache by
+
+    1   Stop Apache by
+
+          net stop apache
+
+    2   Install httpd.conf by copying c:\shakecast\sc\conf\httpd.conf to
+        c:\program files\apache group\apache2\conf\httpd.conf. Then edit this
+        file, by searching for the string "SHAKECAST CHANGE" and changing
+        the following line appropriately. There are two such lines. One
+        defines the email address for support questions and the other
+        defines the name of the server.
+
+    3   Start the Apache server by
+
+          net start apache
+
+  Install the PHP
+
+    To install the PHP, launch the downloaded package
+	
+	\shakecast\Installer\php-5.2.2-win32-installer.msi
+	
+	during ShakeCast installation.  Otherwise, go to
+
+      http://www.php.net/
+
+    and download the latest version of the 5.2.3 server. We are currently
+    using 5.2.2.
+
+    To install, execute the downloaded file and select the following when
+    you are given choices:
+
+    1   It doesn't matter what you enter for the Server Information as you
+        will be editing this later.
+
+    2   Web Server: Apache 2.0.x
+
+   Configure PHP Extras
+
+	when installing PHP, you need to include the following extensions, 
+		GD2, multi-byte string, mcrypt, mysql, mysqli, and SMTP.
+
+
+Finalize Installation 
+=====================
+
+A few final configuration steps are required.
+
+1. Notification.  The file c:\shakecast\sc\conf\sc.conf contains a "Notfication" section that looks like:
+
+#Notification Configuration
+<Notification>
+	From                shakemaster@example.com
+	EnvelopeFrom        shakemaster@example.com
+	SmtpServer          smtp.example.com
+	DefaultEmailTemplate        default.txt
+	DefaultScriptTemplate       default.pl
+	#Username	username
+	#Password	password
+</Notification>
+
+Modify the "From" (what an email recipient sees), "EnvelopeFrom" (what the SMTP server uses in the protocol) and the "SmtpServer" fields to define how email notifications will be sent.
+Uncomment and edit the "Username" and "Password" fields if authentication is required for your SMTP server.
+
+
+2. RSS Daemon.  The file c:\shakecast\sc\conf\sc.conf contains a "RSS" daemon section that looks like:
+
+# RSS Daemon configuration
+<rss>
+	AUTOSTART	1
+	# the LOG & LOGGING setting only applies to messages logged out of
+	# GenericDaemon; other messages from polld itself are controlled by the
+	# settings of LogLevel and LogFile in the system-wide configuration above
+	LOG		c:/shakecast/sc/logs/sc.log
+	LOGGING	1
+	MSGLEVEL	2
+	POLL	60
+	PORT	53458
+	PROMPT	rssd>
+	SERVICE_NAME rssd
+	SERVICE_TITLE ShakeCast RSS Daemon
+	SPOLL	10
+	REGION SC CI NC NN
+	#TIME_WINDOW 30
+</rss>
+
+Modify the "REION" (to download ShakeMaps only from selected regions), the "POLL" (polling interval in seconds), and the "TIME_WINDOW" (in days for triggering ShakeCast processing).
+Available ShakeMap regions are:
+
+Region_Code		Description
+-----------		-----------
+SC				Southern California
+CI				Southern California
+NC				Northern California
+NN				Nevada
+UT				Utah
+PN				Pacific Northwest
+HV				Hawaii
+AK				Alaska
+GLOBAL			Global and US regions not covered by the above networks (NEIC ShakeMap)
+ALL				All the above
+
+
+3. Restart the ShakeCast Services
+To restart the actual services that perform the various ShakeCast functions:
+
+  cd c:\shakecast\admin
+  stop_sc_services
+  start_sc_services
+
+
+4. Custimize the ShakeCast server for facilities, profiles, users, and notification templates.  Consult ShakeCast documentation and tutorial videos in configuring ShakeCast server.
+
+
+Uninstalling ShakeCast
+======================
+
+You may uninstall the ShakeCast Server Software by
+
+1. Stop and uninstall the services:
+
+	  cd c:\shakecast\admin
+	  stop_sc_services
+	  remove_sc_services
+
+2. Remove ShakeCast:
+
+	  c:\shakecast\Uninstall
+
+	or use Ad/Remove Programs in the Control Panel.
+
+3. If desired, uninstall Perl, MySQL and Apache by using Add/Remove
+	Programs in the Control Panel.
+
