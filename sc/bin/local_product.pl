@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/Perl/bin/perl
 
 # $Id: local_product.pl 156 2007-10-10 16:27:10Z klin $
 
@@ -71,7 +71,7 @@ use Data::Dumper;
 use IO::File;
 use Config::General;
 use Time::Local;
-use XML::Simple;
+use XML::LibXML::Simple;
 use XML::Writer;
 use XML::Parser;
 use Template;
@@ -176,7 +176,7 @@ sub local_product {
 		return -1;
 	}
 	
-	my $xsl = XML::Simple->new();
+	my $xsl = XML::LibXML::Simple->new();
 	$shakemap_xml = $xsl->XMLin($shakemap_file);
 	$event_xml = $xsl->XMLin($event_file);
 	if (-e $grid_file) {
@@ -544,4 +544,3 @@ sub ts_to_time {
     
 	return ($timegm);
 }
-

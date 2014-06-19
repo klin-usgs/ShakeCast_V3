@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: manage_profile.pl 423 2008-08-14 16:25:23Z klin $
 

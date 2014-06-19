@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 #
 ### notify: Scan the Notification Queue and Deliver Messages
@@ -1594,24 +1594,24 @@ sub sendnotification {
 		Data => $data
     ) or warn( "Error creating multipart container: $!\n", return -1);
 
-	### Add the pdf file
-	foreach my $file_type (keys %{$files}) {
+		### Add the pdf file
+		foreach my $file_type (keys %{$files}) {
 		return 0 unless (-e $files->{$file_type});
-		my @fields = split /[\/|\\]/, $files->{$file_type};
-		my $filename = $fields[$#fields];
-		$filename =~ s/\./\-$fields[$#fields-1]\./;
-		$msg->attach (
-		   Type => 'AUTO',
-		   Path => $files->{$file_type},
-		   Filename => $filename,
-		   Disposition => 'attachment'
-		) or warn ( "Error adding ".$files->{$file_type}.": $!\n", return -1);
-	}
+			my @fields = split /[\/|\\]/, $files->{$file_type};
+			my $filename = $fields[$#fields];
+			$filename =~ s/\./\-$fields[$#fields-1]\./;
+			$msg->attach (
+			   Type => 'AUTO',
+			   Path => $files->{$file_type},
+			   Filename => $filename,
+			   Disposition => 'attachment'
+			) or warn ( "Error adding ".$files->{$file_type}.": $!\n", return -1);
+		}
 	
 	unless ($config->{Notification}->{SmtpServer}) {
 		$delivery_comment = $msg->send();
 		return 1;
-	} 
+	}
 	
 	my $smtp;
 	if ($config->{Notification}->{Security} eq 'TLS') {

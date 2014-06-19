@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: worker.pl 64 2007-06-05 14:58:38Z klin $
 

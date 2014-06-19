@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: manage_event.pl 262 2008-01-11 20:31:33Z klin $
 

@@ -392,8 +392,11 @@ sub process {
 		my $geom_str;
 		if ($geom) {
 			my @lat_lon = minmax($geom);
+			print scalar @$colp,':',join(':',@$colp),"\n";
 			push @$colp, @lat_lon;
 			$colp->[$features{GEOM}] = $lat_lon[4];
+			#print $features{GEOM},':',$colp->[$features{GEOM}],"\n";
+			#print scalar @$colp,':',join(':',@$colp),"\n";
 		}
 		
         my $fac_type = lookup_facility_type($type);
@@ -631,7 +634,7 @@ sub minmax {
 	}	
 	my $geom_str = join ',',@geom_points;
 		
-        return ($lat_max, $lat_min, $lon_max, $lon_min, $geom_str);       # not found
+        return ($lat_max, $lat_min, $lon_max, $lon_min, $geom);       # not found
 }
 
 # Return facility_id given external_facility_id and facility_type
@@ -821,7 +824,7 @@ sub process_header {
     
     vvpr $sub;
     $sub_ins_upd = eval $sub;
-
+#exit;
     return 1;
 
 }

@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!c:/perl64/bin/perl.exe
 
 
 # $Id: manage_facility.pl 519 2008-10-22 13:58:44Z klin $
@@ -79,7 +79,7 @@ SC->initialize;
 my ($event_id, $event_version) = @ARGV;
 my $DataRoot = SC->config->{DataRoot};
 my $outfile = "$DataRoot/$event_id-$event_version/screenshot.jpg";
-
+print "$outfile\n";
 #."/$shakemap_id-$shakemap_version";
 screen_capture($event_id, $event_version);
 
@@ -102,7 +102,7 @@ sub screen_capture {
     my $proxy = (SC->config->{ProxyServer}) ? ' -p '.SC->config->{ProxyServer} : '';
     
     my $rv = `/bin/touch $outfile`;
-    $rv = `$wkhtmltopdf --javascript-delay 5000 $proxy --width 1024 --height 534 $url $outfile`;
+    $rv = `$wkhtmltopdf --javascript-delay 5000 $proxy --width 1024 $url $outfile`;
     
     SC->log(0, "Screen Capture: $event_id-$event_version ".$rv);
 

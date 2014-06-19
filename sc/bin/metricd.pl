@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/local/sc/sc.bin/perl
 
 # $Id: fragd.pl 426 2008-08-14 16:35:33Z klin $
 

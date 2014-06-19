@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 #
 ### notifyqueue: Scan for Notifications and Queue Them

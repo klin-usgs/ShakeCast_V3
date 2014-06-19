@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: sync_conf.pl 445 2008-08-14 20:41:34Z klin $
 

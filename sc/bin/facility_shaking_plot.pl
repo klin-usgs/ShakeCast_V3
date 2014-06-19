@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: facility_shaking_plot.pl 508 2008-10-20 14:19:28Z klin $
 

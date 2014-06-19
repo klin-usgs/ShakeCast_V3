@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: manage_facility.pl 519 2008-10-22 13:58:44Z klin $
 
@@ -995,5 +995,6 @@ shaking thresholds.&nbsp; Users wishing to receive notifications for
 those cities may use the Size or County attributes to filter the list
 of requested cities when they fill in the ShakeCast notification
 request form.
+
 
 

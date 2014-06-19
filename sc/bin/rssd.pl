@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: rssd.pl 427 2008-08-14 16:36:38Z klin $
 

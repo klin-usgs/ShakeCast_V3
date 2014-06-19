@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: station.pl 64 2007-06-05 14:58:38Z klin $
 
@@ -287,7 +287,7 @@ $csv = Text::CSV_XS->new({
 
 foreach my $event_id (@ARGV) { 
   my ($data, $pha_grd, $inputdir);
-  $inputdir = "/ShakeCast/sc/data/$event_id";
+  $inputdir = "C:/Shakecast/sc/data/$event_id";
   -e "$inputdir/stationlist.xml" or die "Can't find $inputdir/stationlist.xml";
   $data = DataArray->new("$inputdir/stationlist.xml") 
 		or die "Couldn't parse $inputdir/stationlist.xml";

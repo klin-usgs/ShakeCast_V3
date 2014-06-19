@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: shake_fetch.pl 478 2008-09-24 18:47:04Z klin $
 

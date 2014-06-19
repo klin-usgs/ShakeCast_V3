@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/local/sc/sc.bin/perl
 
 # $Id: polld.pl 426 2008-08-14 16:35:33Z klin $
 
@@ -110,8 +110,8 @@ my %options = (
 SC->initialize();
 my $config = SC->config;
 SC->setids();
-my $uid = (getpwnam $config->{UserID})[2];;
-my $gid = (getpwnam $config->{GroupID})[2];;
+#my $uid = (getpwnam $config->{UserID})[2];;
+#my $gid = (getpwnam $config->{GroupID})[2];;
 
 my $perl = $config->{perlbin};
 my $wkhtmltoimage = $config->{wkhtmltopdf};
@@ -407,11 +407,10 @@ sub screen_capture {
 	}
 	
 	# `$wkhtmltopdf --javascript-delay 5000 $proxy --width 1024 --height 534 $url $outfile`;
-	my $prog = "$wkhtmltoimage --javascript-delay 5000 $proxy --width 1024 --height 534 ".
+	my $prog = "$wkhtmltoimage --javascript-delay 5000 $proxy --width 1024 ".
 		$path.' '.$sc_dir.'/'.$event.'/sc.jpg';
 	my $result = `$prog`;
-	chown $uid, $gid, $sc_dir.'/'.$event.'/sc.jpg';
-	print "wkhtmltoimage : $prog, $uid, $gid\n";
+	print "wkhtmltoimage : $_\n";
 		
 	my $pad = (defined $block->{pad}) ? $block->{pad} : $default->{pad};
 	if ( -e $sc_dir.'/'.$event.'/sc.jpg') {
