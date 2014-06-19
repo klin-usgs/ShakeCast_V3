@@ -1,0 +1,110 @@
+Installing ShakeCast on a UNIX-Based Platform
+    This document outlines the process of installing ShakeCast on a platform
+    that runs a UNIX-based operating system such as FreeBSD, Linux or
+    Solaris.
+
+  MySQL Database
+
+    1   Install MySQL -- We have tested with 4.0.16 on Windows and 4.0.17 on
+        FreeBSD. The ShakeCast application requires features not present
+        before 4.0 so you will need that release at a minimum. Make sure you
+        have plenty of free space on the partition where you install the
+        data files.
+
+    2   Create the 'sc' database -- connect to mysql as root or another
+        privileged user and execute the following:
+
+                mysql> grant usage on *.* to sc@localhost identified by 'sc';
+                mysql> grant all privileges on sc.* to sc@localhost;
+
+    3   Build the schema and populate lookup tables -- Two SQL scripts are
+        supplied. The 'sc-create.sql' script contains commands to create all
+        the schema objects (tables and indexes). The 'sc-data.sql' script
+        populates the lookup tables with their predefined contents.
+
+                mysql -u sc -psc sc < sc-create.sql
+                mysql -u sc -psc sc < sc-data.sql
+
+    4   Secure your MySQL installation to meet the requirements of your
+        organization.
+
+  Application
+
+    1   Create the application directory root -- the application root is
+        /usr/local/sc on FreeBSD. You might want to create a separate user
+        to own the application and perform the following steps logged in as
+        that user
+
+    2   Restore the application tree -- the application itself is delivered
+        as a tarball that should be untarred into /usr/local/sc.
+
+    3   Various systems have different paths to the Perl interpreter. All of
+        the ShakeCast scripts use /usr/local/sc/sc.bin/perl as the path. So
+        that this will work, you need to make a soft link, such as
+
+          ln -s /usr/local/bin/perl /usr/local/sc/sc.bin
+
+  Apache Configuration
+
+    1   Install Apache -- we use 1.3.29.
+
+    2   Configure for ShakeCast -- In the 'conf' subdirectory you will find
+        httpd.conf and httpd-sc.conf. The former is based on the distributed
+        httpd.conf with the minimum amount of changes, and includes
+        httpd-sc.conf, which has essentially all the directives for the
+        ShakeCast site. Also included is httpd.diff, which is a diff of
+        httpd.conf from the distributed one (you can see what we changed).
+
+        It is very likely that your Apache install will not be exactly like
+        ours so you might need to do some tweaking of either the httpd.conf
+        that we supply or your own to get things to work.
+
+    3   User authentication -- we provide a user password file that contains
+        one user (scadmin). The initial password is also 'scadmin'. You
+        should change this using the htpasswd utility that comes with
+        Apache.
+
+    4   Test the server -- Try to view the page
+
+               http://yourhostname/scripts/c/printenv.pl
+
+        Log in using the admin account or another you have set up. If you
+        get a page titled "Report Output" then you have set up Apache at
+        least mostly correctly.
+
+  ShakeCast Configuration
+
+    Configure the ShakeCast server as described in
+
+    *
+        Configuring the ShakeCast Server:
+        http://www.shakecast.org/documentation/user/admin/index.html
+
+    *
+        Facility Importing:
+        http://www.shakecast.org/documentation/user/admin/facimport_utility.html
+
+    *
+        The Configuration File:
+        http://www.shakecast.org/documentation/user/config/config_file.html
+
+    *
+        Aggregation of Notifications:
+        http://www.shakecast.org/documentation/user/config/aggregation.html
+
+    *
+        Notification Templates:
+        http://www.shakecast.org/documentation/user/config/templates.html
+
+  Daemon Processes
+
+    ShakeCast uses a daemon process to communicate with other servers and to
+    queue and deliver notifications. So that these processes are started
+    automatically when the system is brought up multi-user, copy the
+    contents of the sc/rc.d directory into /usr/local/etc/rc.d (or its
+    equivalent).
+
+  Author
+
+    @(#)$Id: unix_install.pod,v 1.4 2004/11/28 21:53:35 shc Exp shc $
+

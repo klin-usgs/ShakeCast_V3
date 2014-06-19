@@ -62,6 +62,7 @@ MAPAPP = (function() {
 				  var feature_coords = [];
 					var coord_str = data.feature[0].geom;
 					var coords = coord_str.split(" ");
+					console.log(coords.length);
 					for (i=0; i < coords.length; i++) {
 						var latlon_str = coords[i];
 						var latlon = latlon_str.split(",");
@@ -351,7 +352,7 @@ MAPAPP = (function() {
             var myOptions = {
 				zoomControl: true,
                 zoom: user_options.DEFAULT_ZOOM ? parseInt(user_options.DEFAULT_ZOOM) : DEFAULT_ZOOM,
-				scrollwheel: user_options.scrollwheel_zoom_flag ? true : false,
+				//scrollwheel: false,
                 center: user_options.lat ? 
 					new google.maps.LatLng(parseInt(user_options.lat),parseInt(user_options.lon)) : 
 					new google.maps.LatLng(35,-120),

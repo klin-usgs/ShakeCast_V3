@@ -1,12 +1,12 @@
 #!/bin/sh
 
-SC_DIR=/usr/local/shakecast/sc
+SC_DIR=/usr/local/sc
 PIDFILE=${SC_DIR}/pids/notifyqueue.pid
-PERL=/usr/local/bin/perl
+PERL=/usr/local/sc/sc.bin/perl
 
 case "$1" in
 	start)
-		nohup $PERL ${SC_DIR}/bin/notifyqueue.pl --pid-file=${PIDFILE} &
+		$PERL ${SC_DIR}/bin/notifyqueue.pl --pid-file=${PIDFILE} --daemon
 		echo -n ' notifyqueue'
 		;;
 	stop)

@@ -110,18 +110,3 @@ TemplateDir	/usr/local/sc/templates		# XXX
     ServerPwdFile       /usr/local/sc/userdbs/sc-servers
     UserPwdFile         /usr/local/sc/userdbs/sc-users
 </Admin>
-
-# Event process configuration
-MAG_CUTOFF   3.0
-ARCHIVE_MAG   5.0
-DISTANCE_CUTOFF   400
-COMP_GMPE   1
-MODEL_SHAKING_THRESHOLD   1.0
-BASELINE_SHAKING_THRESHOLD   1.0
-REDUNDANT_CHECK   0
-
-# Supporting application configuration
-wkhtmltopdf   C:/PROGRA~2/wkhtmltopdf
-gnuplot   C:/gnuplot/binary/gnuplot.exe
-perlbin   C:/Perl/bin/perl.exe
-
