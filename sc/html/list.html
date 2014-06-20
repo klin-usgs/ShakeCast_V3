@@ -168,7 +168,6 @@
       //var sm_url = '/scripts/event.pl/datatables';
       var sm_url = '/scripts/r/event/datatables';
 			
-
       $(window).load(function() {
 	SC_DEF.init();
 	map = MAPAPP.init(SC_DEF);
@@ -202,7 +201,6 @@
 	  if (data.length <= 0) {
 		  return;
 	  }
-
 	  var html_array = [];
 	  for (var i=0; i < data.length; i++) {
 	  //MAPAPP.addMarker(data.facility_damage[key]);
@@ -246,7 +244,7 @@
 	  map.setCenter(MAPAPP.facMarkers[data[0].event_id].getPosition());
 	  
 	  var event = data[0];
-	  $('#'+event.shakemap_id + '-' + event.shakemap_version).trigger('click');
+	  $('#'+selector(event.shakemap_id) + '-' + event.shakemap_version).trigger('click');
 	  if (eqdata.start+eqdata.length >= eqdata.total) {
 	    $('#load_more').hide();
 	  } else {
@@ -337,12 +335,27 @@
 		      '</div>',
 	      ]);
 
-	    $("#"+sm_id+"_detail").html(html_array.join(''));
+	    $("#"+selector(sm_id)+"_detail").html(html_array.join(''));
 	    $(".accordion").accordion( "refresh" );
 	  });
 	}
 
-      function switch_sm(){
+function selector(sm_id) {
+    var specials = [
+      '#', '&', '~', '=', '>', 
+      "'", ':', '"', '!', ';', ','
+    ];
+    var regexSpecials = [
+      '.', '*', '+', '|', '[', ']', '(', ')', '/', '^', '$'
+    ];
+    var sRE = new RegExp(
+      '(' + specials.join('|') + '|\\' + regexSpecials.join('|\\') + ')', 'g'
+    );
+
+      return sm_id.replace(sRE, '\\$1');
+    }
+
+    function switch_sm(){
 	var event = event_array[display_ind];
 	var shakemap = event.shakemap_id + '-' + event.shakemap_version;
 	//var dmg_url = '/scripts/damage.pl/from_id/'+shakemap+'?action=summary';

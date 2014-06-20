@@ -642,7 +642,7 @@ sub process_header {
         if ($field =~ /^DELIVERY\s*:\s*(.*)/) {
             vvpr "$ix\: METHOD: $1";
             $methods{$1} = $ix;
-        } elsif ($field =~ /^PROFILE\s*:\s*(.*)/) {
+        } elsif ($field =~ /^PROFILE|GROUP\s*:\s*(.*)/) {
             vpr "$ix\: PROFILE: $1";
             $profiles{$1} = $ix;
         } elsif ($field =~ /^USER\s*:\s*(.*)/) {

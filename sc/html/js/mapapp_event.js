@@ -551,7 +551,7 @@ function LegendControl(controlDiv, map, facTypes) {
   goHomeText.style.fontSize = '12px';
   goHomeText.style.paddingLeft = '4px';
   goHomeText.style.paddingRight = '4px';
-  goHomeText.innerHTML = 'Facility Cluster<br/><img src="/images/cluster/m1_1.png" /><img src="/images/cluster/m1_100.png" /><img src="/images/cluster/m1_200.png" /><img src="/images/cluster/m1_300.png" /><img src="/images/cluster/m1_400.png" />';
+  goHomeText.innerHTML = 'Facility Cluster<br/><img src="/images/cluster/m1_10.png" /><img src="/images/cluster/m1_100.png" /><img src="/images/cluster/m1_200.png" /><img src="/images/cluster/m1_300.png" /><img src="/images/cluster/m1_400.png" />';
   goHomeUI.appendChild(goHomeText);
   
   // Set CSS for the setHome control border

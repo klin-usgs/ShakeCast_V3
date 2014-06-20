@@ -35,7 +35,8 @@ REPLACE INTO `damage_level` (`DAMAGE_LEVEL`, `NAME`, `DESCRIPTION`, `SEVERITY_RA
 ('GREEN', 'Damage Unlikely or Slightly', 'Damage is not likely to the facility.', 100, 0, 'kwl', '2007-07-25 00:00:00'),
 ('YELLOW', 'Moderate Damage Possible', 'This facility has possibly suffered damage.', 200, 0, 'kwl', '2007-07-25 00:00:00'),
 ('ORANGE', 'Extensive Damage Possible', 'This facility has possibly suffered extensive damage.', 300, 0, 'kwl', '2007-07-25 00:00:00'),
-('RED', 'Complete Damage Possible', 'This facility has probably suffered damage.', 400, 1, 'kwl', '2007-07-25 00:00:00');
+('RED', 'Complete Damage Possible', 'This facility has probably suffered damage.', 400, 1, 'kwl', '2007-07-25 00:00:00'),
+('GREY', 'Damage is Not Applicable', 'The facility is not evaulated or below threshold.', 10, 0, 'kwl', '2013-12-02 20:03:09');
 
 -- 
 -- Dumping data for table `delivery_method`
@@ -244,6 +245,10 @@ REPLACE INTO `facility_type` VALUES ('TUNNEL', 'Tunnel', 'Tunnel', 'pan', '2003-
 REPLACE INTO `facility_type` VALUES ('UNKNOWN', 'Unknown Facility Type', 'The type of the facility is unknown', 'pan', '2003-01-01 00:00:00');
 REPLACE INTO `facility_type` VALUES ('VARA', 'Dam - Variable radius arch', 'Variable radius arch', 'dwb', '2004-08-26 12:10:24');
 REPLACE INTO `facility_type` VALUES ('VA_HOSP', 'VA Hospital', NULL, 'kwl', '2007-02-21 09:35:12');
+REPLACE INTO `facility_type` VALUES ('BRIDGE_LC', 'Bridge_Local', NULL, NULL, NULL);
+REPLACE INTO `facility_type` VALUES ('BRIDGE_ST', 'Bridge_State', NULL, NULL, NULL);
+REPLACE INTO `facility_type` VALUES ('BUILDING', 'BUILDING', 'Building', 'kwl', '2014-03-05 19:01:25');
+
 
 -- 
 -- Dumping data for table `facility_type_fragility`
@@ -889,7 +894,9 @@ REPLACE INTO `metric` (`SHORT_NAME`, `METRIC_ID`, `NAME`, `DESCRIPTION`, `UPDATE
 ('PSA30', '6', 'Peak Spectral Acc. at 3.0 sec', NULL, 'pan', '2003-01-01 00:00:00'),
 ('SDPGA', '7', 'PGA Uncertainty in Std Deviation', NULL, 'kwl', '2008-10-01 15:00:00'),
 ('SVEL', '8', 'Estimated Vs30 in m/s', NULL, 'kwl', '2008-10-01 15:00:00'),
-('ARIAS', '9', 'Arias Intensity in m/s', NULL, 'kwl', '2011-07-25 15:00:00');
+('ARIAS', 10, 'Arias Intensity in m/s', NULL, 'kwl', '2014-02-04 17:00:38'),
+('URAT', 9, 'Scale Ratio', 'Scale Ratio', 'kwl', '2014-02-04 17:01:05');
+
 
 -- 
 -- Dumping data for table `notification_class`
@@ -934,9 +941,9 @@ REPLACE INTO `notification_type` (`NOTIFICATION_TYPE`, `NOTIFICATION_CLASS`, `NA
 REPLACE INTO `phpbb_config` (`config_name`, `config_value`) VALUES 
 ('config_id', '1'),
 ('board_disable', '0'),
-('sitename', 'ShakeCast 2.0'),
+('sitename', 'ShakeCast 3'),
 ('site_desc', 'ShakeCast GUI framework based on phpBB'),
-('cookie_name', 'sc2mysql'),
+('cookie_name', 'sc3mysql'),
 ('cookie_path', '/'),
 ('cookie_domain', ''),
 ('cookie_secure', '0'),
@@ -956,7 +963,7 @@ REPLACE INTO `phpbb_config` (`config_name`, `config_value`) VALUES
 ('max_autologin_time', '0'),
 ('override_user_style', '1'),
 ('posts_per_page', '15'),
-('topics_per_page', '50'),
+('topics_per_page', '10'),
 ('hot_threshold', '25'),
 ('max_poll_options', '10'),
 ('max_sig_chars', '255'),
@@ -964,8 +971,8 @@ REPLACE INTO `phpbb_config` (`config_name`, `config_value`) VALUES
 ('max_sentbox_privmsgs', '25'),
 ('max_savebox_privmsgs', '50'),
 ('board_email_sig', 'Thanks, The Management'),
-('board_email', 'admin@localhost'),
-('smtp_delivery', '1'),
+('board_email', 'shakecast@usgs.gov'),
+('smtp_delivery', '0'),
 ('smtp_host', ''),
 ('smtp_username', ''),
 ('smtp_password', ''),
@@ -1028,9 +1035,9 @@ REPLACE INTO `phpbb_config` (`config_name`, `config_value`) VALUES
 ('Poller_SERVICE_NAME', 'polld'),
 ('Poller_SERVICE_TITLE', 'ShakeCast Polling Daemon'),
 ('Poller_SPOLL', '10'),
-('Notification_From', 'shakecast@sample.com'),
-('Notification_EnvelopeFrom', 'shakecast@sample.com'),
-('Notification_SmtpServer', 'smtp.sample.com'),
+('Notification_From', 'shakecast@usgs.gov'),
+('Notification_EnvelopeFrom', 'shakecast@usgs.gov'),
+('Notification_SmtpServer', ''),
 ('Notification_DefaultEmailTemplate', 'default.txt'),
 ('Notification_DefaultScriptTemplate', 'default.pl'),
 ('Destination_Hostname', 'localhost'),
@@ -1186,7 +1193,9 @@ REPLACE INTO `product_type` (`PRODUCT_TYPE`, `NAME`, `DESCRIPTION`, `METRIC`, `F
 ('INFO_XML', 'Info XML', NULL, NULL, 'info.xml', '/images/xml.png', 1, 'ShakeMap', 'kwl', '2012-03-10 14:09:38'),
 ('DYFI_PDF', 'DYFI PDF', 'DYFI PDF', NULL, 'ciim.pdf', '/images/pdf.png', 1, 'DYFI', 'kwl', '2012-03-03 12:11:44'),
 ('PAGER_PDF', 'PAGER PDF', 'PAGER PDF', NULL, 'onepager.pdf', '/images/pdf.png', 1, 'PAGER', 'kwl', '2012-03-03 12:11:44'),
-('TECTONIC', 'Tectonic Summary', 'NEIC Tectonic Summary', NULL, 'tectonic-summary.inc.html', '/images/html.png', 1, 'USGS', 'kwl', '2012-03-13 15:12:21');
+('TECTONIC', 'Tectonic Summary', 'NEIC Tectonic Summary', NULL, 'tectonic_summary.html', '/images/html.png', 1, 'USGS', 'kwl', '2012-03-13 15:12:21'),
+('EXPO_CSV', 'Exposure CSV', 'Exposure CSV', NULL, 'exposure.csv', '/images/csv.png', 1, 'ShakeCast', 'kwl', '2014-01-12 20:59:21');
+
 
 -- 
 -- Dumping data for table `server`

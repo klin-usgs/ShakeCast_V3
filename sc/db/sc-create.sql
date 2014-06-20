@@ -208,10 +208,10 @@ CREATE TABLE `event_type` (
 
 CREATE TABLE `facility` (
   `FACILITY_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `FACILITY_TYPE` varchar(10) NOT NULL,
+  `FACILITY_TYPE` varchar(32) NOT NULL,
   `EXTERNAL_FACILITY_ID` varchar(32) DEFAULT NULL,
   `FACILITY_NAME` varchar(128) DEFAULT NULL,
-  `SHORT_NAME` varchar(10) DEFAULT NULL,
+  `SHORT_NAME` varchar(32) DEFAULT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
   `LAT_MIN` double NOT NULL,
   `LAT_MAX` double NOT NULL,
@@ -284,7 +284,7 @@ CREATE TABLE `facility_fragility_model` (
   `FACILITY_FRAGILITY_MODEL_ID` int(11) NOT NULL AUTO_INCREMENT,
   `FACILITY_ID` int(11) NOT NULL,
   `CLASS` varchar(32) DEFAULT NULL,
-  `COMPONENT` varchar(32) NOT NULL,
+  `COMPONENT` varchar(64) NOT NULL,
   `DAMAGE_LEVEL` varchar(10) NOT NULL,
   `ALPHA` double DEFAULT NULL,
   `BETA` double DEFAULT NULL,
@@ -407,7 +407,7 @@ CREATE TABLE `facility_shaking` (
 -- 
 
 CREATE TABLE `facility_type` (
-  `FACILITY_TYPE` varchar(10) NOT NULL,
+  `FACILITY_TYPE` varchar(32) NOT NULL,
   `NAME` varchar(32) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
   `UPDATE_USERNAME` varchar(32) DEFAULT NULL,
@@ -423,7 +423,7 @@ CREATE TABLE `facility_type` (
 
 CREATE TABLE `facility_type_attribute` (
   `FACILITY_TYPE_ATTRIBUTE_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `FACILITY_TYPE` varchar(10) NOT NULL,
+  `FACILITY_TYPE` varchar(32) NOT NULL,
   `ATTRIBUTE_NAME` varchar(20) NOT NULL,
   `DESCRIPTION` varchar(30) DEFAULT NULL,
   `UPDATE_USERNAME` varchar(32) DEFAULT NULL,
@@ -440,7 +440,7 @@ CREATE TABLE `facility_type_attribute` (
 
 CREATE TABLE `facility_type_fragility` (
   `FACILITY_TYPE_FRAGILITY_ID` int(11) NOT NULL AUTO_INCREMENT,
-  `FACILITY_TYPE` varchar(10) NOT NULL,
+  `FACILITY_TYPE` varchar(32) NOT NULL,
   `DAMAGE_LEVEL` varchar(10) NOT NULL,
   `LOW_LIMIT` double DEFAULT NULL,
   `HIGH_LIMIT` double DEFAULT NULL,

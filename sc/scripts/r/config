@@ -181,10 +181,26 @@ sub config_update {
     my $email_from = $self->param('email_from');
     my $email_envelopefrom = $self->param('email_envelopefrom');
 	$config->{'Notification'}->{'SmtpServer'} = $email_smtpserver;
-	$config->{'Notification'}->{'Security'} = $email_security;
-	$config->{'Notification'}->{'Port'} = $email_port;
-	$config->{'Notification'}->{'Username'} = $email_username;
-	$config->{'Notification'}->{'Password'} = $email_password;
+	if ($email_security) {
+		$config->{'Notification'}->{'Security'} = $email_security;
+	} else {
+		delete $config->{'Notification'}->{'Security'};
+	}
+	if ($email_port) {
+		$config->{'Notification'}->{'Port'} = $email_port;
+	} else {
+		delete $config->{'Notification'}->{'Port'};
+	}
+	if ($email_username) {
+		$config->{'Notification'}->{'Username'} = $email_username;
+	} else {
+		delete $config->{'Notification'}->{'Username'};
+	}
+	if ($email_password) {
+		$config->{'Notification'}->{'Password'} = $email_password;
+	} else {
+		delete $config->{'Notification'}->{'Password'};
+	}
 	$config->{'Notification'}->{'DefaultEmailTemplate'} = $email_defaultemailtemplate;
 	$config->{'Notification'}->{'DefaultScriptTemplate'} = $email_defaultscripttemplate;
 	$config->{'Notification'}->{'From'} = $email_from;

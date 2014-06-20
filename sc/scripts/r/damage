@@ -122,6 +122,11 @@ sub marker {
 		}
 	    }
 	}
+	if ($type && $type ne 'ALL') {
+		foreach my $fac (keys %marker) {
+			delete $marker{$fac} unless ($type eq $marker{$fac}{'facility_type'});
+		}
+	}
 	
 	$hash_file = SC->config->{'DataRoot'}."/$shakemap_id-$shakemap_version/fac_grey_marker.hash";
 	if (-e $hash_file) {

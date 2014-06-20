@@ -209,7 +209,7 @@ sub from_id {
 	    select gp.profile_name
 	    from geometry_profile gp inner join shakecast_user su
 		on gp.profile_name = su.username
-	    where su.shakecast_user = (select profile_id
+	    where su.shakecast_user IN (select profile_id
 		from geometry_user_profile
 		where shakecast_user = ?)
 		 /);
