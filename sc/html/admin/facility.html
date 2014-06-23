@@ -473,7 +473,7 @@
       '</div>']);
 
       
-      if (facility_probability) {
+      if (facility_probability.length>0) {
 	cell_tabs = cell_tabs.concat([
 	  '<li><a href="#' + facility.facility_id,
 	  'probability" data-toggle="tab">Fragility Probability</a></li>',
@@ -507,30 +507,31 @@
 	  '</tr></table></div>']);
       }
 
-      var facility_attribute = data.facility_attribute;
-      for (var key in facility_attribute) {
-	var attribute = facility_attribute[key];
-	if (attribute[facility.facility_id]) {
-	  var att_fac = attribute[facility.facility_id];
-	  cell_tabs = cell_tabs.concat([
-	    '<li><a href="#fea"'+facility.facility_id+'" data-toggle="tab">Facility Specific Information</a></li>',
-	    ]);
-	  cell_array = cell_array.concat([
-	    '<div id="fea"'+facility.facility_id+'" class="tab-pane">',
-	    '<div class="ui-block-b fac_sum">',
-	    '<ul>',
-	    ]);
-
-	  for (var att_key in att_fac) {
-	    cell_array = cell_array.concat([
-	      '<li class="fac_summary"><b>' + att_key + '</b> : ' + att_fac[att_key] + '</li>',
-	      ]);
+	  var facility_attribute = data.attribute;
+	  if (facility_attribute.length>0) {
+		cell_tabs = cell_tabs.concat([
+		  '<li><a href="#' + facility.facility_id,
+		  'attribute" data-toggle="tab">Facility Attributes</a></li>',
+		  ]);
+		cell_array = cell_array.concat([
+		  '<div class="tab-pane" id="' + facility.facility_id,
+		  'attribute">',
+		  '<table class="table table-striped table-responsive">',
+		  ]);
+		for (var ind=0; ind<facility_attribute.length; ind++) {
+		  var att_fac = facility_attribute[ind];
+		  for (var att_key in att_fac) {
+			cell_array = cell_array.concat([
+			  '<tr><td><strong>' + att_key + '</strong></td><td>' + att_fac[att_key] + '</td></tr>',
+			  ]);
+		  }
+		  cell_array = cell_array.concat([
+			'<tr><td></td><td></td></tr>',
+			]);
+		}
+		cell_array = cell_array.concat([
+		  '</table></div>']);
 	  }
-	  cell_array = cell_array.concat([
-	    '</ul></div>',
-	    '</div>']);
-	}
-      }
       cell_tabs = cell_tabs.concat(['</ul>']);
       cell_array = cell_array.concat(['</div>']);
       fac_des[facility.facility_id] = cell_tabs.join('') + cell_array.join('');

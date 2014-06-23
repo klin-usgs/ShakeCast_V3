@@ -259,6 +259,7 @@ MAPAPP = (function() {
 			'<li class="fac_summary"><b>Description</b> : ' + facility.description + '</li>',
 			'</ul></div>',
 		];
+		loadInfo(facility.facility_id, new google.maps.LatLng(lat, lon));
 		var infocontent = html_array.join('');
 		google.maps.event.addListener(marker, 'click', 
 			function() {
