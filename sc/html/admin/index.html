@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="/images/sc_logo.png">
 
-    <title>General Settings</title>
+    <title>ShakeCast System Administration</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../bootstrap3/css/bootstrap.css" rel="stylesheet">
@@ -44,7 +44,7 @@
       </div>
       <div class="navbar-collapse collapse">
 	<ul id="nav_menu" class="nav navbar-nav">
-	    <li class="active"><a href="#">Admin Home</a></li>
+	    <li class="active"><a href="./index.html">Admin Home</a></li>
 	    <li><a href="./config.html">General Settings</a></li>
 	    <li class="">
 	    <a href="./earthquake.html">Earthquakes</a>
@@ -53,13 +53,16 @@
 	    <a href="./facility.html">Facilities</a>
 	    </li>
 	    <li class="">
-	    <a href="./Product.html">Products</a>
+	    <a href="./product.html">Products</a>
 	    </li>
 	    <li class="">
 	    <a href="./station.html">Stations</a>
 	    </li>
 	    <li class="">
 	    <a href="./user.html">Users</a>
+	    </li>
+	    <li class="">
+	    <a href="./post_file.html">Upload</a>
 	    </li>
 	</ul>
       </div><!--/.nav-collapse -->
@@ -83,27 +86,24 @@
     ================================================== -->
     <!-- Wrap the rest of the page in another container to center all the content. -->
 
-    <div class="container marketing">
+    <div class="container">
 
       <!-- Three columns of text below the carousel -->
       <div class="row">
-        <div class="col-lg-4">
-          <img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        <div class="col-lg-4 sidebar_pane" id="event_pane">
+          <h3><img alt="Generic placeholder image" src="/images/epicenter.png"> Earthquake Database</h3>
+          <p></p>
+          <p><a class="btn btn-default" href="earthquake.html" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4">
-          <img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
-          <h2>Heading</h2>
-          <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        <div class="col-lg-4 sidebar_pane" id="facility_pane">
+          <h3><img alt="Generic placeholder image" src="/images/city.png"> Facility Inventory</h3>
+          <p></p>
+          <p><a class="btn btn-default" href="facility.html" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4">
-          <img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        <div class="col-lg-4 sidebar_pane" id="user_pane">
+          <h3><img class="img-circle" alt="Generic placeholder image" style="max-width:28px" src="/images/sc_logo.png"> User Inventory</h3>
+          <p></p>
+          <p><a class="btn btn-default" href="user.html" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
       </div><!-- /.row -->
 
@@ -112,355 +112,25 @@
 
       <hr class="featurette-divider">
 
-      <div class="row featurette">
-        <div class="col-md-7">
-          <h2 class="featurette-heading">First featurette heading. <span class="text-muted">It'll blow your mind.</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-        </div>
-        <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
-        </div>
-      </div>
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+        <div class="col-lg-4 sidebar_pane" id="product_pane">
+          <h3><img alt="Generic placeholder image" style="max-width:28px" src="/images/zip.png"> Product Inventory</h3>
+          <p></p>
+          <p><a class="btn btn-default" href="product.html" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 sidebar_pane" id="server_pane">
+          <h3><img alt="Generic placeholder image" src="/images/usgs.png"> Server Inventory</h3>
+          <p></p>
+          <p><a class="btn btn-default" href="config.html" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 sidebar_pane" id="station_pane">
+          <h3><img alt="Generic placeholder image" src="/images/sta.png"> Station Database</h3>
+          <p></p>
+          <p><a class="btn btn-default" href="station.html" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
 
-      <hr class="featurette-divider">
-
-      <div class="row featurette">
-        <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
-        </div>
-        <div class="col-md-7">
-          <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-        </div>
-      </div>
-
-      <hr class="featurette-divider">
-
-      <div class="row featurette">
-        <div class="col-md-7">
-          <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-        </div>
-        <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
-        </div>
-      </div>
-
-      <hr class="featurette-divider">
-
-      <!-- /END THE FEATURETTES -->
-
-    <!-- Docs nav
-    ================================================== -->
-    <div class="row">
-        <div class="col-md-3">
-	    <div class="list-group bs-sidebar" id="sidebar">
-	      <ul class="nav nav-pills nav-stacked">
-		<li class="active"><a class="list-group-item" href="#database-connection">ShakeCast Database</a></li>
-		<li class=""><a class="list-group-item" href="#email-server">Email Server</a></li>
-		<li class=""><a class="list-group-item" href="#shakemap-server">ShakeMap Server</a></li>
-		<li class=""><a class="list-group-item" href="#shakemap-region">ShakeMap Region</a></li>
-		<li class=""><a class="list-group-item" href="#system-directory">System Directory</a></li>
-		<li class=""><a class="list-group-item" href="#misc-param">Misc. Parameter</a></li>
-	      </ul>
-	    </div>
-        </div><!--/span-->
-        <div class="col-md-8">
-
-
-        <!-- ShakeCast Database
-        ================================================== -->
-        <section id="database-connection">
-          <div class="page-header">
-            <h1>1. ShakeCast Database</h1>
-          </div>
-          <p class="lead">Specify connection information for the ShakeCast database.</p>
-          <p>Once connected, the administrator can modify system specific configuration settings.</p>
-
-          <div class="row">
-	    <div class="col-md-6" id="server-form">
-		<form>
-		  <fieldset>
-		    <table class="table table-hover">
-		    <thead>
-		    <tr>
-		    <th>Connection String</th>
-		    <th>Type</th>
-		    <th>Username</th>
-		    <th>Password</th>
-		    </tr>
-		    </thead>
-		    <tbody>
-		    <tr>
-		    <td><input type="text" placeholder="Connection String" id="db_connection_string" ></td>
-		    <td><input type="text" placeholder="Type" id="db_type" ></td>
-		    <td><input type="text" placeholder="Username" id="db_username" ></td>
-		    <td><input type="password" placeholder="Password" id="db_password" ></td>
-		    </tr>
-		    </tbody>
-		    </table>
-			<button type="button" class="btn config_update">Update</button>
-			<div class="server_result"></div>
-		  </fieldset>
-		</form>
-	    </div>
-          </div>
-        </section>
-
-
-        <!-- Email Server
-        ================================================== -->
-        <section id="email-server">
-          <div class="page-header">
-            <h1>2. Email Server</h1>
-          </div>
-          <p class="lead">Specify information for Email server.</p>
-          <p>A valid SMTP email server is required for sending ShakeCast notifications. Leave the username and password fields blank if no authentication is required.</p>
-
-          <div class="row">
-<div class="col-md-6" id="server-form">
-<form>
-  <fieldset>
-    <table class="table table-hover">
-    <thead>
-    <tr>
-    <th>SMTP Server</th>
-    <th>Security</th>
-    <th>Port</th>
-    <th>Username</th>
-    <th>Password</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input type="text" class="input-medium" placeholder="SMTP Server" id="email_smtpserver" ></td>
-    <td><select class="input-small" placeholder="Security" id="email_security" >
-		<option></option>
-		<option>SSL</option>
-		<option>TLS</option></select></td>
-    <td><input type="text" class="input-mini" placeholder="Port" id="email_port" ></td>
-    <td><input type="text" placeholder="Username" id="email_username" ></td>
-    <td><input type="password" placeholder="Password" id="email_password" ></td>
-    </tr>
-    </tbody>
-    </table>
-          <p>Notif.</p>
-    <table class="table table-hover">
-    <thead>
-    <tr>
-    <th>Default Email Template</th>
-    <th>Default Script Template</th>
-    <th>From</th>
-    <th>Envelope From</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input type="text" class="input-medium" placeholder="Default Email Template" id="email_defaultemailtemplate" ></td>
-    <td><input type="text" class="input-medium" placeholder="Default Script Template" id="email_defaultscripttemplate" ></td>
-    <td><input type="text" placeholder="From" id="email_from" ></td>
-    <td><input type="text" placeholder="Envelope From" id="email_envelopefrom" ></td>
-    </tr>
-    </tbody>
-    </table>
-	<button type="button" class="btn config_update">Update</button>
-	<div class="server_result"></div>
-  </fieldset>
-</form>
-          </div>
-          </div>
-        </section>
-
-
-
-        <!-- ShakeMap Server
-        ================================================== -->
-        <section id="shakemap-server">
-          <div class="page-header">
-            <h1>3. ShakeMap Server</h1>
-          </div>
-          <p class="lead">Specify server information for ShakeMap and related earthquake products.</p>
-
-          <div class="row">
-<div class="col-md-6" id="server-form">
-<form>
-  <fieldset>
-    <table class="table table-hover">
-    <thead>
-    <tr>
-    <th>Server ID</th>
-    <th>DNS Address</th>
-    <th>Query</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input type="text" placeholder="Server ID" id="server_server_id" ></td>
-    <td><input type="text" placeholder="DNS Address" id="server_dns_address" ></td>
-    <td><input type="checkbox" id="server_query_flag" > </td>
-    </tr>
-    </tbody>
-    </table>
-	<button type="button" class="btn" id="server_update">Update</button>
-	<div class="server_result"></div>
-  </fieldset>
-</form>
-          </div>
-          </div>
-        </section>
-
-
-        <!-- ShakeMap Region
-        ================================================== -->
-        <section id="shakemap-region">
-          <div class="page-header">
-            <h1>4. ShakeMap Region</h1>
-          </div>
-          <p class="lead">Specify region preference for ShakeMap and related earthquake products.</p>
-
-          <div class="row">
-<div class="col-md-6" id="server-form">
-<form>
-  <fieldset>
-    <table class="table table-hover">
-    <thead>
-    <tr>
-    <th>Region</th>
-    <th>Active Time Window</th>
-    <th>Magnitude Threshold</th>
-    <th>Update Threshold</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input type="text" placeholder="ShakeMap Network Codes" id="sm_region" ></td>
-    <td><input type="text" class="input-medium" placeholder="Days after Earthquake" id="sm_time_window" ></td>
-    <td><input type="text" class="input-medium" placeholder="Magnitude Threshold" id="param_mag_threshold" ></td>
-    <td><input type="text" class="input-medium" placeholder="% Changes in PGM" id="param_update_threshold" ></td>
-    </tr>
-    </tbody>
-    </table>
-	<button type="button" class="btn config_update">Update</button>
-	<div class="server_result"></div>
-  </fieldset>
-</form>
-          </div>
-          </div>
-        </section>
-
-
-        <!-- System Directory
-        ================================================== -->
-        <section id="system-directory">
-          <div class="page-header">
-            <h1>5. System Directory</h1>
-          </div>
-          <p class="lead">Specify region preference for ShakeMap and related earthquake products.</p>
-
-          <div class="row">
-<div class="col-md-6" id="server-form">
-<form>
-  <fieldset>
-    <table class="table table-hover">
-    <thead>
-    <tr>
-    <th>Root Directory</th>
-    <th>Data Root</th>
-    <th>Template Directory</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input type="text" placeholder="Root Directory" id="param_rootdir" ></td>
-    <td><input type="text" placeholder="Data Directory" id="param_dataroot" ></td>
-    <td><input type="text" placeholder="Template Directory" id="param_templatedir" ></td>
-    </tr>
-    </tbody>
-    </table>
-    <table class="table table-hover">
-    <thead>
-    <tr>
-    <th>Log Directory</th>
-    <th>Log File</th>
-    <th>Log Level</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input type="text" placeholder="Log Directory" id="param_logdir" ></td>
-    <td><input type="text" class="input-small" placeholder="Log File" id="param_logfile" ></td>
-    <td><select class="input-small" placeholder="Log Level" id="param_loglevel" >
-		<option>1</option>
-		<option>2</option>
-		<option>3</option>
-		<option>4</option></select></td>
-    </tr>
-    </tbody>
-    </table>
-	<button type="button" class="btn config_update">Update</button>
-	<div class="server_result"></div>
-  </fieldset>
-</form>
-          </div>
-          </div>
-        </section>
-
-
-        <!-- System Directory
-        ================================================== -->
-        <section id="misc-param">
-          <div class="page-header">
-            <h1>6. Misc. Parameters</h1>
-          </div>
-          <p class="lead">Specify region preference for ShakeMap and related earthquake products.</p>
-
-          <div class="row">
-<div class="col-md-6" id="server-form">
-<form>
-  <fieldset>
-    <table class="table table-hover">
-    <thead>
-    <tr>
-    <th>GNU Plot</th>
-    <th>wkhtmltopdf</th>
-    <th>Perl</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input type="text" placeholder="GNU Plot" id="param_gnuplot" ></td>
-    <td><input type="text" placeholder="wkhtmltopdf" id="param_wkhtmltopdf" ></td>
-    <td><input type="text" placeholder="Perl Bin" id="param_perlbin" ></td>
-    </tr>
-    </tbody>
-    </table>
-    <table class="table table-hover">
-    <thead>
-    <tr>
-    <th>User ID</th>
-    <th>Group ID</th>
-    <th>Redundancy Check</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-    <td><input type="text" class="input-small" placeholder="User ID" id="param_userid" ></td>
-    <td><input type="text" class="input-small" placeholder="Group ID" id="param_groupid" ></td>
-    <td><input type="text" class="input-small" placeholder="Redundancy Check" id="param_redundant_check" ></td>
-    </tr>
-    </tbody>
-    </table>
-	<button type="button" class="btn config_update">Update</button>
-	<div class="server_result"></div>
-  </fieldset>
-</form>
-          </div>
-          </div>
-        </section>
-
-
-      </div>
-    </div>
 
   </div>
 
@@ -487,6 +157,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/application.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
     <script type="text/javascript" src="../js/sc_constant.js"></script>
@@ -497,12 +168,12 @@
         //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
         var username = SC_DEF.user ? SC_DEF.user : 'guest';
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var sm_url = '/scripts/user.pl/from_id/'+username;
+        var sm_url = '/scripts/r/user/from_id/'+username;
         var submit_data = {
             'username': username,
             'password': password,
         };
-        console.log(username + ' ' + password);
+        //console.log(username + ' ' + password);
 	
 	$(window).load(function() {
 	    $.post(sm_url, submit_data, function(data) {
@@ -511,10 +182,189 @@
 		  alert("The user "+username+" does not have administration privileges.");
 		  window.location.replace("../preference.html");
 		}
-		retrieve_config();
+		//retrieve_config();
+		user_info();
+		facility_info();
+		event_info();
+		station_info();
+		server_info();
+		product_info();
 	    }, "json");
 	});
 
+	function product_info() {
+
+		var config_url = '/scripts/r/product/product_source_list/';
+
+		$.post(config_url, submit_data, function(data) {
+
+			// Are there even any EQ to display?
+			if (data.length <= 0) {
+				return;
+			}
+			
+			var html = ['<ul class="list-group">'];
+			for (var ii=0; ii<data.length; ii++) {
+			  var group = data[ii];
+			  html.push([
+			    '<li class="list-group-item" >'+group.product_source +
+			    ' <span class="badge pull-right">' + group.count + '</span></li>',
+			  ]);
+			}
+			html.push(['</ul>']);
+			$("#product_pane p").first().html(html.join(''));
+		});
+	}
+			
+	function server_info() {
+
+		var config_url = '/scripts/r/config/server_list/';
+
+		$.post(config_url, submit_data, function(data) {
+
+			// Are there even any EQ to display?
+			if (data.length <= 0) {
+				return;
+			}
+			
+			var html = ['<ul class="list-group">'];
+			for (var ii=0; ii<data.length; ii++) {
+			  var group = data[ii];
+			  html.push([
+			    '<li class="list-group-item" >'+group.dns_address +
+			    ' <span class="label label-success pull-right">' + group.server_status + '</span></li>',
+			  ]);
+			}
+			html.push(['</ul>']);
+			$("#server_pane p").first().append(html.join(''));
+		});
+		var config_url = '/scripts/r/config/dispatch_task/';
+
+		$.post(config_url, submit_data, function(data) {
+
+			// Are there even any EQ to display?
+			if (data.length <= 0) {
+				return;
+			}
+			
+			var html = ['<h4>System Worker</h4><ul class="list-group">'];
+			var summary = data.summary;
+			for (var ii=0; ii<summary.length; ii++) {
+			  var group = summary[ii];
+			  html.push([
+			    '<li class="list-group-item" >'+group.status +
+			    ' <span class="badge pull-right">' + group.count + '</span></li>',
+			  ]);
+			}
+			var plan = data.plan;
+			for (var ii=0; ii<plan.length; ii++) {
+			  var group = plan[ii];
+			  html.push([
+			    '<li class="list-group-item" >Task ' +
+			    ' <span class="label label-success pull-right">' + group.action + '</span></li>',
+			  ]);
+			}
+			html.push(['</ul>']);
+			$("#server_pane p").first().append(html.join(''));
+		});
+	}
+			
+	function station_info() {
+
+		var config_url = '/scripts/r/station/station_list/';
+
+		$.post(config_url, submit_data, function(data) {
+
+			// Are there even any EQ to display?
+			if (data.length <= 0) {
+				return;
+			}
+			
+			var html = ['<ul class="list-group">'];
+			for (var ii=0; ii<data.length; ii++) {
+			  var group = data[ii];
+			  html.push([
+			    '<li class="list-group-item" >'+group.station_network +
+			    ' <span class="badge pull-right">' + group.count + '</span></li>',
+			  ]);
+			}
+			html.push(['</ul>']);
+			$("#station_pane p").first().html(html.join(''));
+		});
+	}
+			
+	function event_info() {
+
+		var config_url = '/scripts/r/event/event_summary/';
+
+		$.post(config_url, submit_data, function(data) {
+
+			// Are there even any EQ to display?
+			if (data.length <= 0) {
+				return;
+			}
+			
+			var html = ['<ul class="list-group">'];
+			for (var ii=0; ii<data.length; ii++) {
+			  var group = data[ii];
+			  html.push([
+			    '<li class="list-group-item" >'+group.event_type +
+			    ' <span class="badge pull-right">' + group.count + '</span></li>',
+			  ]);
+			}
+			html.push(['</ul>']);
+			$("#event_pane p").first().html(html.join(''));
+		});
+	}
+			
+	function user_info() {
+
+		var config_url = '/scripts/r/user/user_group/';
+
+		$.post(config_url, submit_data, function(data) {
+
+			// Are there even any EQ to display?
+			if (data.length <= 0) {
+				return;
+			}
+			
+			var html = ['<ul class="list-group">'];
+			for (var ii=0; ii<data.length; ii++) {
+			  var group = data[ii];
+			  html.push([
+			    '<li class="list-group-item" >'+group.user_type +
+			    ' <span class="badge pull-right">' + group.count + '</span></li>',
+			  ]);
+			}
+			html.push(['</ul>']);
+			$("#user_pane p").first().html(html.join(''));
+		});
+	}
+			
+	function facility_info() {
+
+		var config_url = '/scripts/r/facility/facility_list/';
+
+		$.post(config_url, submit_data, function(data) {
+
+			// Are there even any EQ to display?
+			if (data.length <= 0) {
+				return;
+			}
+			
+			var html = ['<ul class="list-group">'];
+			for (var ii=0; ii<data.length; ii++) {
+			  var group = data[ii];
+			  html.push([
+			    '<li class="list-group-item" >'+group.facility_type +
+			    ' <span class="badge pull-right">' + group.count + '</span></li>',
+			  ]);
+			}
+			html.push(['</ul>']);
+			$("#facility_pane p").first().html(html.join(''));
+		});
+	}
+			
 	function retrieve_config() {
 
 		var config_url = '/scripts/system_config.pl/';
@@ -535,14 +385,14 @@
 			var servers = data.server;
 			if (servers.length > 0) {
 			var server = servers[0];
-			console.log(server.server_id);
+			//console.log(server.server_id);
 			$("#server_server_id").val(server.server_id);
 			$("#server_dns_address").val(server.dns_address);
 			if (server.query_flag > 0) $("#server_query_flag").prop('checked', true);
 			}
 			
 			var email_server = data.Notification;
-			console.log(email_server.SmtpServer);
+			//console.log(email_server.SmtpServer);
 			$("#email_smtpserver").val(email_server.SmtpServer);
 			$("#email_security").val(email_server.Security);
 			$("#email_port").val(email_server.Port);
@@ -554,7 +404,7 @@
 			$("#email_envelopefrom").val(email_server.EnvelopeFrom);
 			
 			var sm = data.rss;
-			console.log(sm.TIME_WINDOW);
+			//console.log(sm.TIME_WINDOW);
 			$("#sm_time_window").val(sm.TIME_WINDOW);
 			$("#sm_region").val(sm.REGION);
 			$("#param_update_threshold").val(data.Threshold);
@@ -612,7 +462,7 @@
 					'db_password': $("#db_password").val(),
 			
 					};
-					console.log($("#param_groupid").val());
+					//console.log($("#param_groupid").val());
 				$.post(config_url, param, function(data) {
 
 					// Are there even any EQ to display?

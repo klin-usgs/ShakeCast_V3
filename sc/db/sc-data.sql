@@ -1096,13 +1096,7 @@ INSERT INTO `phpbb_config` (`config_name`, `config_value`) VALUES
 
 INSERT INTO `phpbb_groups` (`group_id`, `group_type`, `group_name`, `group_description`, `group_moderator`, `group_single_user`) VALUES 
 (1, 1, 'Anonymous', 'Personal User', 0, 1),
-(2, 1, 'Admin', 'Personal User', 0, 1),
-(42, 1, '01 0012 - MIDDLE FORK SMITH RIVER', '   <table border="0" cellpadding="3" cellspacing="3" height="250" width="350">    <tbody>     <tr>      <td colspan="2" style="background-color: rgb(0, 0, 0);">       <span style="color:#ffffff;"><span style="font-size: 16px;"><strong><span style="font-fa', 1, 1),
-(43, 1, '01 0012 - MIDDLE FORK SMITH RIVER', '   <table border="0" cellpadding="3" cellspacing="3" height="250" width="350">    <tbody>     <tr>      <td colspan="2" style="background-color: rgb(0, 0, 0);">       <span style="color:#ffffff;"><span style="font-size: 16px;"><strong><span style="font-fa', 1, 1),
-(44, 1, '01 0012 - MIDDLE FORK SMITH RIVER', '   <table border="0" cellpadding="3" cellspacing="3" height="250" width="350">    <tbody>     <tr>      <td colspan="2" style="background-color: rgb(0, 0, 0);">       <span style="color:#ffffff;"><span style="font-size: 16px;"><strong><span style="font-fa', 1, 1),
-(45, 1, '01 0012 - MIDDLE FORK SMITH RIVER', '   <table border="0" cellpadding="3" cellspacing="3" height="250" width="350">    <tbody>     <tr>      <td colspan="2" style="background-color: rgb(0, 0, 0);">       <span style="color:#ffffff;"><span style="font-size: 16px;"><strong><span style="font-fa', 1, 1),
-(46, 1, '01 0012 - MIDDLE FORK SMITH RIVER', '   <table border="0" cellpadding="3" cellspacing="3" height="250" width="350">    <tbody>     <tr>      <td colspan="2" style="background-color: rgb(0, 0, 0);">       <span style="color:#ffffff;"><span style="font-size: 16px;"><strong><span style="font-fa', 1, 1),
-(47, 1, '01 0012 - MIDDLE FORK SMITH RIVER', '   <table border="0" cellpadding="3" cellspacing="3" height="250" width="350">    <tbody>     <tr>      <td colspan="2" style="background-color: rgb(0, 0, 0);">       <span style="color:#ffffff;"><span style="font-size: 16px;"><strong><span style="font-fa', 1, 1);
+(2, 1, 'Admin', 'Personal User', 0, 1);
 
 -- 
 -- Dumping data for table `phpbb_themes`
@@ -1125,20 +1119,7 @@ INSERT INTO `phpbb_themes_name` (`themes_id`, `tr_color1_name`, `tr_color2_name`
 
 INSERT INTO `phpbb_users` (`user_id`, `user_active`, `username`, `user_password`, `user_session_time`, `user_session_page`, `user_lastvisit`, `user_regdate`, `user_level`, `user_posts`, `user_timezone`, `user_style`, `user_lang`, `user_dateformat`, `user_new_privmsg`, `user_unread_privmsg`, `user_last_privmsg`, `user_login_tries`, `user_last_login_try`, `user_emailtime`, `user_viewemail`, `user_attachsig`, `user_allowhtml`, `user_allowbbcode`, `user_allowsmile`, `user_allowavatar`, `user_allow_pm`, `user_allow_viewonline`, `user_notify`, `user_notify_pm`, `user_popup_pm`, `user_rank`, `user_avatar`, `user_avatar_type`, `user_email`, `user_icq`, `user_fullname`, `user_from`, `user_sig`, `user_sig_bbcode_uid`, `user_aim`, `user_yim`, `user_msnm`, `user_occ`, `user_organization`, `user_actkey`, `user_newpasswd`) VALUES 
 (-1, 0, 'Anonymous', '', 0, 0, 0, 1168467455, 0, 0, '0.00', NULL, '', '', 0, 0, 0, 0, 0, NULL, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, NULL, '', 0, '', '', '', '', '', NULL, '', '', '', '', '', '', ''),
-(1, 1, 'scadmin', '7014be26f3506a3814e0138c268c857cb2dd08832671361487bfd1cbbb6ab657', 1390085672, 0, 1389728875, 1168467455, 1, 3, '0.00', 1, 'english', 'D M d, Y g:i a', 0, 0, 1174229798, 0, 0, NULL, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, '', 0, '', '', '', '', '', '', '', '', '', '', '', '', ''),
-(23, 1, 'klin', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(31, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(32, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(33, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(34, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(35, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(36, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(37, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(38, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(44, 1, 'test_user', '637ee558f1077628bcd6b63c69dff4cc52d09ca15ba558986369d5044be9d878', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'kuowan.lin@gmail.com', NULL, 'Test User', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(45, 1, 'test_user', '637ee558f1077628bcd6b63c69dff4cc52d09ca15ba558986369d5044be9d878', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'kuowan.lin@gmail.com', NULL, 'Test User', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(46, 1, 'test_user', 'e7ca685f81e2acd0c167fd44fe1cbc8f7443a2046190c7966e5ceceedb644bfe', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Kuo-Wan Lin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(48, 1, 'test_user', '637ee558f1077628bcd6b63c69dff4cc52d09ca15ba558986369d5044be9d878', 0, 0, 0, 0, 0, 0, '0.00', NULL, NULL, 'd M Y H:i', 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, NULL, 0, 'klin@usgs.gov', NULL, 'Test User', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 1, 'scadmin', '7014be26f3506a3814e0138c268c857cb2dd08832671361487bfd1cbbb6ab657', 1390085672, 0, 1389728875, 1168467455, 1, 3, '0.00', 1, 'english', 'D M d, Y g:i a', 0, 0, 1174229798, 0, 0, NULL, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '');
 
 -- 
 -- Dumping data for table `phpbb_user_group`
@@ -1229,7 +1210,7 @@ INSERT INTO `product_type` (`PRODUCT_TYPE`, `NAME`, `DESCRIPTION`, `METRIC`, `FI
 
 INSERT INTO `server` (`SERVER_ID`, `DNS_ADDRESS`, `IP_ADDRESS`, `OWNER_ORGANIZATION`, `LAST_HEARD_FROM`, `ERROR_COUNT`, `SYSTEM_GENERATION`, `SOFTWARE_VERSION`, `BIRTH_TIMESTAMP`, `DEATH_TIMESTAMP`, `PKI_KEY`, `SERVER_STATUS`, `LAT`, `LON`, `LAST_EVENT_TIMESTAMP`, `NUMBER_OF_USERS`, `ACCESS_COUNT`, `EVENT_COUNT`, `PRODUCT_COUNT`, `UPDATE_USERNAME`, `UPDATE_TIMESTAMP`, `PASSWORD`, `UPSTREAM_FLAG`, `DOWNSTREAM_FLAG`, `POLL_FLAG`, `QUERY_FLAG`, `SELF_FLAG`, `EVENT_HWM`, `SHAKEMAP_HWM`, `PRODUCT_HWM`) VALUES 
 (1, 'localhost', NULL, NULL, '2007-06-25 15:46:20', 0, 0, NULL, NULL, NULL, NULL, 'ALIVE', NULL, NULL, NULL, 0, 0, 0, 0, 'scadmin', '2006-12-16 10:25:22', NULL, 1, NULL, NULL, NULL, NULL, 0, 0, 0),
-(1000, 'i386_Base', NULL, NULL, '2006-12-08 16:21:58', 0, 0, NULL, NULL, NULL, NULL, 'ALIVE', NULL, NULL, NULL, 0, 0, 0, 0, 'scadmin', '2006-12-16 10:25:22', NULL, NULL, NULL, NULL, NULL, 1, 45743, 5078, 140769),
+(1000, 'localhost', NULL, NULL, '2006-12-08 16:21:58', 0, 0, NULL, NULL, NULL, NULL, 'ALIVE', NULL, NULL, NULL, 0, 0, 0, 0, 'scadmin', '2006-12-16 10:25:22', NULL, NULL, NULL, NULL, NULL, 1, 45743, 5078, 140769),
 (1302, 'earthquake.usgs.gov', NULL, NULL, '2007-06-25 22:44:31', 0, 0, NULL, NULL, NULL, NULL, 'ALIVE', NULL, NULL, NULL, 0, 0, 0, 0, 'scadmin', '2006-11-27 10:24:08', NULL, 1, 0, 0, 1, 0, 0, 0, 0);
 
 -- 
@@ -1246,8 +1227,7 @@ INSERT INTO `server_status` (`SERVER_STATUS`, `NAME`, `DESCRIPTION`, `UPDATE_USE
 -- 
 
 INSERT INTO `shakecast_user` (`SHAKECAST_USER`, `EMAIL_ADDRESS`, `PHONE_NUMBER`, `FULL_NAME`, `PASSWORD`, `USERNAME`, `USER_TYPE`, `UPDATE_USERNAME`, `UPDATE_TIMESTAMP`) VALUES 
-(1, NULL, NULL, NULL, '7014be26f3506a3814e0138c268c857cb2dd08832671361487bfd1cbbb6ab657', 'scadmin', 'ADMIN', 'cmdadmin', '2013-08-08 15:50:01'),
-(43, NULL, NULL, NULL, NULL, 'GLOBAL', 'GROUP', NULL, NULL);
+(1, NULL, NULL, NULL, '7014be26f3506a3814e0138c268c857cb2dd08832671361487bfd1cbbb6ab657', 'scadmin', 'ADMIN', 'cmdadmin', '2013-08-08 15:50:01');
 
 -- 
 -- Dumping data for table `shakemap_status`

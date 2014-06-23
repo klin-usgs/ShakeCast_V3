@@ -3,408 +3,427 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>ShakeCast</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="/images/sc_logo.png">
 
-<link rel="stylesheet" media="screen" href="../css/proui.css" />
-<link rel="stylesheet" media="screen" href="../css/mapapp.css" />
-<link href="../css/tango/skin.css" rel="stylesheet" type="text/css" />
-		<style type="text/css" title="currentStyle"> 
-			@import "../css/jquery-ui-1.8.16.custom.css";
-			@import "../css/demo_table.css";
-		</style> 
-        <link rel="stylesheet" href="../css/bootstrap.css">
-        <link rel="shortcut icon" href="/images/sc_logo.png">
-        <style>
-            body {
-                padding-top: 60px;
-                padding-bottom: 40px;margin:0px;
-            }
-			.logo{ 
-				vertical-align: text-bottom;
-				text-align: center;
-				height: 24px;
-			}
-			html { overflow-y: scroll; height: 300%; font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-			table { clear: both }
-			 .GREEN { background-color: #008800; }
-			 .YELLOW { background-color: #eeee00; }
-			 .ORANGE { background-color: #ee9900; }
-			 .RED { background-color: #cc0000; }
-			 .NA { background-color: #888888; }
-			 .GREY { background-color: #888888; }
-			.accordion h3 { padding-left: 2em; }
-.fac_summary {
-	border-bottom: 1px solid #888;
-    text-align: left;
-}
-.fac_summary:nth-child(odd) {
-	background-color: #eeeeee;
-}
+    <title>Earthquake Database Administration</title>
 
-.metric
-{
-    margin:10px;
-    padding:5px;	
-	height: 50px;
-	border: 1px solid #888;
-	font-size: 80%;
-}
+    <!-- Bootstrap core CSS -->
+    <link href="../bootstrap3/css/bootstrap.css" rel="stylesheet">
 
-.histogram
-{
-    position:relative;
-    margin:5px;
-    padding:5px;	
-	height: 75px;
-	border-bottom: 1px solid #888;
-   background:#eee;
-	font-size: 70%;
-	width: 175px;
-}
+    <!-- Custom styles for this template -->
+	<link rel="stylesheet" href="../bootstrap3/css/navbar-fixed-top.css">
+	<link rel="stylesheet" href="../css/main.css">
+	<link rel="stylesheet" href="../css/application.css"> 
+	<link rel="stylesheet" href="../css/jquery-ui-1.8.16.custom.css">
+	<link rel="stylesheet" href="../css/demo_table.css">
 
-.histogram li
-{
-    position:absolute;
-   list-style:none;
-   background:lightblue;
-   width:30px;
-   text-align:center;
-   visibility: hidden;
--moz-box-shadow:    3px 3px 5px 6px #ccc;
-  -webkit-box-shadow: 1px #ccc;
-  box-shadow:         1px 1px 1px 1px #ccc;
-}
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
-.thumbnailClass{ text-align: center; }
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
 
-       </style>
-        <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
-        <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../themes/default/default.css" type="text/css" media="screen" />
+  <body>
 
-        <script src="../js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
-    </head>
-    <body>
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
         <![endif]-->
 
         <!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
 
-<div class="container-fluid">
-<div>                    
-	<!-- <a class="brand" href="index.html"><img src="/images/sc_logo.png" class="img-circle logo" />ShakeCast</a>    -->
-	<div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <div class="nav-collapse collapse">
-                        <ul class="nav">
-                            <li class="logo"><a class="brand" href="../index.html"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a></li>
-              <!-- <li class="">
-                <a href="http://twitter.github.com/bootstrap/index.html">Home</a>
-              </li> -->
-              <li class="">
-                <a href="config.html">System Configuration</a>
-              </li>
-              <li class="active">
-                <a href="earthquake.html">Earthquakes</a>
-              </li>
-              <li class="">
-                <a href="facility.html">Facilities</a>
-              </li>
-              <li class="">
-                <a href="Product.html">Products</a>
-              </li>
-              <li class="">
-                <a href="station.html">Stations</a>
-              </li>
-              <li class="">
-                <a href="user.html">Users</a>
-              </li>
-            </ul>
-                    </div><!--/.nav-collapse -->
-                </div>
-            </div>
-        </div>
-</div>
-        <!--/.nav-collapse <div class="container">-->
-      <div class="row-fluid">
-        <div class="span2">
-          <div class="well sidebar-nav">
-            <ul class="nav nav-list">
-              <li class="nav-header">Earthquake List</li>
-              <li><a href="?age=all">Processed Earthquakes</a></li>
-				<li><a href="?type=major">Significant Events</a></li>
-				<li class="divider"></li>
-             <li><a href="?type=scenario">Scenarios</a></li>
-				<li class="divider"></li>
-             <li><a href="?type=test">Test Events</a></li>
-            </ul>
+
+  <!-- Fixed navbar -->
+  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	  <span class="sr-only">Toggle navigation</span>
+	  <span class="icon-bar"></span>
+	  <span class="icon-bar"></span>
+	  <span class="icon-bar"></span>
+	</button>
+	<a class="navbar-brand" href="../index.html"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+      </div>
+      <div class="navbar-collapse collapse">
+	<ul id="nav_menu" class="nav navbar-nav">
+	    <li class=""><a href="./index.html">Admin Home</a></li>
+	    <li><a href="./config.html">General Settings</a></li>
+	    <li class="active">
+	    <a href="./earthquake.html">Earthquakes</a>
+	    </li>
+	    <li class="">
+	    <a href="./facility.html">Facilities</a>
+	    </li>
+	    <li class="">
+	    <a href="./product.html">Products</a>
+	    </li>
+	    <li class="">
+	    <a href="./station.html">Stations</a>
+	    </li>
+	    <li class="">
+	    <a href="./user.html">Users</a>
+	    </li>
+	    <li class="">
+	    <a href="./post_file.html">Upload</a>
+	    </li>
+	</ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+
+  <!-- Subhead
+  ================================================== -->
+  <header class="header" id="overview">
+    <div class="container">
+      <h2>Earthquake Database Administration <small>Manage the earthquake database, ShakeMaps, and scenarios</small></h2>
+      <ol class="breadcrumb">
+	<li class="active"><a href="./index.html">Admin Home</a></li>
+	<li>Earthquake Database Administration</li>
+      </ol>
+    </div>
+  </header>
+  
+<div class="container">
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="panel panel-default">
+	    <div class="panel-heading">Earthquake Inventory</div>
+	    <div class="list-group" id="sidebar">
+              <a class="list-group-item" id="list_all" href="?age=all">Processed Earthquakes</a>
+               <a class="list-group-item" id="list_major" href="?type=major">Significant Events</a>
+             <a class="list-group-item" id="list_scenario" href="?type=scenario">Scenarios</a>
+             <!--<a class="list-group-item" id="list_test" href="?type=test">Test/Exercise Events</a>-->
+	    </div>
           </div><!--/.well -->
+	  
+	            <div class="panel panel-default">
+	    <div class="panel-heading">Fetch Earthquake from USGS Web</div>
+	    <div id="sidebar_prod">
+	      <select class="form-control" id="net_id">
+		<option value=''> - Select Network - </option>
+		<option value='nc'>Northern California</option>
+		<option value='sc'>Southern California</option>
+		<option value='nn'>Nevada</option>
+		<option value='uw'>Pacific Northwest</option>
+		<option value='ut'>Utah</option>
+		<option value='hv'>Hawaii</option>
+		<option value='ak'>Alaska</option>
+		<option value='nm'>New Madrid</option>
+		<option value='global'>Global System</option>
+	      </select>
+	      <div class="form-group">
+		<input type="text" class="form-control" id="event_id" placeholder="Earthquake ID">
+	      </div>
+	      <button type="button" class="btn btn-primary" id="shake_fetch">Submit</button>
+	    </div>
+          </div><!--/.well -->
+	  
         </div><!--/span-->
-        <div class="span9">
+	
+        <div class="col-md-9">
             <!-- Main hero unit for a primary marketing message or call to action -->
-            <div class="hero-unit" style="padding: 30px;">
+            <div class="panel panel-default" id="main_pane">
 				<div id="map_title"></div>
 				<div id="map_canvas" style="width:800px; height:400px;"></div>
  				<div id="caption"></div>
-            </div>
+           </div>
 
             <!-- Example row of columns -->
-            <div class="row-fluid">
-			<p>
-			<a class="btn btn-danger" href="javascript:void(0)" id="delete">Delete selected events</a> 	
-			<a class="btn btn-danger" href="javascript:void(0)" id="trigger_test">Trigger test events</a> 	
-			<a class="btn btn-primary" href="javascript:void(0)" id="major_event">Toggle selected events in archive</a>
-			<a class="btn btn-primary" href="javascript:void(0)" id="create_test">Create test events</a>
-			</p> 	
+            <div class="panel panel-default">
+	      <ul class="nav nav-pills">
+		<li><a class="btn btn-primary" href="javascript:void(0)" id="major_event">Toggle Permanetn Archive Flag</a></li>
+		<li class="pull-right"><a class="btn btn-danger" href="javascript:void(0)" id="delete">Delete Selected Events</a></li>
+		<li class="pull-right"><a class="btn btn-danger" href="javascript:void(0)" id="trigger_test">Trigger Scenario</a></li>
+	      </ul>
 			<table cellpadding="0" cellspacing="0" border="0" class="display" id="eq_content_table"></table>
             </div>
 
-<div id="spinner" class="spinner ui-widget ui-widget-content ui-corner-all" style="width:50px;background:#fff;height:50px;">
-	<img id="img-spinner" src="/images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
-</div>
-
-<!-- Button to trigger modal -->
-     
-    <!-- Modal -->
-    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-    <h3 id="myModalLabel">Modal header</h3>
-    </div>
-    <div class="modal-body">
-    <p>One fine body</p>
-    </div>
-    <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary">Save File</button>
-    </div>
-    </div>
-
-            <hr>
-
-            <footer>
-                <p>&copy; Company 2012</p>
-            </footer>
 
 
-        </div><!--/span-->
+			<div id="spinner" class="spinner ui-widget ui-widget-content ui-corner-all" style="width:50px;background:#fff;height:50px;">
+				<img id="img-spinner" src="/images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
+			</div>
+
         </div> <!-- /container -->
-		
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="../js/vendor/jquery-1.8.2.min.js"><\/script>')</script>
-        <script src="../js/jquery-ui.js"></script>
+      </div> <!-- /container -->
 
-        <script src="../js/vendor/bootstrap.min.js"></script>
+    <!-- Footer
+    ================================================== -->
+    <footer class="footer">
+      <div class="container">
+        <ul class="footer-links">
+          <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
+          <li class="muted">&middot;</li>
+          <li>Desktop</li>
+          <li class="muted">&middot;</li>
+          <li><a href="/html/mobile.html">Mobile</a></li>
+        </ul>
+     </div>
+    </footer>
 
-        <script src="../js/plugins.js"></script>
-        <script src="../js/main.js"></script>
-        <script src="../js/spin.min.js"></script>
-<script type="text/javascript" src="../js/jquery.dataTables1.9.4.min.js"></script>
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-<script src="../js/shakemap.js" type="text/javascript"></script>
-<script src="../js/loadXML.js" type="text/javascript"></script>
+<script type="text/javascript">
+  var prefix;
+  var script = '<script type="text/javascript" src="';
+  var loc = new String(window.parent.document.location);
+  if (loc.indexOf("https://")!= -1)
+    prefix = "https://";
+  else
+    prefix = "http://";
+  script += prefix + 'maps.google.com/maps/api/js?sensor=false"><' + '/script>';
+  document.write(script);
+</script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui.js"></script>
+<script type="text/javascript" src="../js/main.js"></script>
+<script type="text/javascript" src="../js/shakemap.js"></script>
+<script type="text/javascript" src="../js/loadXML.js"></script>
 <script type="text/javascript" src="../js/mapapp_list.js"></script>
-<script type="text/javascript" src="../js/jquery.jcarousel.min.js"></script>
+<script type="text/javascript" src="../js/sc_constant.js"></script>
+<script type="text/javascript" src="../js/storage.js"></script>
+<script type="text/javascript" src="../js/sc_markerclusterer.js"></script>
+<script type="text/javascript" src="../js/jquery.dataTables.min.js"></script>
 
-	<script>
-		var map;
-		var sc_id = gup('event');
-		var type = gup('type');
-		var age = gup('age');
-		var fac_des = [];
-		var mmi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X+"];
-		var product_type = {'INFO_XML':1, 'INTEN_JPG':1, 'PGA_JPG':1, 'PGV_JPG':1, 
-			'PSA03_JPG':1, 'PSA10_JPG':1, 'PSA30_JPG':1, 'STN_XML':1,};
-		var bar = {'GREEN':'bar-success', 'YELLOW':'bar-yellow', 'ORANGE':'bar-warning', 'RED':'bar-danger'};
-		var anOpen = [];
-var eqDiv = {
+<script>
+  var map;
+  var sc_id = gup('event');
+  var type = gup('type');
+  var age = gup('age');
+  var fac_des = [];
+  var anOpen = [];
+  var oTable;
+
+  if (type.match(/test/i)) {
+    $('#delete').hide();$('#major_event').hide();$('#create_test').hide();
+  } else if (type.match(/scenario/i)) {
+    $('#major_event').hide();
+  }
+
+  SC_DEF.init();
+  var username = SC_DEF.user ? SC_DEF.user : 'guest';
+  var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
+  var submit_data = {
+      'username': username,
+      'password': password,
+  };
+
+  $(window).load(function() {
+
+    map = MAPAPP.init(sc_id);
+    $("#list_"+type+age).addClass("active");
+    
+    load_eq();
+  });
+		
+  function load_eq( oTableLocal ) {
+    //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+    //var sm_url = '/scripts/event.pl/event_list?type='+type+'&age='+age;
+    var sm_url = '/scripts/r/event/event_list?type='+type+'&age='+age;
+
+    $.getJSON(sm_url, function(data) {
+
+      // Are there even any EQ to display?
+      if (data.length <= 0) {
+	return;
+      }
+
+      var eqTable = [];
+      for (var i=0; i < data.length; i++) {
+	//MAPAPP.addMarker(data.facility_damage[key]);
+	var event = data[i];
+	event.opacity = 1-i/data.length;
+	MAPAPP.addMarker(event);
+	eqTable.push(
+	  {
+	    "index":i+1,
+	    "event_id":event.event_id,  
+	    "magnitude":event.magnitude, 
+	    "latitude":event.lat, "longitude":event.lon, 
+	    "origin":event.event_timestamp, 
+	    "shakemap_id":event.shakemap_id, 
+	    "shakemap_version":event.shakemap_version, 
+	    "description":event.event_location_description,
+	    "major_event":(event.major_event)?'Yes':'',
+	  }
+	);
+      }
+
+      var eqDiv = {
 	"bJQueryUI": true,
-	"iDisplayLength": 25,
-	"sScrollY": "100%",
+	"iDisplayLength": 10,
+	"sScrollY": ($("#map_canvas").height() > 0) ? $("#map_canvas").height() :  $(window).height()/3,
 	"sScrollX": "100%",
 	"aaSorting": [[ 5, "desc" ]],
 	"bUseRendered": false,
-	aaData: [], 
+	aaData: eqTable, 
 	aoColumns: 
-		[
-		{'sTitle': 'Index',"mDataProp": "index"},
-		{'sTitle': 'Earthquake ID',"mDataProp": "event_id"},
-		{'sTitle': 'Magnitude',"mDataProp": "magnitude"},
-		{'sTitle': 'Latitude',"mDataProp": "latitude"},
-		{'sTitle': 'Longitude',"mDataProp": "longitude"}, 
-		{'sTitle': 'Origin Time',"mDataProp": "origin"},
-		{'sTitle': 'Description',"mDataProp": "description"},
-		{'sTitle': 'Permanent Archived',"mDataProp": "major_event"},
+	  [
+	  {'sTitle': 'Index',"mDataProp": "index"},
+	  {'sTitle': 'Earthquake ID',"mDataProp": "event_id"},
+	  {'sTitle': 'Magnitude',"mDataProp": "magnitude"},
+	  {'sTitle': 'Latitude',"mDataProp": "latitude"},
+	  {'sTitle': 'Longitude',"mDataProp": "longitude"}, 
+	  {'sTitle': 'Origin Time',"mDataProp": "origin"},
+	  {'sTitle': 'Description',"mDataProp": "description"},
+	  {'sTitle': 'Permanent Archived',"mDataProp": "major_event"},
 	]};
-					oTable = $('#eq_content_table').dataTable(eqDiv);
-
-		 if (type.match(/test/i)) {
-			$('#delete').hide();$('#major_event').hide();$('#create_test').hide();
-		} else if (type.match(/scenario/i)) {
-			$('#major_event').hide();$('#trigger_test').hide();
-		} else {
-			$('#trigger_test').hide();
-		}
-
-	$(window).load(function() {
-
-		map = MAPAPP.init(sc_id);
-			//google.maps.event.trigger(map, 'resize');
-	 
-		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-		var sm_url = '/scripts/event.pl/event_list?type='+type+'&age='+age;
-
-		$.getJSON(sm_url, function(data) {
-
-			// Are there even any EQ to display?
-			if (data.length <= 0) {
-				return;
-			}
-
-			var eqTable = [];
-			for (var i=0; i < data.length; i++) {
-			//MAPAPP.addMarker(data.facility_damage[key]);
-			var event = data[i];
-			event.opacity = 1-i/data.length;
-			MAPAPP.addMarker(event);
-			eqTable.push(
-				{
-				"index":i+1,
-				"event_id":event.event_id,  
-				"magnitude":event.magnitude, 
-				"latitude":event.lat, "longitude":event.lon, 
-				"origin":event.event_timestamp, 
-				"shakemap_id":event.shakemap_id, 
-				"shakemap_version":event.shakemap_version, 
-				"description":event.event_location_description,
-				"major_event":(event.major_event)?'Yes':'',
-				}
-				);
-				
-			}
-			//eqDiv.aaData = eqTable;
-			//var oTable = $('#eq_content_table').dataTable(eqDiv);
-					$('#eq_content_table').dataTable().fnAddData(eqTable);
-			google.maps.event.trigger(MAPAPP.facMarkers[data[0].event_id], 'click');
-			map.setCenter(MAPAPP.facMarkers[data[0].event_id].getPosition());
+	  
+      if (oTable) oTable.fnDestroy();
+      
+      oTable = $('#eq_content_table').dataTable(eqDiv);
+      
+      oTable.$('tr').click( function () {
+	var data = oTable.fnGetData( this );
+	//fnAccordion(data.id);
+	//load_marker(data.id);
+	row_click(this);
+      });
 	
-		$("tr").live('click', function (e) {
-			if ( $(this).hasClass('row_selected') ) {
-				$(this).removeClass('row_selected');
-				MAPAPP.infowindow.close(map);
-				MAPAPP.removeSM();
-			}
-			else {
-				//oTable.$('tr.row_selected').removeClass('row_selected');
-				$(this).addClass('row_selected');
-				var oData = oTable.fnGetData( this );
-				var sLat = parseFloat(oData.latitude);
-				var sLon = parseFloat(oData.longitude);
-				google.maps.event.trigger(MAPAPP.facMarkers[oData.event_id], 'click');
-			}
-					 $(window).trigger('resize');
-			});
-			 
-		/* Add a click handler for the delete row */
-		$('#delete').bind('click', function() {
-			var anSelected = fnGetSelected( oTable );
-			for (var i=0; i < anSelected.length; i++) {
-				var oData = oTable.fnGetData( anSelected[i] );
-				//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-				var evt_url = '/scripts/event.pl/erase?event_id='+oData.event_id;
-				var row = anSelected[i];
+      google.maps.event.trigger(MAPAPP.facMarkers[data[0].event_id], 'click');
+      map.setCenter(MAPAPP.facMarkers[data[0].event_id].getPosition());
+      $(window).trigger('resize');
+    });
+  }
 
-				$.getJSON(evt_url, function(data) {
+  function row_click(data) {
+    if ( $(data).hasClass('row_selected') ) {
+      $(data).removeClass('row_selected');
+      MAPAPP.infowindow.close(map);
+      MAPAPP.removeSM();
+    }
+    else {
+      //oTable.$('tr.row_selected').removeClass('row_selected');
+      $(data).addClass('row_selected');
+      var oData = oTable.fnGetData( data );
+      var sLat = parseFloat(oData.latitude);
+      var sLon = parseFloat(oData.longitude);
+      google.maps.event.trigger(MAPAPP.facMarkers[oData.event_id], 'click');
+    }
+    $(window).trigger('resize');
+  }
+		     
+  /* Add a click handler for the delete row */
+  $('#delete').bind('click', function() {
+    var anSelected = fnGetSelected( oTable );
+    for (var i=0; i < anSelected.length; i++) {
+      var oData = oTable.fnGetData( anSelected[i] );
+      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+      //var evt_url = '/scripts/event.pl/erase?event_id='+oData.event_id;
+      var evt_url = '/scripts/r/event/erase?event_id='+oData.event_id;
+      var row = anSelected[i];
+	oTable.fnDeleteRow( row );
 
-					// Are there even any EQ to display?
-					if (data.length <= 0) {
-						return;
-					}
-					
-					console.log(row);
-					MAPAPP.infowindow.close(map);
-					MAPAPP.removeSM();
-					MAPAPP.removeMarker(oData.event_id);
-					oTable.fnDeleteRow( anSelected[i] );
-				});
-			}
-		} );
-		/* Add a click handler for the delete row */
-		$('#major_event').bind('click', function() {
-			var anSelected = fnGetSelected( oTable );
-			for (var i=0; i < anSelected.length; i++) {
-				var oData = oTable.fnGetData( anSelected[i] );
-				//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-				var evt_url = '/scripts/event.pl/toggle?event_id='+oData.event_id;
-				var arch_f = (oData.major_event) ? '' : 'Yes';
-				oTable.fnUpdate(arch_f, anSelected[i], 7);
-				$.getJSON(evt_url, function(data) {
+      $.getJSON(evt_url, function(data) {
+	// Are there even any EQ to display?
+	if (data.length <= 0) {
+		return;
+	}
+				    
+	console.log(row);
+	MAPAPP.infowindow.close(map);
+	MAPAPP.removeSM();
+	MAPAPP.removeMarker(oData.event_id);
+	if (data.status) {
+	  alert("Earthquake is deleted from the database.");
+	} else {
+	  alert("Error in deleting earthquake.");
+	}
+      });
+    }
+  } );
+  
+  /* Add a click handler for the delete row */
+  $('#major_event').bind('click', function() {
+    var anSelected = fnGetSelected( oTable );
+    for (var i=0; i < anSelected.length; i++) {
+      var oData = oTable.fnGetData( anSelected[i] );
+      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+      //var evt_url = '/scripts/event.pl/toggle?event_id='+oData.event_id;
+      var evt_url = '/scripts/r/event/toggle?event_id='+oData.event_id;
+      var arch_f = (oData.major_event) ? '' : 'Yes';
+      oTable.fnUpdate(arch_f, anSelected[i], 7);
+      
+      $.getJSON(evt_url, function(data) {
+	// Are there even any EQ to display?
+	if (data.length <= 0) {
+		return;
+	}
+      });
+    }
+  } );
+  
+  /* Add a click handler for the delete row */
+  $('#trigger_test').bind('click', function() {
+    var anSelected = fnGetSelected( oTable );
+    for (var i=0; i < anSelected.length; i++) {
+      var oData = oTable.fnGetData( anSelected[i] );
+      
+      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+      //var evt_url = '/scripts/event.pl/inject_test?event_id='+oData.event_id;
+      var evt_url = '/scripts/r/event/trigger_scenario?event_id='+oData.event_id;
+      $.getJSON(evt_url, function(data) {
+	// Are there even any EQ to display?
+	if (data.length <= 0) {
+	  return;
+	}
+	
+	if (data.scfeed_local) {
+	  alert(data.scfeed_local);
+	} else {
+	  alert("Error in triggering scenario.");
+	}
+      });
+    }
+  } );
+  
+  /* Add a click handler for the delete row */
+  $('#shake_fetch').bind('click', function() {
+    var net_id = $("#net_id").val();
+    var event_id = $("#event_id").val();
 
-					// Are there even any EQ to display?
-					if (data.length <= 0) {
-						return;
-					}
-				});
-			}
-		} );
-		/* Add a click handler for the delete row */
-		$('#trigger_test').bind('click', function() {
-			var anSelected = fnGetSelected( oTable );
-			for (var i=0; i < anSelected.length; i++) {
-				var oData = oTable.fnGetData( anSelected[i] );
-				//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-				var evt_url = '/scripts/event.pl/inject_test?event_id='+oData.event_id;
-				$.getJSON(evt_url, function(data) {
-
-					// Are there even any EQ to display?
-					if (data.length <= 0) {
-						return;
-					}
-				});
-			}
-		} );
-		 /* Get the rows which are currently selected */
-		function fnGetSelected( oTableLocal )
-		{
-			return oTableLocal.$(".row_selected");
-		}
-
-					 $(window).trigger('resize');
-		});
-
-	});
-		
-	$(window).resize(function() {
-		oTable.fnAdjustColumnSizing();
-		//$("#eq_content_table").width($(".row").width());
-		$("#map_canvas").width($(".hero-unit").width());
-		$("#map_canvas").height(($("#map_canvas").width())/2);
-		//console.log($("#map_canvas").width());
-		google.maps.event.trigger(map, 'resize');
-		var cont_height = $("#map_canvas").height() + $("#eq_content_table").height();
-		if ($("#sidebar").length) {
-			cont_height = ($("#sidebar").height() > cont_height) ? $("#sidebar").height() : cont_height;
-		}
-		$('html').css('height', cont_height+ 300);
-	});
-		
-	$(document).ready(function(){
-		$("#spinner").bind("ajaxStart", function() {
-			$(this).show();
-		}).bind("ajaxStop", function() {
-			$(this).hide();
-		}).bind("ajaxError", function() {
-			$(this).hide();
-		});
-
-		 });
+    submit_data.program = 'shake_fetch';
+    submit_data.filename = event_id;
+    submit_data.option = net_id;
+    
+    var local_url = '/scripts/r/update_inventory';
+    $.post(local_url, submit_data, function(data) {
+      if (data.result) {
+	alert(data.result);
+      } else {
+	alert("Error in fetching ShakeMap.");
+      }
+    });
+  });
+  
+  /* Get the rows which are currently selected */
+  function fnGetSelected( oTableLocal ) {
+    return oTableLocal.$(".row_selected");
+  }
+      
+  $(window).resize(function() {
+    //oTable.fnAdjustColumnSizing();
+    //$("#eq_content_table").width($(".row").width());
+    $("#map_canvas").width($("#main_pane").width());
+    $("#map_canvas").height(($("#map_canvas").width())/2);
+    //console.log($("#map_canvas").width());
+    google.maps.event.trigger(map, 'resize');
+    var cont_height = $("#map_canvas").height() + $(".accordion").height();
+    if ($("#sidebar").length) {
+      cont_height = ($("#sidebar").height() > cont_height) ? $("#sidebar").height() : cont_height;
+    }
+    $('html').css('height', cont_height);
+  });
 
     </script>
     </body>
