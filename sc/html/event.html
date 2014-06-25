@@ -663,6 +663,7 @@
 			  facility_type: facility.facility_type,
 			  facility_count: 1,
 			  damage_level: facility.damage_level,
+			  severity_rank: parseInt(facility.severity_rank),
 			};
 		  } else {
 		    marker_icon[icon_type].facility_count += 1;
@@ -687,39 +688,32 @@
 		  markers_index[fac] = count++;
 		}
 		
-		if (fac_type == "ALL") {
-			var dmg_url = '/scripts/r/damage/from_id/'+sc_id+'?action=summary';
-			$.getJSON(dmg_url, function(summary) {
-				var damage_summary = '<div class="progress">';
-				// Are there even any EQ to display?
-				if (summary.count > 0) {
-					jQuery.each(summary.damage_summary, function(i, val) {
-						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: ' + val/summary.count*100 + '%;">' + val + '</div>';
-					});
-				}
-				damage_summary += '</div>';
-				$("#caption").html(damage_summary);
-			});
-		} else {
-					var damage_summary = '<div class="progress">';
-			// Are there even any EQ to display?
-			for (var i in marker_icon)  {
-				if (marker_icon[i].facility_count > 0) {
-					damage_summary += '<div class="progress-bar ' + bar[marker_icon[i].damage_level] + '" style="width: 20%;">' + marker_icon[i].facility_count + '</div>';
-				}
-			}
-			damage_summary += '</div>';
-			$("#caption").html(damage_summary);
-		}
-
-		markerCluster = new MarkerClusterer(map, markers,{'zoomOnClick':0});
-		
-		marker_icon.sort(function(a, b){
-		    var a1= a.facility_type, b1= b.facility_type;
+		var disp_icon = [];
+		for (var key in marker_icon) disp_icon.push(marker_icon[key]);
+		disp_icon.sort(function(a, b){
+		    var a1= a.severity_rank, b1= b.severity_rank;
 		    if(a1== b1) return 0;
 		    return a1> b1? 1: -1;
 		});
-		MAPAPP.addLegend(marker_icon);
+		
+		var dmg_url = '/scripts/r/damage/from_id/'+sc_id+'?action=summary';
+		if (fac_type != "ALL") {
+		  dmg_url += '&type=' + fac_type;
+		}
+		$.getJSON(dmg_url, function(summary) {
+			var damage_summary = '<div class="progress">';
+			// Are there even any EQ to display?
+			//if (summary.count > 0) {
+				jQuery.each(summary.damage_summary, function(i, val) {
+					damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width:20%;">' + val + '</div>';
+				});
+			//}
+			damage_summary += '</div>';
+			$("#caption").html(damage_summary);
+		});
+		markerCluster = new MarkerClusterer(map, markers,{'zoomOnClick':0});
+		
+		MAPAPP.addLegend(disp_icon);
 		
 		  google.maps.event.addListener(markerCluster, 'clusterclick', function(cluster) {
 		    var marker_index = [];

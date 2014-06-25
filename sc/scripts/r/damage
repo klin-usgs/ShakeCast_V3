@@ -18,6 +18,8 @@ use API::Shaking;
 
 SC->initialize;
 my $default_options = API::APIUtil::config_options();
+my %damage_levels = new API::Damage->damage_level();
+$damage_levels{'GREY'} = "10";
 
 my $self = new CGI;
 my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
@@ -77,9 +79,17 @@ sub from_id {
 	    } else {
 		$shake_count = $damage->{'count'};
 	    }
+	    my $damage_type = {};
+	    foreach my $damage_level (sort keys %damage_levels) {
+    		if ($damage->{'damage_summary'}->{$damage_level} > 0) {
+		    $damage_type->{$damage_level} = $damage->{'damage_summary'}->{$damage_level};
+		} else {
+		    $damage_type->{$damage_level} = 0;
+		}
+	    }
 
 	    $damage = {'count' => $shake_count,
-			    'damage_summary' => $damage->{'damage_summary'}
+			    'damage_summary' => $damage_type
 			    };
 	}
 
