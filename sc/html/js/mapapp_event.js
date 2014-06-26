@@ -160,7 +160,8 @@ MAPAPP = (function() {
 				// Are there even any EQ to display?
 				if (summary.count > 0) {
 					jQuery.each(summary.damage_summary, function(i, val) {
-						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: ' + val/summary.count*100 + '%;">' + val + '</div>';
+						//damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: ' + val/summary.count*100 + '%;">' + val + '</div>';
+						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: 20%;">' + val + '</div>';
 					});
 				}
 				damage_summary += '</div>';

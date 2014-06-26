@@ -208,7 +208,7 @@ sub from_id_damage {
 	      from facility_shaking fs inner join facility_fragility ff
 		  ON fs.facility_id = ff.facility_id
 		  INNER JOIN facility f on fs.facility_id = f.facility_id
-		  INNER JOIN damage_level dl on ff.damage_level = dl.damage_level
+		  RIGHT JOIN damage_level dl on ff.damage_level = dl.damage_level
 	     where grid_id = ?
 			AND fs.value_%VALNO% > ff.low_limit 
 			AND fs.value_%VALNO% <= ff.high_limit
@@ -368,7 +368,8 @@ sub damage_level {
 		my $sth = SC->dbh->prepare(qq/
 			select damage_level, severity_rank
 			  from damage_level
-			  where damage_level not in ('grey')/);
+			  where damage_level not in ('grey')
+			  order by severity_rank/);
 		$sth->execute;
 		while (my @p = $sth->fetchrow_array()) {
 			push @damage_level, @p;
