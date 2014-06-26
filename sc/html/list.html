@@ -404,6 +404,7 @@ function selector(sm_id) {
 			  // The anchor for this image is the base of the flagpole at 0,32.
 			  anchor: new google.maps.Point(12, 12),
 			  facility_type: facility.facility_type,
+		    severity_rank: facility.severity_rank,
 			  facility_count: 1,
 			};
 		  } else {
@@ -428,7 +429,15 @@ function selector(sm_id) {
 		}
 		markerCluster = new MarkerClusterer(map, markers,{'zoomOnClick':0});
 		
-		MAPAPP.addLegend(marker_icon);
+		var disp_icon = [];
+		for (var key in marker_icon) disp_icon.push(marker_icon[key]);
+		disp_icon.sort(function(a, b){
+		    var a1= a.severity_rank, b1= b.severity_rank;
+		    if(a1== b1) return 0;
+		    return a1> b1? 1: -1;
+		});
+		
+		MAPAPP.addLegend(disp_icon);
 		
 		  google.maps.event.addListener(markerCluster, 'clusterclick', function(cluster) {
 		    var cluster_markers = cluster.getMarkers();
