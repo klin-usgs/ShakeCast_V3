@@ -153,7 +153,7 @@ MAPAPP = (function() {
 			
 			sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
-			var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
+			/*var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
 			if (allmarker_flag) dmg_url += '&all=1';
 			$.getJSON(dmg_url, function(summary) {
 				var damage_summary = '<div class="progress">';
@@ -166,7 +166,7 @@ MAPAPP = (function() {
 				}
 				damage_summary += '</div>';
 				$("#caption").html(damage_summary);
-			});
+			});*/
 		var html_array = [
 			'<div  class="panel panel-info"><div class="panel-heading text-center"><h4>Earthquake Information</h4></div>',
 			'<table class="table table-striped table-responsive">',
@@ -313,11 +313,11 @@ MAPAPP = (function() {
 	}
 
 	var typeText = '<img src="/images/epicenter.png" /> Earthquake Epicenter<br />';
-	var type_array = [];
-        for (var ii in facTypes) type_array.push(ii);
-	type_array.sort();
-        for (var ii=0; ii< type_array.length; ii++) {
-	    var factype = facTypes[type_array[ii]];
+	//var type_array = [];
+        //for (var ii in facTypes) type_array.push(ii);
+	//type_array.sort();
+        for (var ii in facTypes) {
+	    var factype = facTypes[ii];
 	    if (factype.facility_count > 0) 
 	    typeText = typeText +
 	    '<img src="' + factype.url + '" /> ' + factype.facility_type + ' : ' +
@@ -330,7 +330,29 @@ MAPAPP = (function() {
 	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(tableDiv);
     } // watchHash
    
-    var module = {
+    function addCaption(sm_id, facTypes) {
+			//sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
+			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
+			var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
+			if (facTypes != "ALL") {
+			  dmg_url += '?type=' + facTypes;
+			}
+			console.log(dmg_url);
+			$.getJSON(dmg_url, function(summary) {
+				var damage_summary = '<div class="progress">';
+				// Are there even any EQ to display?
+				if (summary.count > 0) {
+					jQuery.each(summary.damage_summary, function(i, val) {
+						//damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: ' + val/summary.count*100 + '%;">' + val + '</div>';
+						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: 20%;">' + val + '</div>';
+					});
+				}
+				damage_summary += '</div>';
+				$("#caption").html(damage_summary);
+			});
+    } // watchHash
+
+	    var module = {
         addMarker: addMarker,
 	loadSM: loadSM,
 	loadInfo: loadInfo,
@@ -340,6 +362,7 @@ MAPAPP = (function() {
 	removeMarkers : removeMarkers,
 	facMarkers : facMarkers,
         addLegend: addLegend,
+        addCaption: addCaption,
        
         init: function(user_options) {
 

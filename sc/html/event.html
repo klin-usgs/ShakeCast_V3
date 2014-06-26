@@ -623,6 +623,7 @@
       }
 
       function load_marker(){
+		MAPAPP.addCaption(sc_id, fac_type);
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = '/scripts/r/damage/marker/' + sc_id;
 		if (SC_DEF.allmarker_flag) {
@@ -696,7 +697,7 @@
 		    return a1> b1? 1: -1;
 		});
 		
-		var dmg_url = '/scripts/r/damage/from_id/'+sc_id+'?action=summary';
+		/*var dmg_url = '/scripts/r/damage/from_id/'+sc_id+'?action=summary';
 		if (fac_type != "ALL") {
 		  dmg_url += '&type=' + fac_type;
 		}
@@ -710,7 +711,7 @@
 			//}
 			damage_summary += '</div>';
 			$("#caption").html(damage_summary);
-		});
+		});*/
 		markerCluster = new MarkerClusterer(map, markers,{'zoomOnClick':0});
 		
 		MAPAPP.addLegend(disp_icon);

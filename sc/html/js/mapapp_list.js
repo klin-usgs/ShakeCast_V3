@@ -357,11 +357,8 @@ MAPAPP = (function() {
 	}
 
 	var typeText = '<img src="/images/epicenter.png" /> Earthquake Epicenter<br />';
-	var type_array = [];
-        for (var ii in facTypes) type_array.push(ii);
-	type_array.sort();
-        for (var ii=0; ii< type_array.length; ii++) {
-	    var factype = facTypes[type_array[ii]];
+        for (var ii in facTypes) {
+	    var factype = facTypes[ii];
 	    if (factype.facility_count > 0) 
 	    typeText = typeText +
 	    '<img src="' + factype.url + '" /> ' + factype.facility_type + ' : ' +
