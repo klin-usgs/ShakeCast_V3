@@ -62,7 +62,6 @@ MAPAPP = (function() {
 				  var feature_coords = [];
 					var coord_str = data.feature[0].geom;
 					var coords = coord_str.split(" ");
-					console.log(coords.length);
 					for (i=0; i < coords.length; i++) {
 						var latlon_str = coords[i];
 						var latlon = latlon_str.split(",");
@@ -154,19 +153,20 @@ MAPAPP = (function() {
 			
 			sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
-			var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
+			/*var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
 			if (allmarker_flag) dmg_url += '&all=1';
 			$.getJSON(dmg_url, function(summary) {
 				var damage_summary = '<div class="progress">';
 				// Are there even any EQ to display?
 				if (summary.count > 0) {
 					jQuery.each(summary.damage_summary, function(i, val) {
-						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: ' + val/summary.count*100 + '%;">' + val + '</div>';
+						//damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: ' + val/summary.count*100 + '%;">' + val + '</div>';
+						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: 20%;">' + val + '</div>';
 					});
 				}
 				damage_summary += '</div>';
 				$("#caption").html(damage_summary);
-			});
+			});*/
 		var html_array = [
 			'<div  class="panel panel-info"><div class="panel-heading text-center"><h4>Earthquake Information</h4></div>',
 			'<table class="table table-striped table-responsive">',
@@ -313,11 +313,11 @@ MAPAPP = (function() {
 	}
 
 	var typeText = '<img src="/images/epicenter.png" /> Earthquake Epicenter<br />';
-	var type_array = [];
-        for (var ii in facTypes) type_array.push(ii);
-	type_array.sort();
-        for (var ii=0; ii< type_array.length; ii++) {
-	    var factype = facTypes[type_array[ii]];
+	//var type_array = [];
+        //for (var ii in facTypes) type_array.push(ii);
+	//type_array.sort();
+        for (var ii in facTypes) {
+	    var factype = facTypes[ii];
 	    if (factype.facility_count > 0) 
 	    typeText = typeText +
 	    '<img src="' + factype.url + '" /> ' + factype.facility_type + ' : ' +
@@ -330,6 +330,28 @@ MAPAPP = (function() {
 	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(tableDiv);
     } // watchHash
    
+    function addCaption(sm_id, facTypes) {
+			//sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
+			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
+			var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
+			if (facTypes != "ALL") {
+			  dmg_url += '?type=' + facTypes;
+			}
+			console.log(dmg_url);
+			$.getJSON(dmg_url, function(summary) {
+				var damage_summary = '<div class="progress">';
+				// Are there even any EQ to display?
+				if (summary.count > 0) {
+					jQuery.each(summary.damage_summary, function(i, val) {
+						//damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: ' + val/summary.count*100 + '%;">' + val + '</div>';
+						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: 20%;">' + val + '</div>';
+					});
+				}
+				damage_summary += '</div>';
+				$("#caption").html(damage_summary);
+			});
+    } // watchHash
+
     var module = {
         addMarker: addMarker,
 	loadSM: loadSM,
@@ -340,6 +362,7 @@ MAPAPP = (function() {
 	removeMarkers : removeMarkers,
 	facMarkers : facMarkers,
         addLegend: addLegend,
+        addCaption: addCaption,
        
         init: function(user_options) {
 
@@ -352,7 +375,7 @@ MAPAPP = (function() {
             var myOptions = {
 				zoomControl: true,
                 zoom: user_options.DEFAULT_ZOOM ? parseInt(user_options.DEFAULT_ZOOM) : DEFAULT_ZOOM,
-				//scrollwheel: false,
+				scrollwheel: user_options.scrollwheel_zoom_flag ? true : false,
                 center: user_options.lat ? 
 					new google.maps.LatLng(parseInt(user_options.lat),parseInt(user_options.lon)) : 
 					new google.maps.LatLng(35,-120),
@@ -551,7 +574,7 @@ function LegendControl(controlDiv, map, facTypes) {
   goHomeText.style.fontSize = '12px';
   goHomeText.style.paddingLeft = '4px';
   goHomeText.style.paddingRight = '4px';
-  goHomeText.innerHTML = 'Facility Cluster<br/><img src="/images/cluster/m1_10.png" /><img src="/images/cluster/m1_100.png" /><img src="/images/cluster/m1_200.png" /><img src="/images/cluster/m1_300.png" /><img src="/images/cluster/m1_400.png" />';
+  goHomeText.innerHTML = 'Facility Cluster<br/><img src="/images/cluster/m1_1.png" /><img src="/images/cluster/m1_100.png" /><img src="/images/cluster/m1_200.png" /><img src="/images/cluster/m1_300.png" /><img src="/images/cluster/m1_400.png" />';
   goHomeUI.appendChild(goHomeText);
   
   // Set CSS for the setHome control border

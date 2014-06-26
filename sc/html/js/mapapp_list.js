@@ -209,7 +209,7 @@ MAPAPP = (function() {
 				// Are there even any EQ to display?
 				if (summary.count > 0) {
 					jQuery.each(summary.damage_summary, function(i, val) {
-						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width: ' + val/summary.count*100 + '%;">' + val + '</div>';
+						damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width:20%;">' + val + '</div>';
 					});
 				}
 				damage_summary += '</div>';
@@ -259,6 +259,7 @@ MAPAPP = (function() {
 			'<li class="fac_summary"><b>Description</b> : ' + facility.description + '</li>',
 			'</ul></div>',
 		];
+		loadInfo(facility.facility_id, new google.maps.LatLng(lat, lon));
 		var infocontent = html_array.join('');
 		google.maps.event.addListener(marker, 'click', 
 			function() {
@@ -356,11 +357,8 @@ MAPAPP = (function() {
 	}
 
 	var typeText = '<img src="/images/epicenter.png" /> Earthquake Epicenter<br />';
-	var type_array = [];
-        for (var ii in facTypes) type_array.push(ii);
-	type_array.sort();
-        for (var ii=0; ii< type_array.length; ii++) {
-	    var factype = facTypes[type_array[ii]];
+        for (var ii in facTypes) {
+	    var factype = facTypes[ii];
 	    if (factype.facility_count > 0) 
 	    typeText = typeText +
 	    '<img src="' + factype.url + '" /> ' + factype.facility_type + ' : ' +
@@ -396,7 +394,7 @@ MAPAPP = (function() {
             var myOptions = {
 				zoomControl: true,
                 zoom: user_options.DEFAULT_ZOOM ? parseInt(user_options.DEFAULT_ZOOM) : DEFAULT_ZOOM,
-				//scrollwheel: false,
+				scrollwheel: user_options.scrollwheel_zoom_flag ? true : false,
                 center: user_options.lat ? 
 					new google.maps.LatLng(parseInt(user_options.lat),parseInt(user_options.lon)) : 
 					new google.maps.LatLng(35,-120),
