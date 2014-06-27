@@ -490,15 +490,16 @@ sub fetch_json_page
 # returns a list of all products that should be polled for new events, etc.
 sub event_filter {
 	my ($xml) = @_;
+	my $rc = 0;
 	
-	return (0) if ($xml->{'event_region'} =~ /pt|at|dr/i);
+	return ($rc) if ($xml->{'event_region'} =~ /pt|at|dr/i);
 	
 	my $time_window = (SC->config->{'rss'}->{'TIME_WINDOW'}) ? 
 						SC->config->{'rss'}->{'TIME_WINDOW'} : 30;
 	my $eq_time = SC->ts_to_time($xml->{'event_timestamp'});
 	my $time_cutoff = $eq_time + $time_window * 86400;
 
-	return (0) unless ($time_cutoff > time() );
+	return ($rc) unless ($time_cutoff > time() );
 
 	use Graphics_2D;
 	my $sth_lookup_poly = SC->dbh->prepare(qq{
@@ -506,7 +507,7 @@ sub event_filter {
 		  from geometry_profile});
 
     my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
-	return (1) unless (scalar @$idp >= 1);
+	return ($rc) unless (scalar @$idp >= 1);
 	while (@$idp) {
 		my $profile_name = shift @$idp;
 		my $geom = shift @$idp;
