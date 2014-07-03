@@ -1,9 +1,10 @@
 ; Default HTML Email Notification
 ;
-;From: ShakeCast <%HEADER_FROM%>
-;To: %HEADER_TO%
-%EVENT_ID%: M%MAGNITUDE% %EVENT_LOCATION_DESCRIPTION%
-Content-Type: text/html
+From: ShakeCast <%HEADER_FROM%>
+To: %HEADER_TO%
+Subject: M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
+; End -- header
+
 
 The following New Event occurred at <b>%EVENT_TIMESTAMP%</b>:
 <p>
