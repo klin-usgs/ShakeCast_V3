@@ -1,9 +1,10 @@
 ; Default HTML Email Notification
 ;
-From: ShakeCast <%HEADER_FROM%>
+From: ShakeCast Linux <%HEADER_FROM%>
 To: %HEADER_TO%
-Subject: %DAMAGE_LEVEL% Damage Level at  %FACILITY_NAME%
-Content-Type: text/html
+Subject: Inspection Priority M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
+Attach: C:/ShakeCast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
+; End -- header
 
 Grid generated at %GENERATION_TIMESTAMP% shows that
 %METRIC% shaking at <b>%FACILITY_NAME%</b> resulted in a
@@ -11,6 +12,7 @@ damage level of <b>%DAMAGE_LEVEL% (%DAMAGE_NAME%)</b>.
 The actual value was %GRID_VALUE%.
 <p>
 %DAMAGE_DESCRIPTION%
+<img src="cid:intensity.jpg">
 <p>
 Event ID:   %EVENT_ID%   Version: %EVENT_VERSION%
 <p>

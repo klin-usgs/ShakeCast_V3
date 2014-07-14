@@ -693,6 +693,12 @@ __SQL__
       SELECT_SERVER_INFO => { SQL => <<__SQL__ },
 SELECT server_id, dns_address FROM server WHERE self_flag = 1
 __SQL__
+      SELECT_FACILITY_ATTRIBUTE => { SQL => <<__SQL__ },
+SELECT attribute_name, attribute_value FROM facility_attribute WHERE facility_id = ?
+__SQL__
+      SELECT_FACILITY_FEATURE => { SQL => <<__SQL__ },
+SELECT geom_type, geom FROM facility_feature WHERE facility_id = ?
+__SQL__
       SELECT_TEMPLATE => { SQL => <<__SQL__ },
 SELECT file_name FROM message_format WHERE message_format = ?
 __SQL__
@@ -1323,6 +1329,8 @@ sub add_derived_values {
     my $r = shift;
 
     add_exceedance_ratio($r);
+	add_facility_attribute($r);
+	add_facility_feature($r);
     # put others here...
 }
 
@@ -1338,6 +1346,36 @@ sub add_exceedance_ratio {
     if ($r->{IS_MAX_SEVERITY}) { $v = $val / $lv }
     else { $v = ($val - $lv) / ($hv - $lv) }
     $r->{EXCEEDANCE_RATIO} = sprintf "%.3f", $v;
+    }
+}
+
+
+sub add_facility_attribute {
+    my $r = shift;
+
+    if ($r->{FACILITY_ID}) {
+	my $sth = $SQL{SELECT_FACILITY_ATTRIBUTE}->{STH};
+	$sth->execute($r->{FACILITY_ID});
+	while (my $fa = $sth->fetchrow_hashref('NAME_uc')) {
+	    $r->{'ATTR_'.uc($fa->{ATTRIBUTE_NAME})} = $fa->{ATTRIBUTE_VALUE}; 
+	}
+	$sth->finish;
+    }
+}
+
+
+sub add_facility_feature {
+    my $r = shift;
+
+    if ($r->{FACILITY_ID}) {
+		my $sth = $SQL{SELECT_FACILITY_FEATURE}->{STH};
+		$sth->execute($r->{FACILITY_ID});
+		my $ff = $sth->fetchrow_hashref('NAME_uc');
+		if ($ff) {
+			$r->{GEOM_TYPE} = $ff->{GEOM_TYPE}; 
+			$r->{GEOM} = $ff->{GEOM}; 
+		}
+		$sth->finish;
     }
 }
 
@@ -1574,8 +1612,22 @@ sub process_configuration {
 
 sub sendnotification {
     my ($from, $to, $delivery_method, $lines, $files) = @_;
-    my $skipping;
-    my $subject = shift @$lines;
+    my ($subject, $skipping);
+	
+	for (my $ind = 0; $ind < scalar @$lines; $ind++) {
+		my $temp_header = $lines->[$ind];
+		last unless ($temp_header =~ /:/);
+		chomp($temp_header);
+		my ($field, $content) = split /:/, $temp_header, 2;
+		$content =~ s/^\s*//;
+		$content =~ s/\s*$//;
+		if ($field =~ /^From|To|Subject/i) {
+			eval '$'.lc($field)."='".$content."'";
+		} elsif ($field =~ /^Attach/i) {
+			$files->{'ATTACH'.$ind} = $content;
+		}
+		$lines->[$ind] = '';
+	}
     my $data = join '', @$lines;
     my @to = split(/,/, $to);
 	my $msg_type = ($delivery_method eq 'EMAIL_HTML') ? 'text/html' : 'text/plain';
@@ -1594,24 +1646,27 @@ sub sendnotification {
 		Data => $data
     ) or warn( "Error creating multipart container: $!\n", return -1);
 
-	### Add the pdf file
-	foreach my $file_type (keys %{$files}) {
-		return 0 unless (-e $files->{$file_type});
-		my @fields = split /[\/|\\]/, $files->{$file_type};
-		my $filename = $fields[$#fields];
-		$filename =~ s/\./\-$fields[$#fields-1]\./;
-		$msg->attach (
-		   Type => 'AUTO',
-		   Path => $files->{$file_type},
-		   Filename => $filename,
-		   Disposition => 'attachment'
-		) or warn ( "Error adding ".$files->{$file_type}.": $!\n", return -1);
-	}
+	#$msg->attach(Type=>'image/png', Id=>"GREEN.png", Encoding=>"base64", Path=>"C:/ShakeCast/sc/images/GREEN.png");
+		### Add the pdf file
+		foreach my $file_type (keys %{$files}) {
+		next unless (-e $files->{$file_type});
+		#return 0 unless (-e $files->{$file_type});
+			my @fields = split /[\/|\\]/, $files->{$file_type};
+			my $filename = $fields[$#fields];
+			$filename =~ s/\./\-$fields[$#fields-1]\./ unless ($file_type =~ /ATTACH/);
+			$msg->attach (
+			   Type => 'AUTO',
+			   Path => $files->{$file_type},
+			   Id => $filename,
+			   Filename => $filename,
+			   Disposition => 'inline'
+			) or warn ( "Error adding ".$files->{$file_type}.": $!\n", return -1);
+		}
 	
 	unless ($config->{Notification}->{SmtpServer}) {
 		$delivery_comment = $msg->send();
 		return 1;
-	} 
+	}
 	
 	my $smtp;
 	if ($config->{Notification}->{Security} eq 'TLS') {

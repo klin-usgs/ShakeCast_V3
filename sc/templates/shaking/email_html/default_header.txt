@@ -2,8 +2,8 @@
 ;
 From: ShakeCast <%HEADER_FROM%>
 To: %HEADER_TO%
-Subject: ShakeCast Shaking Summary: %EVENT_ID% (%_ITEMNO%)
-Content-Type: text/html
+Subject: Shaking M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
+; End -- header
 
 <font size=+2><b>ShakeCast Event: Magnitude %MAGNITUDE%</b></font><br>
 ShakeMap %EVENT_NAME:|NULL|;(Unnamed Event) %Version %SHAKEMAP_VERSION%<br>

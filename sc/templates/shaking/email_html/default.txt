@@ -2,8 +2,8 @@
 ;
 From: ShakeCast <%HEADER_FROM%>
 To: %HEADER_TO%
-Subject: Shaking at %FACILITY_NAME%
-Content-Type: text/html
+Subject: Shaking M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
+; End -- header
 
 Grid generated at %GENERATION_TIMESTAMP% shows that
 %METRIC% shaking at <b>%FACILITY_NAME%</b> resulted in a

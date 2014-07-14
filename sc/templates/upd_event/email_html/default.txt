@@ -2,8 +2,9 @@
 ;
 From: ShakeCast <%HEADER_FROM%>
 To: %HEADER_TO%
-Subject: Updated Event: %EVENT_ID%
-Content-Type: text/html
+Subject: Update M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
+; End -- header
+
 
 The following Updated Event occurred at <b>%EVENT_TIMESTAMP%</b>:
 <p>
