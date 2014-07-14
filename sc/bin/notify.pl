@@ -1330,7 +1330,7 @@ sub add_derived_values {
 
     add_exceedance_ratio($r);
 	add_facility_attribute($r);
-	#add_facility_feature($r);
+	add_facility_feature($r);
     # put others here...
 }
 
@@ -1649,8 +1649,8 @@ sub sendnotification {
 	#$msg->attach(Type=>'image/png', Id=>"GREEN.png", Encoding=>"base64", Path=>"C:/ShakeCast/sc/images/GREEN.png");
 		### Add the pdf file
 		foreach my $file_type (keys %{$files}) {
-		#next unless (-e $files->{$file_type});
-		return -1 unless (-e $files->{$file_type});
+		next unless (-e $files->{$file_type});
+		#return 0 unless (-e $files->{$file_type});
 			my @fields = split /[\/|\\]/, $files->{$file_type};
 			my $filename = $fields[$#fields];
 			$filename =~ s/\./\-$fields[$#fields-1]\./ unless ($file_type =~ /ATTACH/);
