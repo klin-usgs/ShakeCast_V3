@@ -133,10 +133,11 @@ my @mmi = ("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X+");
 my $grid_spec = sc_xml($event);
 #print Dumper($grid_spec);
 my %damage_levels = (
-    'GREEN'     => 0,
-    'YELLOW'    => 1,
-    'ORANGE'    => 2,
-    'RED'       => 3
+    'GREY'     => 0,
+    'GREEN'     => 1,
+    'YELLOW'    => 2,
+    'ORANGE'    => 3,
+    'RED'       => 4
 );
 
 foreach my $conf (@confs) {
@@ -855,7 +856,8 @@ sub parse_facility {
   my $row_count = 0;
   my @cell_props;
   push @cell_props, [map { q{$_[0]->[} . $columns{$_} . q{]} } (@fields)];
-  foreach my $row ( reverse sort { $damage_levels{$a->[$columns{DAMAGE_LEVEL}]} <=> $damage_levels{$b->[$columns{DAMAGE_LEVEL}]} } @all_rows) {
+  foreach my $row ( sort { $damage_levels{$b->[$columns{DAMAGE_LEVEL}]} <=> $damage_levels{$a->[$columns{DAMAGE_LEVEL}]}
+	|| $a->[$columns{DIST}] <=> $b->[$columns{DIST}]} @all_rows) {
     $row->[0] =~ m/\w+/ or next; # 3rd field should match
 	next if ($type && $type !~ /$row->[0]/);
 
