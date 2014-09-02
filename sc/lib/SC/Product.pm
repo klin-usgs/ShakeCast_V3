@@ -842,19 +842,14 @@ sub process_grid_xml_file {
             return 1;
         }
     }
-    eval {
-	require XML::Parser;
-    };
-    if ($@) {
-	$SC::errstr = $@;
-	return 0;
-    }
-	my $parser = new XML::Parser;
-	$parser->setHandlers(      Start => \&startElement,
-											 End => \&endElement,
-											 Char => \&characterData,
-											 Default => \&default);
-	$parser->parsefile($self->abs_file_path);
+	my $parser = SC->xml_in($self->abs_file_path);
+	%event_spec = %{$parser->{'shakemap_grid'}->{'event'}};
+	%grid_spec = %{$parser->{'shakemap_grid'}->{'grid_specification'}};
+	%shakemap_spec = %{$parser->{'shakemap_grid'}};
+		foreach my $metric (keys %{$parser->{'shakemap_grid'}->{grid_field}}) {
+		$grid_metric[$parser->{'shakemap_grid'}->{grid_field}->{$metric}->{index}-1] = $metric;
+	}
+	my @grid_data = split /\n/, $parser->{'shakemap_grid'}->{'grid_data'};
 
     #SC->log(2, "Grid file header: $header");
     # save the header to process later
@@ -915,6 +910,7 @@ sub process_grid_xml_file {
         SC->log(2, "grid loaded, $lon_cell_count x $lat_cell_count [$lon_min/$lat_min, $lon_max/$lat_max]");
         SC->log(2, "cols/deg: $cols_per_degree, rows/deg: $rows_per_degree");
         SC->log(2, "x spacing: $lon_spacing, y spacing: $lat_spacing");
+        SC->log(2, "cells: $cell_no");
 
 	# update GRID record
 
@@ -1034,7 +1030,56 @@ sub process_grid_xml_file {
                 #SC->log(4, "last cell: $cell_no");
                 #SC->log(4, "checked $n,  metrics: ", join(', ', @summary));
                 $sth_i->execute($p->[0], $grid_id, $dist, @summary);
-				
+            }
+        }
+			SC::Server->this_server->queue_request(
+				'screen_shot', $self->shakemap_id, $self->shakemap_version);
+			
+			SC::Server->this_server->queue_request(
+				'local_product', $self->shakemap_id, $self->shakemap_version);
+			
+			SC::Server->this_server->queue_request(
+				'facility_damage_stat', $self->shakemap_id, $self->shakemap_version);
+			
+			SC::Server->this_server->queue_request(
+				'facility_regulatory_level', $self->shakemap_id, $self->shakemap_version);
+			
+			SC::Server->this_server->queue_request(
+				'facility_feature_shaking', $self->shakemap_id, $self->shakemap_version);
+			
+			SC::Server->this_server->queue_request(
+				'sc_pdf', $self->shakemap_id, $self->shakemap_version);
+        foreach my $p (@$facpp) {
+            # some pt features have only min
+            $p->[3] = $p->[1] unless defined $p->[3];
+            $p->[4] = $p->[2] unless defined $p->[4];
+            #SC->log(4, sprintf("FacID: %d, bbox: %f9,%f9 - %f9,%f9", $p->[0], $p->[2], $p->[1], $p->[4], $p->[3]));
+            my @summary;
+            my $n = 0;
+            for (my $row = _max(0, int(($lat_max-$p->[4]) * $rows_per_degree));
+                    $row < $lat_cell_count; $row++) {
+                last if int (($lat_max - $p->[2]) * $rows_per_degree) < $row;
+                for (my $col = _max(0,int(($p->[1]-$lon_min) * $cols_per_degree));
+                        $col < $lon_cell_count; $col++) {
+                    last if int (($p->[3] - $lon_min) * $cols_per_degree) < $col;
+                    $cell_no = $row * $lon_cell_count + $col;
+                    #SC->log(4, sprintf("row=%d,col=%d,v0=%f",$row,$col,$cells[$cell_no][0]));
+                    if (@summary) {
+                        for (my $i = 0; $i <= $#summary; $i++) {
+                            $summary[$i] = _max($summary[$i],
+                                                $cells[$cell_no][$i]);
+                        }
+                    } else {
+                        @summary = @{$cells[$cell_no]}[@data_fields];
+                    }
+                    $n++;
+                }
+            }
+            if ($n == 0) {
+                # XXX should never happen
+                SC->log(0, "no cell for facility $p->[0]");
+                next;
+            } else {
 				# read all the facilities that overlap the grid
 				my $fac_metric = SC->dbh->selectall_arrayref(qq{
 					select metric
@@ -1051,6 +1096,9 @@ sub process_grid_xml_file {
 				}
             }
         }
+			SC::Server->this_server->queue_request(
+				'facility_fragility_stat', $self->shakemap_id, $self->shakemap_version);
+			
         SC->log(2, "grid xml processing complete");
     };
     if ($@) {
@@ -1307,27 +1355,6 @@ sub process_new_product {
     } elsif ($self->product_type eq 'GRID_XML') {
 		if ($self->process_grid_xml_file) {
 			SC->log(2, "xml grid file processed");
-			
-			SC::Server->this_server->queue_request(
-				'screen_shot', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'local_product', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'facility_damage_stat', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'facility_fragility_stat', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'facility_regulatory_level', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'facility_feature_shaking', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'sc_pdf', $self->shakemap_id, $self->shakemap_version);
 		} else {
 			SC->error($SC::errstr);
 			# XXX might not be correct.  Even though we got an error while
