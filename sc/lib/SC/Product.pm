@@ -842,14 +842,19 @@ sub process_grid_xml_file {
             return 1;
         }
     }
-	my $parser = SC->xml_in($self->abs_file_path);
-	%event_spec = %{$parser->{'shakemap_grid'}->{'event'}};
-	%grid_spec = %{$parser->{'shakemap_grid'}->{'grid_specification'}};
-	%shakemap_spec = %{$parser->{'shakemap_grid'}};
-		foreach my $metric (keys %{$parser->{'shakemap_grid'}->{grid_field}}) {
-		$grid_metric[$parser->{'shakemap_grid'}->{grid_field}->{$metric}->{index}-1] = $metric;
-	}
-	my @grid_data = split /\n/, $parser->{'shakemap_grid'}->{'grid_data'};
+    eval {
+	require XML::Parser;
+    };
+    if ($@) {
+	$SC::errstr = $@;
+	return 0;
+    }
+	my $parser = new XML::Parser;
+	$parser->setHandlers(      Start => \&startElement,
+											 End => \&endElement,
+											 Char => \&characterData,
+											 Default => \&default);
+	$parser->parsefile($self->abs_file_path);
 
     #SC->log(2, "Grid file header: $header");
     # save the header to process later
@@ -861,7 +866,6 @@ sub process_grid_xml_file {
 	$lat_max = $grid_spec{'lat_max'};
 	$lon_min = $grid_spec{'lon_min'};
 	$lon_max = $grid_spec{'lon_max'};
-	
 
     eval {
         # insert new GRID record and read back its grid_id
