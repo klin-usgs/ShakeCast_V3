@@ -3,7 +3,7 @@
 From: ShakeCast Linux <%HEADER_FROM%>
 To: %HEADER_TO%
 Subject: Inspection Priority M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
-Attach: C:/ShakeCast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
+Attach: /usr/local/shakecast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
 ; End -- header
 
 <font size=+2><b>ShakeCast Event: Magnitude %MAGNITUDE%</b></font><br>
@@ -20,14 +20,14 @@ Acceleration: %_MAX_METRIC_PGA:|NULL|;(not measured)%<br>
 Number of Reports of Likely Damage: %_NUM_DAMAGE_LEVEL_RED%<br>
 Number of Reports of Possible Damage: %_NUM_DAMAGE_LEVEL_YELLOW%
 <p>
-<font size=+2><b>Facility Damage Estimates from ShakeMap</b></font>
 <img src="cid:intensity.jpg">
+<p>
+<font size=+2><b>Facility Damage Estimates from ShakeMap</b></font>
 <table border=1 bordercolor=black cellpadding=5 cellspacing=0>
 <tr>
   <th>Facility
   <th>Inspection Priority
   <th>Metric
   <th>Value
-  <th>Exceedance Ratio
 </tr>
 ;;;;;

@@ -3,7 +3,7 @@
 From: ShakeCast Linux <%HEADER_FROM%>
 To: %HEADER_TO%
 Subject: Inspection Priority M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
-Attach: C:/ShakeCast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
+Attach: /usr/local/shakecast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
 ; End -- header
 
 Grid generated at %GENERATION_TIMESTAMP% shows that
@@ -12,7 +12,7 @@ damage level of <b>%DAMAGE_LEVEL% (%DAMAGE_NAME%)</b>.
 The actual value was %GRID_VALUE%.
 <p>
 %DAMAGE_DESCRIPTION%
-<img src="cid:intensity.jpg">
+<p><img src="cid:intensity.jpg">
 <p>
 Event ID:   %EVENT_ID%   Version: %EVENT_VERSION%
 <p>

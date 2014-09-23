@@ -1649,8 +1649,11 @@ sub sendnotification {
 	#$msg->attach(Type=>'image/png', Id=>"GREEN.png", Encoding=>"base64", Path=>"C:/ShakeCast/sc/images/GREEN.png");
 		### Add the pdf file
 		foreach my $file_type (keys %{$files}) {
-		next unless (-e $files->{$file_type});
-		#return 0 unless (-e $files->{$file_type});
+		if ($file_type =~ /^ATTACH/i) {
+			next unless (-e $files->{$file_type});
+		} else {
+			return 0 unless (-e $files->{$file_type});
+		}
 			my @fields = split /[\/|\\]/, $files->{$file_type};
 			my $filename = $fields[$#fields];
 			$filename =~ s/\./\-$fields[$#fields-1]\./ unless ($file_type =~ /ATTACH/);

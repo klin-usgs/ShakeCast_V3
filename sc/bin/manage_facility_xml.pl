@@ -631,7 +631,7 @@ sub minmax {
 	}	
 	my $geom_str = join ',',@geom_points;
 		
-        return ($lat_max, $lat_min, $lon_max, $lon_min, $geom_str);       # not found
+        return ($lat_max, $lat_min, $lon_max, $lon_min, $geom);       # not found
 }
 
 # Return facility_id given external_facility_id and facility_type

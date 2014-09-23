@@ -337,6 +337,31 @@ my $data_root =  SC->config->{'DataRoot'};
 my @shakemaps = @ARGV;
 
 if ($options{'maintain'}) {
+	my $dir = "$data_root/eq_product";
+	opendir(DIR, $dir) or die $!;
+	while (my $eqdir = readdir(DIR)) {
+		next unless (-d "$dir/$eqdir");
+		next if lookup_shakemap($eqdir);
+		my $mtime = (stat("$dir/$eqdir"))[9];
+		my $timestamp = (time - $mtime)/86400;
+		if ($timestamp>$time_window) {
+		print "Outside Timewindow No ShakeMap: $dir/$eqdir : $timestamp, $mtime\n";
+		rmtree("$dir/$eqdir");
+		}
+	}
+	closedir(DIR);
+	
+	opendir(DIR, $data_root) or die $!;
+	while (my $eqdir = readdir(DIR)) {
+		next unless (-d "$data_root/$eqdir");
+		my $smdir = $eqdir;
+		$eqdir =~ s/-\d+$//;
+		next if (lookup_shakemap($eqdir) || $eqdir =~ /^\.|eq_product/i);
+		print "ShakeMap not in database: $data_root/$eqdir $smdir\n";
+		rmtree("$data_root/$smdir");
+	}
+	closedir(DIR);
+	
 	update_archive_sm();
 	my $sms = lookup_maintain_sm();
 	exit unless (ref $sms eq 'ARRAY');
