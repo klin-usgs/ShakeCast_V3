@@ -1,8 +1,7 @@
 <tr>
 <td>%FACILITY_NAME%
-<td><font color=%DAMAGE_LEVEL:YELLOW;ORANGE%>%DAMAGE_LEVEL:RED;Likely;YELLOW;Possible;GREEN;Unlikely%</font>
+<td bgcolor=%DAMAGE_LEVEL:RED;RED;ORANGE;ORANGE;YELLOW;YELLOW;GREEN;GREEN%>%DAMAGE_LEVEL:RED;High;Orange;Moderate High;YELLOW;Moderate;GREEN;Low;GREY;No Inspection%
 <td>%METRIC%
 <td>%GRID_VALUE%
-<td>%EXCEEDANCE_RATIO%
 </tr>
 

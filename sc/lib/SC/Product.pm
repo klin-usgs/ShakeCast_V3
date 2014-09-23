@@ -845,10 +845,12 @@ sub process_grid_xml_file {
     eval {
 	require XML::Parser;
     };
+
     if ($@) {
 	$SC::errstr = $@;
 	return 0;
     }
+
 	my $parser = new XML::Parser;
 	$parser->setHandlers(      Start => \&startElement,
 											 End => \&endElement,
@@ -866,6 +868,7 @@ sub process_grid_xml_file {
 	$lat_max = $grid_spec{'lat_max'};
 	$lon_min = $grid_spec{'lon_min'};
 	$lon_max = $grid_spec{'lon_max'};
+
 
     eval {
         # insert new GRID record and read back its grid_id
@@ -899,6 +902,7 @@ sub process_grid_xml_file {
             my @v;
 			$line =~ s/\n|\t//g;
 			($lon, $lat, @v) = split ' ', $line;
+			next unless (scalar @v);
 			#$#v = 5;
             for (my $i = 0; $i < scalar @v; $i++) {
                 $min[$i] = _min($min[$i], $v[$i]);
@@ -1103,7 +1107,7 @@ sub process_grid_xml_file {
 			SC::Server->this_server->queue_request(
 				'facility_fragility_stat', $self->shakemap_id, $self->shakemap_version);
 			
-        SC->log(2, "grid xml processing complete");
+        SC->log(2, "grid probability processing complete");
     };
     if ($@) {
 	$SC::errstr = $@;

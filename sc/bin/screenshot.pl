@@ -78,18 +78,20 @@ SC->initialize;
 
 my ($event_id, $event_version) = @ARGV;
 my $DataRoot = SC->config->{DataRoot};
+my $tmpfile = "$DataRoot/$event_id-$event_version/tmp.jpg";
 my $outfile = "$DataRoot/$event_id-$event_version/screenshot.jpg";
-print "$outfile\n";
+
 #."/$shakemap_id-$shakemap_version";
 screen_capture($event_id, $event_version);
 
-exit unless (-e $outfile);
-my $rv = check_grey($outfile);
+exit unless (-e $tmpfile);
+my $rv = check_grey($tmpfile);
 
-if ($rv < 40) {
+if ($rv < 120) {
+    rename($tmpfile, $outfile);
     print "process product STATUS=SUCCESS\n";
-} elsif ($rv>60) {
-    unlink $outfile;
+} elsif ($rv> 160) {
+    unlink $tmpfile;
 }
 exit;
 
@@ -101,8 +103,8 @@ sub screen_capture {
     my $filesize = 20*1024;	#20k
     my $proxy = (SC->config->{ProxyServer}) ? ' -p '.SC->config->{ProxyServer} : '';
     
-    my $rv = `/bin/touch $outfile`;
-    $rv = `$wkhtmltopdf --javascript-delay 5000 $proxy --width 1024 $url $outfile`;
+    my $rv = `/bin/touch $tmpfile`;
+    $rv = `$wkhtmltopdf --javascript-delay 8000 $proxy --width 1024 --height 534 $url $tmpfile`;
     
     SC->log(0, "Screen Capture: $event_id-$event_version ".$rv);
 

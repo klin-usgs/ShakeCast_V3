@@ -238,7 +238,6 @@
       function load_fac_table(){
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
 		var local_url = '/scripts/r/damage/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-			  console.log(sc_id);
 			  MAPAPP.addCaption(sc_id, type);
 	  $(".breadcrumb li").last().html(type + ' List');
 		$.getJSON(local_url, function(data) {
