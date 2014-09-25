@@ -58,7 +58,7 @@ $result = &{$proc_sub}("$sc_home/tmp/$filename", $filename);
 
 my $org_name;
 if ($ext =~ /zip/i) {
-	$org_name = $filename;
+    $org_name = $filename;
     $filename =~ s/\.zip$//i;
 }
 
@@ -67,7 +67,7 @@ my $json = {'status' => 'File was uploaded successfuly!',
 	    'filename' => "$filename",
 	    'username' => "$username",
 	    'action'	=> $result,
-		'ext' => "$ext",
+	    'ext' => "$ext",
 	    };
 
 print JSON::XS->new->utf8->encode(API::APIUtil::stringfy($json));
@@ -112,8 +112,8 @@ sub process_zip {
     my @members;
     my %result;
     my $evt_name = $file;
-	$evt_name =~ s/\.zip$//i;
-	mkdir "$evt_name";
+    $evt_name =~ s/\.zip$//i;
+    mkdir "$evt_name";
     eval {
 	use Archive::Zip;
         my $zip = new Archive::Zip($file);

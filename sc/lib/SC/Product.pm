@@ -843,11 +843,11 @@ sub process_grid_xml_file {
         }
     }
     eval {
-	require XML::Parser;
+		require XML::Parser;
     };
 
     if ($@) {
-	$SC::errstr = $@;
+		$SC::errstr = $@;
 	return 0;
     }
 
@@ -868,7 +868,7 @@ sub process_grid_xml_file {
 	$lat_max = $grid_spec{'lat_max'};
 	$lon_min = $grid_spec{'lon_min'};
 	$lon_max = $grid_spec{'lon_max'};
-
+	
 
     eval {
         # insert new GRID record and read back its grid_id
@@ -1040,23 +1040,23 @@ sub process_grid_xml_file {
                 $sth_i->execute($p->[0], $grid_id, $dist, @summary);
             }
         }
-			SC::Server->this_server->queue_request(
-				'screen_shot', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'local_product', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'facility_damage_stat', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'facility_regulatory_level', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'facility_feature_shaking', $self->shakemap_id, $self->shakemap_version);
-			
-			SC::Server->this_server->queue_request(
-				'sc_pdf', $self->shakemap_id, $self->shakemap_version);
+	SC::Server->this_server->queue_request(
+		'screen_shot', $self->shakemap_id, $self->shakemap_version);
+	
+	SC::Server->this_server->queue_request(
+		'local_product', $self->shakemap_id, $self->shakemap_version);
+	
+	SC::Server->this_server->queue_request(
+		'facility_damage_stat', $self->shakemap_id, $self->shakemap_version);
+	
+	SC::Server->this_server->queue_request(
+		'facility_regulatory_level', $self->shakemap_id, $self->shakemap_version);
+	
+	SC::Server->this_server->queue_request(
+		'facility_feature_shaking', $self->shakemap_id, $self->shakemap_version);
+	
+	SC::Server->this_server->queue_request(
+		'sc_pdf', $self->shakemap_id, $self->shakemap_version);
         foreach my $p (@$facpp) {
             # some pt features have only min
             $p->[3] = $p->[1] unless defined $p->[3];
@@ -1088,25 +1088,25 @@ sub process_grid_xml_file {
                 SC->log(0, "no cell for facility $p->[0]");
                 next;
             } else {
-				# read all the facilities that overlap the grid
-				my $fac_metric = SC->dbh->selectall_arrayref(qq{
-					select metric
-					  from facility_fragility_model
-					 where facility_id = ?
-					 group by metric}, undef, $p->[0]);
-					 
-					 
-					# print $p->[0]," $fac_metric\n";
-				foreach my $m (@$fac_metric) {
-					my $m_val = $summary[$metric_column_map{$m->[0]}-1];
-					$sth_prob->execute($grid_id, $m->[0], $p->[0], $m->[0], $m_val, $m_val)
-						if (grep /$m->[0]/, @grid_metric);
-				}
+		# read all the facilities that overlap the grid
+		my $fac_metric = SC->dbh->selectall_arrayref(qq{
+			select metric
+			  from facility_fragility_model
+			 where facility_id = ?
+			 group by metric}, undef, $p->[0]);
+			 
+			 
+			# print $p->[0]," $fac_metric\n";
+		foreach my $m (@$fac_metric) {
+			my $m_val = $summary[$metric_column_map{$m->[0]}-1];
+			$sth_prob->execute($grid_id, $m->[0], $p->[0], $m->[0], $m_val, $m_val)
+				if (grep /$m->[0]/, @grid_metric);
+		}
             }
         }
-			SC::Server->this_server->queue_request(
-				'facility_fragility_stat', $self->shakemap_id, $self->shakemap_version);
-			
+	SC::Server->this_server->queue_request(
+		'facility_fragility_stat', $self->shakemap_id, $self->shakemap_version);
+	
         SC->log(2, "grid probability processing complete");
     };
     if ($@) {
@@ -1363,7 +1363,7 @@ sub process_new_product {
     } elsif ($self->product_type eq 'GRID_XML') {
 		if ($self->process_grid_xml_file) {
 			SC->log(2, "xml grid file processed");
-		} else {
+    		} else {
 			SC->error($SC::errstr);
 			# XXX might not be correct.  Even though we got an error while
 			# processing the grid we might want to push the file downstream.
