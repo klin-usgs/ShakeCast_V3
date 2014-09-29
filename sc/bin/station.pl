@@ -287,7 +287,7 @@ $csv = Text::CSV_XS->new({
 
 foreach my $event_id (@ARGV) { 
   my ($data, $pha_grd, $inputdir);
-  $inputdir = "C:/Shakecast/sc/data/$event_id";
+  $inputdir = "C:/ShakeCast/sc/data/$event_id";
   -e "$inputdir/stationlist.xml" or die "Can't find $inputdir/stationlist.xml";
   $data = DataArray->new("$inputdir/stationlist.xml") 
 		or die "Couldn't parse $inputdir/stationlist.xml";

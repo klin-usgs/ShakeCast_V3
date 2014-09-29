@@ -136,7 +136,8 @@ exit 1;	# abnormal termination
 # Main loop: check reads/accepts, check writes, check ready to process
 sub process {
 	my %serviceHash;
-	my @sc_services = ('mysql', 'sc_dispd', 'sc_polld', 'sc_rssd', 'sc_notify', 'sc_notifyqueue');
+	#my @sc_services = ('mysql', 'sc_dispd', 'sc_polld', 'sc_rssd', 'sc_notify', 'sc_notifyqueue');
+	my @sc_services = ('mysql', 'sc_dispd', 'sc_notify', 'sc_notifyqueue');
 	foreach my $key(@sc_services){
 		 my %statusHash;
 		 #Win32::Service::GetStatus("", "$key", \%statusHash);

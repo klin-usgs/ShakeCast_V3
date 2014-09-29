@@ -104,7 +104,7 @@ sub screen_capture {
     my $proxy = (SC->config->{ProxyServer}) ? ' -p '.SC->config->{ProxyServer} : '';
     
     my $rv = `/bin/touch $tmpfile`;
-    $rv = `$wkhtmltopdf --javascript-delay 8000 $proxy --width 1024 --height 534 $url $tmpfile`;
+    $rv = `$wkhtmltopdf --javascript-delay 8000 $proxy --width 1024 --load-error-handling ignore $url $tmpfile`;
     
     SC->log(0, "Screen Capture: $event_id-$event_version ".$rv);
 

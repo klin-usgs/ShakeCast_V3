@@ -91,7 +91,7 @@ GetOptions(\%options,
 );
 
 my $config_file = (exists $options{'conf'} ? 
-	$options{'conf'} : 'C:/Shakecast/sc/conf/sc.conf');
+	$options{'conf'} : 'C:/ShakeCast/sc/conf/sc.conf');
 
 my $conf = new Config::General($config_file);
 my %chash = $conf->getall;
