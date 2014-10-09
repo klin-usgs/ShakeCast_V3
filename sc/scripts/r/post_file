@@ -173,29 +173,10 @@ sub process_xml {
     use XML::LibXML::Simple;
    # eval {
     my $xml = XMLin($file);
-    my $worksheet = $xml->{Worksheet};
-    my $data;
-    
-            SC->log(0, "$file ".ref $worksheet);
-    if (ref $worksheet eq "ARRAY") {
-	    $data = $worksheet->[0]->{Table}->{Row};
-    } else {
-	    $data = $worksheet->{Table}->{Row};
-    }
-    
-	my $header = shift @$data;
-    my $cells = $header->{Cell};
-    my (@fields, $ind);
-    foreach my $cell (@$cells) {
-	    if ($cell->{'ss:Index'}) {
-		    my $new_ind = $cell->{'ss:Index'};
-		    my @array;
-		    $#array = $new_ind - $ind - 2;
-		    push @fields, @array;
-	    }
-	    push @fields, $cell->{Data}->{content};
-	    $ind++;
-    }
+    #my $worksheet = $xml->{Worksheet};
+	my $data = $xml->{FacilityRow};
+
+	my $facility = shift @$data;
 
     # specify required columns, 1=always required, 2=not required for update
     my %apps = (
@@ -205,39 +186,17 @@ sub process_xml {
 	},
     );
 
-    my $ix = 0;         # field index
-    my %columns;
-    # uppercase and trim header field names
-    foreach my $field (@fields) {
-        $ix++;
-        $field =~ s/^\s+//;
-        $field =~ s/\s+$//;
-	$columns{$field} = $ix;
-    }
-    
-    # map lat/lon to min/max
-    if (exists $columns{'LAT'}) {
-        $columns{'LAT_MIN'} = $columns{'LAT'};
-        $columns{'LAT_MAX'} = $columns{'LAT'};
-        #delete $columns{'LAT'};
-    }
-    if (exists $columns{'LON'}) {
-        $columns{'LON_MIN'} = $columns{'LON'};
-        $columns{'LON_MAX'} = $columns{'LON'};
-        #delete $columns{'LON'};
-    }
-	
     # check for required fields
     foreach my $app (keys %apps) {
 	$result{$app}{'result'} = 1;
 	my @fields;
 	my $err_cnt;
     while (my ($req, $req_type) = each %{$apps{$app}}) {
-        unless (defined $columns{$req}) {
-            SC->log(0,  "required field $req is missing");
+        unless (defined $facility->{$req}) {
+        SC->log(0,  "required field $req is missing");
 	    push @fields, $req;
 	    $result{$app}{'result'} = 0;
-            $err_cnt++;
+		$err_cnt++;
         }
     }
      $result{$app}{'err_cnt'} = \@fields;
