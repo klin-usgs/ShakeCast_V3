@@ -138,20 +138,17 @@ my $sth_lookup_facility;
 my $sth_lookup_facility_prob;
 my $sth_lookup_facility_feature;
 my $sth_lookup_facility_type;
-my $sth_lookup_facility_fragility;
 my $sth_ins;
 my $sth_repl;
 my $sth_upd;
 my $sth_del;
 my $sth_ins_metric;
 my $sth_del_metrics;
-my $sth_del_one_fragility;
+my $sth_del_one_metric;
 my $sth_ins_attr;
 my $sth_ins_prob;
 my $sth_ins_feature;
-my $sth_upd_feature;
 my $sth_ins_facility;
-my $sth_upd_facility;
 my $sth_del_attrs;
 my $sth_del_feature;
 my $sth_del_specified_attrs;
@@ -226,13 +223,6 @@ $sth_lookup_facility_feature = SC->dbh->prepare(qq{
      where facility_id = ?
     });
 
-$sth_lookup_facility_fragility = SC->dbh->prepare(qq{
-    select facility_id
-      from facility_fragility
-     where facility_id = ?
-		and damage_level = ?
-    });
-
 $sth_del = SC->dbh->prepare(qq{
     delete from facility
      where facility_id = ?});
@@ -253,10 +243,10 @@ $sth_del_geometry_facility_profile = SC->dbh->prepare(qq{
     delete from geometry_facility_profile
      where facility_id = ?});
 
-$sth_del_one_fragility = SC->dbh->prepare(qq{
+$sth_del_one_metric = SC->dbh->prepare(qq{
     delete from facility_fragility
      where facility_id = ?
-       and damage_level = ?});
+       and metric = ?});
 
 $sth_ins_metric = SC->dbh->prepare(qq{
     insert into facility_fragility (
@@ -281,36 +271,11 @@ $sth_ins_feature = SC->dbh->prepare(qq{
 		   update_username, update_timestamp)
     values (?,?,?,?,?,?)});
 
-$sth_upd_feature = SC->dbh->prepare(qq{
-    update facility_feature
-		set description = ?,
-		geom_type = ?,
-		geom = ?,
-		update_username = ?,
-		update_timestamp = ?
-    where facility_id = ?});
-
 $sth_ins_facility = SC->dbh->prepare(qq{
     insert into facility (
            facility_type, external_facility_id, 
-		   facility_name, short_name, description,
-		   lat_min, lat_max, lon_min, lon_max,
-		   update_username, update_timestamp)
-    values (?,?,?,?,?,?,?,?,?,?,?)});
-
-$sth_upd_facility = SC->dbh->prepare(qq{
-    update facility
-		set facility_type = ?,
-		external_facility_id = ?, 
-		facility_name = ?,
-		short_name = ?,
-		description = ?,
-		lat_min = ?,
-		lat_max = ?,
-		lon_min = ?,
-		lon_max = ?
-	where facility_id = ?
-	});
+		   facility_name, lat_min, lat_max, lon_min, lon_max)
+    values (?,?,?,?,?,?,?)});
 
 $sth_del_attrs = SC->dbh->prepare(qq{
     delete from facility_attribute
@@ -360,12 +325,38 @@ foreach my $file (@ARGV) {
 }
 exit;
 
-sub process {
-	my $data = $xml->{FacilityRow};
+    
+sub parse_row {
+	my ($row) = @_;
 
-	my $row = $data->[0];
-    unless (defined $row->{EXTERNAL_FACILITY_ID} &&
-		defined $row->{FACILITY_TYPE}) {
+	my $cells = $row->{Cell};
+	my (@cell_data, $ind);
+	foreach my $cell (@$cells) {
+		if ($cell->{'ss:Index'}) {
+			my $new_ind = $cell->{'ss:Index'};
+			my @array;
+			$#array = $new_ind - $ind - 2;
+			push @cell_data, @array;
+		}
+		push @cell_data, $cell->{Data}->{content};
+		$ind++;
+	}
+
+	return \@cell_data;
+}
+
+sub process {
+	my $worksheet = $xml->{Worksheet};
+	my $data;
+	if (ref $worksheet eq "ARRAY") {
+		$data = $worksheet->[0]->{Table}->{Row};
+	} else {
+		$data = $worksheet->{Table}->{Row};
+	}
+
+	my $header = shift @$data;
+	my $cell_data = parse_row($header);
+    unless (process_header($cell_data)) {
         epr "file had errors, skipping";
         return;
     }
@@ -378,12 +369,11 @@ sub process {
     my $nskip = 0;
 	my ($ext_id, $type);
 	
-	foreach my $colp (@$data) {
+	foreach my $item (@$data) {
         if ($nrec and $nrec % 100 == 0) {
             vpr "$nrec records processed";
         }
-		
-		#print join ":", keys %$colp,"\n";
+		my $colp = parse_row($item);
         #my $colp = $csv->getline($fh);
         $nrec++;
         # TODO error handling
@@ -391,35 +381,20 @@ sub process {
             epr "error limit reached, skipping";
             return;
         }
-        $ext_id = $colp->{EXTERNAL_FACILITY_ID};
-        $type   = $colp->{FACILITY_TYPE};
-        my $facility_model   = $colp->{FACILITY_MODEL}
-			unless (ref  $colp->{FACILITY_MODEL} eq 'HASH');
-        my $facility_name   = $colp->{FACILITY_NAME}
-			unless (ref  $colp->{FACILITY_NAME} eq 'HASH');
-        my $short_name   = $colp->{SHROT_NAME}
-			unless (ref  $colp->{SHROT_NAME} eq 'HASH');
-        my $description   = $colp->{DESCRIPTION}
-			unless (ref  $colp->{DESCRIPTION} eq 'HASH');
-        #my $damage_metric   = $colp->[$metric_column];
-        my $damage_metric;
-        my $component_class = $colp->{COMPONENT_CLASS}
-			unless (ref $colp->{COMPONENT_CLASS} eq 'HASH');
-        my $component   = $colp->{COMPONENT}
-			unless (ref $colp->{COMPONENT} eq 'HASH');
-        my $geom_type   = $colp->{FEATURE}->{GEOM_TYPE}
-			unless (ref $colp->{FEATURE}->{GEOM_TYPE} eq 'HASH');
-        my $geom_description = (ref $colp->{FEATURE}->{DESCRIPTION} eq 'HASH') ?
-			$description : $colp->{FEATURE}->{DESCRIPTION};
-        my $geom   = $colp->{FEATURE}->{GEOM}
-			unless (ref $colp->{FEATURE}->{GEOM} eq 'HASH');
-		my @geom;
-		
-		if ($geom_type =~ /POINT|POLYLINE|POLYGON/i) {
-			@geom = minmax($geom_type, $geom);
-			$geom = $geom[4];
+        $ext_id = $colp->[$columns{EXTERNAL_FACILITY_ID}];
+        $type   = $colp->[$columns{FACILITY_TYPE}];
+        my $damage_metric   = $colp->[$metric_column];
+        my $component_class   = $colp->[$components{COMPONENT_CLASS}];
+        my $component   = $colp->[$components{COMPONENT}];
+        my $geom_type   = $colp->[$features{GEOM_TYPE}];
+        my $description   = $colp->[$features{DESCRIPTION}];
+        my $geom   = $colp->[$features{GEOM}];
+		my $geom_str;
+		if ($geom) {
+			my @lat_lon = minmax($geom);
+			push @$colp, @lat_lon;
+			$colp->[$features{GEOM}] = $lat_lon[4];
 		}
-		my $fragility = $colp->{FRAGILITY};
 		
         my $fac_type = lookup_facility_type($type);
         if ($fac_type <= 0) {
@@ -443,8 +418,7 @@ sub process {
                 next;
             }
             eval {
-                $sth_ins_facility->execute($type, $ext_id, $facility_name,
-					 $short_name, $description, @geom[0..3], 'admin', SC::time_to_ts(time));
+                $sth_ins->execute(&$sub_ins_upd($colp));
                 $nins++;
                 $fac_id = lookup_facility($ext_id, $type);
                 if ($fac_id < 0) {
@@ -480,9 +454,8 @@ sub process {
                 $sth_del_facility_shaking->execute($fac_id);
                 $sth_del_geometry_facility_profile->execute($fac_id);
                 eval {
-                    #$sth_del->execute($fac_id);
-					$sth_upd_facility->execute($type, $ext_id, $facility_name,
-						$short_name, $description, @geom[0..3], $fac_id);
+                    $sth_del->execute($fac_id);
+                    $sth_repl->execute(&$sub_ins_upd($colp), $fac_id);
                     $nrepl++;
                 };
                 if ($@) {
@@ -511,8 +484,7 @@ sub process {
             } else {
                 # update just updates the existing record
                 eval {
-					$sth_upd_facility->execute($type, $ext_id, $facility_name,
-						$short_name, $description, @geom[0..3], $fac_id);
+                    $sth_upd->execute(&$sub_ins_upd($colp), $fac_id);
                     $nupd++;
                 };
                 if ($@) {
@@ -528,11 +500,38 @@ sub process {
         # at this point the facility record has been either inserted or
         # updated, and $fac_id is its PK.
 
-		if (!$processed_fac{$fac_id} && $component =~ /system/i) {
-			if (ref $facility_model eq 'SCALAR') {
+		if (!$processed_fac{$fac_id} && $component_class =~ /system/i) {
+			if (%metrics) {
+				while (my ($metric, $valp) = each %metrics) {
+					next unless ($metric =~ /alpha/i);
+					if ($mode == M_UPDATE) {
+						# only update needs to individually delete metrics; other
+						# cases either won't have metrics or they'll all have been
+						# deleted
+						$sth_del_one_metric->execute($fac_id, $damage_metric);
+					}
+					my $level;
+					my $lo;
+					foreach my $ix (0 .. $#damage_levels) {
+						next unless $valp->[$ix];	# col not present in input file
+						my $val = $colp->[$valp->[$ix]];
+						next unless defined $val;	# treat blank like missing
+						if (defined $level) {
+						$sth_ins_metric->execute($fac_id, $level,
+							$lo, $val, $damage_metric);
+						}
+						$lo = $val;
+						$level = $damage_levels[$ix]
+					}
+					if (defined $level) {
+						$sth_ins_metric->execute($fac_id, $level,
+							$lo, 999999, $damage_metric);
+					}
+				}
+			} elsif ($mode == M_INSERT or $mode == M_REPLACE) {
 				# insert default facility fragility if not defined
 				my $facility_type_fragility = SC->dbh->selectcol_arrayref(
-					$sth_lookup_facility_type_fragility, {Columns=>[1,2,3,4]}, $facility_model);
+					$sth_lookup_facility_type_fragility, {Columns=>[1,2,3,4]}, $type);
 				while (@$facility_type_fragility) {
 					my $metric = shift @$facility_type_fragility;
 					my $damage_level = shift @$facility_type_fragility;
@@ -540,69 +539,50 @@ sub process {
 					my $high_limit = shift @$facility_type_fragility;
 					$sth_ins_metric->execute($fac_id, $damage_level,
 						$low_limit, $high_limit, $metric);
-					$fragility->{$damage_level}->{METRIC} = $metric;
-					$fragility->{$damage_level}->{ALPHA} = $low_limit;
-					$fragility->{$damage_level}->{BETA} = 0.64;
-				}
-			} else {
-				my $level;
-				my $level_metric;
-				my $lo;
-				my $ix;
-				foreach $ix (0 .. $#damage_levels) {
-					my $val = $fragility->{$damage_levels[$ix]}->{ALPHA};
-					next unless ($val > 0);	# treat blank like missing
-					if ($mode == M_UPDATE) {
-						# only update needs to individually delete metrics; other
-						# cases either won't have metrics or they'll all have been
-						# deleted
-						$sth_del_one_fragility->execute($fac_id, $damage_levels[$ix]);
-					}
-					if (defined $level) {
-					$sth_ins_metric->execute($fac_id, $level, 
-						$lo, $val, $level_metric);
-					}
-					$lo = $val;
-					$level = $damage_levels[$ix];
-					$level_metric = $fragility->{$damage_levels[$ix]}->{METRIC};
-				}
-				
-				if ($level) {
-					$sth_ins_metric->execute($fac_id, $level,
-						$lo, 999999, $level_metric);
 				}
 			}
 		}
 
-        if ($fragility->{GREEN}->{ALPHA}) {
-			foreach my $damage_level (@damage_levels) {
-                my $alpha = $fragility->{$damage_level}->{'ALPHA'};
-                my $beta = $fragility->{$damage_level}->{'BETA'};
-                my $damage_metric = $fragility->{$damage_level}->{'METRIC'};
+        if (%probs) {
+            while (my ($prob, $valp) = each %probs) {
+                my $alpha = $colp->[$valp->{'ALPHA'}];
+                my $beta = $colp->[$valp->{'BETA'}];
 
-				next unless ($alpha > 0 && $beta > 0);
-	
-				if ($mode == M_UPDATE or $mode == M_REPLACE) {
-					# delete any attributes mentioned in the input file
-					$sth_del_specified_prob->execute($fac_id, $component_class,
-						$component, $damage_level);
-				}
-				$sth_ins_prob->execute($fac_id, $component_class, $component, $damage_level,
-					$alpha, $beta, 'admin', SC::time_to_ts(time), $damage_metric);
+		next unless ($alpha && $beta);
+
+		    if ($mode == M_UPDATE or $mode == M_REPLACE) {
+		        # delete any attributes mentioned in the input file
+		        $sth_del_specified_prob->execute($fac_id, $component_class, $component, $prob);
+		    }
+			$sth_ins_prob->execute($fac_id, $component_class, $component, $prob,
+				$alpha, $beta, 'admin', SC::time_to_ts(time), $damage_metric);
             }
         }
 
-		if ($geom_type =~ /POINT|POLYLINE|POLYGON/i) {
-			my $status;
-			$geom_description =~ s/\n//g;
+         if (%features && $component_class =~ /system/i) {
+		$description =~ s/\n//g;
+            if ($mode == M_UPDATE or $mode == M_REPLACE) {
+                # delete any attributes mentioned in the input file
+                $sth_del_feature->execute($fac_id);
+            }
+		
+		my %feature_row;
+            while (my ($feature, $ix) = each %features) {
+                $feature_row{$feature} = $colp->[$ix];;
+            }
+
 	        my $fac_feature_id = lookup_facility_feature($fac_id);
-			if ($fac_feature_id > 0) {
-				$status = 	$sth_upd_feature->execute($geom_description,
-					$geom_type, $geom, 'admin', SC::time_to_ts(time), $fac_id);
-			} else {
-				$status = 	$sth_ins_feature->execute($fac_id, $geom_description,
-					$geom_type, $geom, 'admin', SC::time_to_ts(time));
-			}
+
+		if ($fac_feature_id > 0) {
+		    # error looking up ID
+		    $err_cnt++;
+		    next;
+		}
+
+		my $status = 	$sth_ins_feature->execute($fac_id, $feature_row{'DESCRIPTION'},
+			$feature_row{'GEOM_TYPE'}, $feature_row{'GEOM'}, 
+				'admin', SC::time_to_ts(time));
+					
         }
 
        if (%attrs && !$processed_fac{$fac_id}) {
@@ -626,7 +606,7 @@ sub process {
 
 # Return facility_id given external_facility_id and facility_type
 sub minmax {
-    my ($geom_type, $geom) = @_;
+    my ($geom) = @_;
 	
 	my @points = split /[\s\t\n]+/, $geom;
 	my ($lat_max, $lat_min, $lon_max, $lon_min);
@@ -651,12 +631,7 @@ sub minmax {
 	}	
 	my $geom_str = join ',',@geom_points;
 		
-	if ($geom_type =~ /POLYLINE/i) {
-		$lat_max = $lat_min = $geom_points[int($#points/2)*2];
-		$lon_max = $lon_min = $geom_points[int($#points/2)*2+1];
-	}
-	#print "($lat_max, $lat_min, $lon_max, $lon_min)\n";
-    return ($lat_max, $lat_min, $lon_max, $lon_min, $geom);       # not found
+        return ($lat_max, $lat_min, $lon_max, $lon_min, $geom);       # not found
 }
 
 # Return facility_id given external_facility_id and facility_type
