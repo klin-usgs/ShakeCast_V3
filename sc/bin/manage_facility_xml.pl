@@ -551,7 +551,11 @@ sub process {
 				my $ix;
 				foreach $ix (0 .. $#damage_levels) {
 					my $val = $fragility->{$damage_levels[$ix]}->{ALPHA};
+<<<<<<< HEAD
 					next unless ($val > 0);	# treat blank like missing
+=======
+					next unless defined $val;	# treat blank like missing
+>>>>>>> 79c1c10cde114cdc0f72a1b14c5434328bf744a7
 					if ($mode == M_UPDATE) {
 						# only update needs to individually delete metrics; other
 						# cases either won't have metrics or they'll all have been
@@ -580,7 +584,11 @@ sub process {
                 my $beta = $fragility->{$damage_level}->{'BETA'};
                 my $damage_metric = $fragility->{$damage_level}->{'METRIC'};
 
+<<<<<<< HEAD
 				next unless ($alpha > 0 && $beta > 0);
+=======
+				next unless ($alpha && $beta);
+>>>>>>> 79c1c10cde114cdc0f72a1b14c5434328bf744a7
 	
 				if ($mode == M_UPDATE or $mode == M_REPLACE) {
 					# delete any attributes mentioned in the input file
