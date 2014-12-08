@@ -74,6 +74,7 @@ use Text::CSV_XS;
 
 use XML::LibXML::Simple;
 use Data::Dumper;
+use Scalar::Util qw(looks_like_number);
 
 use FindBin;
 use lib "$FindBin::Bin/../lib";
@@ -580,7 +581,7 @@ sub process {
                 my $beta = $fragility->{$damage_level}->{'BETA'};
                 my $damage_metric = $fragility->{$damage_level}->{'METRIC'};
 
-				next unless ($alpha && $beta);
+				next unless (looks_like_number($alpha) && looks_like_number($beta));
 	
 				if ($mode == M_UPDATE or $mode == M_REPLACE) {
 					# delete any attributes mentioned in the input file
