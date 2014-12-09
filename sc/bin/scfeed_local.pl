@@ -589,6 +589,7 @@ my $evid = shift;
 	my $version = int($shakemap_spec{'shakemap_version'}) || 1;
 	my $evt_network = ($event_spec{'event_network'}) ? lc($event_spec{'event_network'}) : lc($shakemap_spec{'shakemap_originator'});
 	my $evt_id = ($event_spec{'event_id'}) ? lc($event_spec{'event_id'}) : lc($shakemap_spec{'shakemap_id'});
+	$evt_id =~ s/^$evt_network//;
 	$sc_data = "$download_dir/$evt_network$evt_id-$version";
 	return (0) if (-d $sc_data);
 	rename("$download_dir/$evid", $sc_data);
