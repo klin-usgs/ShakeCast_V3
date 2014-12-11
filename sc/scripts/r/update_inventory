@@ -128,6 +128,36 @@ sub manage_facility_xml {
 
 
     # Authenticated
+sub manage_group_xml {
+	my ($filename, $param) = @_;
+	my $bin_file = "$sc_home/bin/manage_group_xml.pl";
+	my $file_path = "$sc_home/tmp/$filename";
+	my $cmd = "$bin_file $param \"$file_path\"";
+	
+	my $json = {};
+	$json->{prog} = $cmd;
+	$json->{result} = `$cmd -verbose`;
+
+	return $json;
+}
+
+
+    # Authenticated
+sub manage_user_xml {
+	my ($filename, $param) = @_;
+	my $bin_file = "$sc_home/bin/manage_user_xml.pl";
+	my $file_path = "$sc_home/tmp/$filename";
+	my $cmd = "$bin_file $param \"$file_path\"";
+	
+	my $json = {};
+	$json->{prog} = $cmd;
+	$json->{result} = `$cmd -verbose`;
+
+	return $json;
+}
+
+
+    # Authenticated
 sub manage_facility {
 	my ($filename, $param) = @_;
 	my $bin_file = "$sc_home/bin/manage_facility.pl";

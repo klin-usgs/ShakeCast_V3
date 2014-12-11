@@ -130,10 +130,12 @@ my $sth_lookup_profile;
 my $sth_lookup_profile_id;
 my $sth_lookup_group_id;
 my $sth_ins_geom_fac_profile;
+my $sth_ins_notification_request;
 my $sth_del_notification_request;
 my $sth_del_profile_notification_request;
 my $sth_del_geometry_facility_profile;
 my $sth_del_geometry_profile;
+my $sth_lookup_fac_poly;
 my $sth_lookup_poly;
 
 my $sth_lookup_shakemap;
@@ -175,7 +177,6 @@ GetOptions(
     'replace',          # replace existing facilities
     'update',           # update existing facilities
     'delete',           # delete existing facilities	#kwl 20061024
-    'poly=s',           # delete existing facilities	#kwl 20061024
     
     'verbose+',         # repeat for more verbosity
     'help',             # print help and exit
@@ -197,13 +198,11 @@ use constant M_INSERT  => 1;
 use constant M_REPLACE => 2;
 use constant M_UPDATE  => 3;
 use constant M_DELETE    => 4;	
-use constant M_POLY    => 5;	
 my $mode = 0;
 
 $mode = M_INSERT   if $options{'insert'};
 $mode = M_UPDATE   if $options{'update'};
 $mode = M_DELETE     if $options{'delete'};	
-$mode = M_POLY     if $options{'poly'};	
 
 SC->initialize;
 
@@ -225,7 +224,8 @@ $sth_ins_facility_notification_request = SC->dbh->prepare(qq{
 	  from geometry_facility_profile gfp inner join geometry_profile gp 
 	  on gfp.profile_id = gp.profile_id inner join shakecast_user su 
 	  on gp.profile_name = su.username inner join notification_request nr 
-	  on nr.shakecast_user = su.shakecast_user where su.shakecast_user = ?)});
+	  on nr.shakecast_user = su.shakecast_user 
+	  where su.shakecast_user = ? and nr.notification_request_id = ?)});
 
 $sth_del_facility_notification_request = SC->dbh->prepare(qq{
     delete fnr from facility_notification_request fnr inner join notification_request nr 
@@ -254,6 +254,11 @@ $sth_lookup_profile = SC->dbh->prepare(qq{
 	 and p.profile_name = ? });
 
 $sth_lookup_poly = SC->dbh->prepare(qq{
+    select geom
+      from geometry_profile
+     where profile_name = ? });
+
+$sth_lookup_fac_poly = SC->dbh->prepare(qq{
     select f.facility_id, f.lon_min, f.lat_min, f.facility_name, f.facility_type
       from facility f
      where f.lon_max < ? and f.lon_min > ?
@@ -272,6 +277,27 @@ $sth_lookup_group_id = SC->dbh->prepare(qq{
 $sth_del_profile_notification_request = SC->dbh->prepare(qq{
     delete from profile_notification_request
      where profile_id = ?});
+
+$sth_ins_notification_request = SC->dbh->prepare(qq{
+    insert into notification_request (
+           damage_level,
+           notification_type,
+           event_type,
+           delivery_method,
+           message_format,
+           limit_value,
+           user_message,
+           notification_priority,
+           auxiliary_script,
+           disabled,
+           product_type,
+           metric,
+           aggregate,
+           aggregation_group,
+           shakecast_user,
+           update_username,
+           update_timestamp)
+    values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)});
 
 $sth_del_notification_request = SC->dbh->prepare(qq{
     delete from notification_request
@@ -413,6 +439,12 @@ sub process {
         }
 
         my $profile_name = $colp->{GROUP_NAME};
+        my $facility_type   = $colp->{FACILITY_TYPE}
+			unless (ref  $colp->{FACILITY_TYPE} eq 'HASH');
+        my $poly   = $colp->{POLY}
+			unless (ref  $colp->{POLY} eq 'HASH');
+        my $notification   = $colp->{NOTIFICATION};
+        
 		my $group_id = lookup_group_id($profile_name);
 		$group_id = insert_group_id($profile_name) if ($group_id <= 0);
 		my $profile_id = lookup_profile_id($profile_name);
@@ -421,162 +453,107 @@ sub process {
 		$profile_description =  $colp->{'DESCRIPTION'} 
 		if (defined $colp->{'DESCRIPTION'});
 	
-	if (defined $colp->{'FACILITY_TYPE'}) {
-		@fac_types =  split /[\s\t\n]+/, $colp->{'FACILITY_TYPE'};
-	}
-	
-	if ($group_id < 0) {
-		# error looking up ID
-		$err_cnt++;
-    } elsif ($group_id == 0) {
-		# new profile
-		if ($mode == M_UPDATE or $mode == M_DELETE) {
-			# update requires the record to already exist
-			epr "$profile_name does not exist";
-			$err_cnt++;
-			return 0;
-		} 
-		eval {
-			my $polygon = load_geometry($colp);
-			my $result = $sth_ins_geom_profile->execute($profile_name, $profile_description,
-				join (',', split /[\s\t\n]+/, $colp->{'POLY'}));
-			my $profile = lookup_profile($profile_name, $polygon);
-			return 0 unless $profile;
-			
-			vpr "$profile_name :";
-			$nins += creae_notification_profile($group_id, $colp);
-			$profile_id = lookup_profile_id($profile_name);
-			if ($profile_id < 0) {
-				$err_cnt++;
-				next;
-			} elsif ($profile_id == 0) {
-				epr "lookup failed after insert of $profile_name";
-				$err_cnt++;
-				next;
-			}
-
-			while (@$profile) {
-				my $facility = shift @$profile;
-				my $lon = shift @$profile;
-				my $lat = shift @$profile;
-				my $fac_type = shift @$profile;
-				next unless ($polygon->{POLY}->crossingstest([$lon, $lat]));
-				if (scalar @fac_types) {
-					next unless grep { /$fac_type/i } @fac_types;
-					#vpr "$facility, $lon, $lat, $fac_type\n";
-				}
-				$sth_ins_geom_fac_profile->execute($facility, $profile_name);
-				$fnins++;
-			}
-				$group_id = lookup_group_id($profile_name);
-				my $rc = $sth_ins_facility_notification_request->execute($group_id)
-					if (scalar @fac_types);
-		};
-	} else {
-		if ($mode == M_INSERT) {
-			# insert requres that the record NOT exist
-			epr "$profile_name already exists";
-			$err_cnt++;
-			next;
-		} elsif ($mode == M_DELETE) {
-			eval {
-				$sth_del_facility_notification_request->execute($group_id);
-				$sth_del_notification_request->execute($group_id);
-				$sth_del_profile_notification_request->execute($profile_id);
-				$sth_del_geometry_facility_profile->execute($profile_id);
-				$sth_del_geometry_profile->execute($profile_id);
-				$sth_del_shakecast_user->execute($group_id);
-				$ndel++;
-			};
-		} else {
-			eval {
-				$sth_del_facility_notification_request->execute($group_id);
-				$sth_del_notification_request->execute($group_id);
-				$sth_del_profile_notification_request->execute($profile_id);
-				$sth_del_geometry_facility_profile->execute($profile_id);
-				$sth_del_geometry_profile->execute($profile_id);
-
-				vpr "$profile_name :";
-				#vpr @{$config{$profile_name}{'NOTIFICATION'}},"\n";
-				$nins += creae_notification_profile($group_id, $colp);
-
-				my $polygon = load_geometry($colp);
-				my $result = $sth_ins_geom_profile->execute($profile_name, $profile_description,
-					join (',', split /[\s\t\n]+/, $colp->{'POLY'}));
-				my $profile = lookup_profile($profile_name, $polygon);
-				return unless $profile;
-				
-				$profile_id = lookup_profile_id($profile_name);
-				if ($profile_id < 0) {
-					$err_cnt++;
-					next;
-				} elsif ($profile_id == 0) {
-					epr "lookup failed after insert of $profile_name";
-					$err_cnt++;
-					next;
-				}
-	
-				while (@$profile) {
-					my $facility = shift @$profile;
-					my $lon = shift @$profile;
-					my $lat = shift @$profile;
-					my $fac_type = shift @$profile;
-					next unless ($polygon->{POLY}->crossingstest([$lon, $lat]));
-					if (scalar @fac_types) {
-						next unless grep { /$fac_type/i } @fac_types;
-						#vpr "$facility, $lon, $lat, $fac_type\n";
-					}
-					$sth_ins_geom_fac_profile->execute($facility, $profile_name);
-					$fnins++;
-				}
-				$group_id = lookup_group_id($profile_name);
-				my $rc = $sth_ins_facility_notification_request->execute($group_id)
-					if (scalar @fac_types);
-
-				if ($@) {
-					epr $@;
-					$err_cnt++;
-				}
-			};
+		if (defined $facility_type) {
+			@fac_types =  split /[\s\t\n\,]+/, $facility_type;
 		}
-		
-	}
-	
-	$processed_grp{profile_name} = 1;
 
+		if ($group_id <= 0) {
+			# error looking up ID
+			$err_cnt++;
+		} else {
+			if ($mode == M_DELETE) {
+				eval {
+					$sth_del_facility_notification_request->execute($group_id);
+					$sth_del_notification_request->execute($group_id);
+					$sth_del_profile_notification_request->execute($profile_id);
+					$sth_del_geometry_facility_profile->execute($profile_id);
+					$sth_del_geometry_profile->execute($profile_id);
+					$sth_del_shakecast_user->execute($group_id);
+					$ndel++;
+				};
+			} else {
+				#eval {
+					vpr "$profile_name ($group_id)\n";
+
+					my $polygon = load_geometry($poly);
+					if ($polygon) {
+						$sth_del_facility_notification_request->execute($group_id);
+						$sth_del_profile_notification_request->execute($profile_id);
+						$sth_del_geometry_facility_profile->execute($profile_id);
+						$sth_del_geometry_profile->execute($profile_id);
+						$sth_del_notification_request->execute($group_id);
+						my $result = $sth_ins_geom_profile->execute($profile_name, $profile_description,
+							join (',', split /[\,\s\t\n]+/, $poly));
+						
+						my $profile = lookup_profile($profile_name, $polygon);
+						return unless $profile;
+				
+						while (@$profile) {
+							my $facility = shift @$profile;
+							my $lon = shift @$profile;
+							my $lat = shift @$profile;
+							my $fac_type = shift @$profile;
+							next unless ($polygon->{POLY}->crossingstest([$lon, $lat]));
+							if (scalar @fac_types) {
+								next unless grep { /$fac_type/i } @fac_types;
+								#vpr "$facility, $lon, $lat, $fac_type\n";
+							}
+							$sth_ins_geom_fac_profile->execute($facility, $profile_name);
+							$fnins++;
+						}
+					} else {
+						$poly = lookup_poly($profile_name);
+						$polygon = load_geometry($poly);
+					}
+
+					$group_id = lookup_group_id($profile_name);
+					$nupd += creae_notification_profile($group_id, $notification);
+
+					if ($@) {
+						epr $@;
+						$err_cnt++;
+					}
+				#};
+			}
+		
+		}
+	
 	}
-    vpr "$nrec records processed ($nins inserted, $nupd updated, $ndel deleted, $err_cnt rejected). $fnins facilities affected.";
+    vpr "$nrec records processed ($nupd inserted/updated, $ndel deleted, $err_cnt rejected). $fnins facilities affected.";
 }
 
 
 sub creae_notification_profile {
 	my ($profile_id, $colp) = @_;
 	my $cnt = 0;
-	my @notifications;
-	if (ref($colp->{'NOTIFICATION'}) eq "HASH") {
-		push @notifications, $colp->{'NOTIFICATION'};
-	} else {
-		@notifications = @{$colp->{'NOTIFICATION'}};
-	}
-	
-	foreach my $notification (@notifications) {
-    # build sql
-    my @keys = sort keys %{$notification};
-	
-    my @values;
-	for (0 .. $#keys) {
-		push @values, $notification->{$keys[$_]};
-	}
-	push @keys, 'shakecast_user';
-	push @values, $profile_id;
-	
-    my $sql = 'insert into notification_request (' . join(',', @keys) . ') ' .
-        'values (' . join(',', ('?') x scalar @keys) . ') '; 
-    $sth_ins = SC->dbh->prepare($sql);
-    $sth_ins->execute(@values);
-	$cnt++;
-	}
-	return $cnt;
+
+print Dumper($colp);
+	my $result = $sth_ins_notification_request->execute(
+       $colp->{DAMAGE_LEVEL},
+       $colp->{NOTIFICATION_TYPE},
+       $colp->{EVENT_TYPE},
+       $colp->{DELIVERY_METHOD},
+       (ref $colp->{MESSAGE_FORMAT} eq 'SCALAR') ? $colp->{MESSAGE_FORMAT} : '',
+       (ref $colp->{LIMIT_VALUE} eq 'SCALAR') ? $colp->{LIMIT_VALUE} : undef,
+       $colp->{USER_MESSAGE},
+       $colp->{NOTIFICATION_PRIORITY},
+       $colp->{AUXILIARY_SCRIPT},
+       $colp->{DISABLED},
+       (ref $colp->{PRODUCT_TYPE} eq 'SCALAR') ? $colp->{PRODUCT_TYPE} : '',
+       (ref $colp->{METRIC} eq 'SCALAR') ? $colp->{METRIC} : '',
+       $colp->{AGGREGATE},
+       $colp->{AGGREGATE_GROUP},
+       $profile_id,
+		 'admin', SC::time_to_ts(time)
+       );
+       
+    return 0 unless $result;
+    
+       my $insert_id = SC->dbh->last_insert_id(undef, undef, undef, undef);
+		my $rc = $sth_ins_facility_notification_request->execute($profile_id, $insert_id);
+					
+
+	return $result;
 }
 
 
@@ -594,20 +571,18 @@ sub load_geometry {
   my ($nc, $poly, $lat, $lon, $north_b, $south_b, $east_b, $west_b);
   my $box    = {};
   my $coords = [];
-  my @args;
-  @args = split /[\s\t\n]+/, $colp->{'POLY'};
-
+  my @points = split /[\,\s\t\n]+/, $colp;
   $box->{COORDS} = $coords;
 
-  return 0 if (($nc = @args) % 2 != 0);
+  return 0 if (($nc = @points) % 2 != 0);
   $nc /= 2;
   return 0 if $nc < 3;
-  while (@args) {
-    $lat = shift @args;
+  while (@points) {
+    $lat = shift @points;
 	$north_b = _max($lat, $north_b);
 	$south_b = _min($lat, $south_b);
 	
-    $lon = shift @args;
+    $lon = shift @points;
 	$east_b = _max($lon, $east_b);
 	$west_b = _min($lon, $west_b);
     push @$coords, [ $lon, $lat ];
@@ -654,8 +629,20 @@ sub lookup_profile {
 
 # Return facility_id given external_facility_id and facility_type
 sub lookup_poly {
+    my ($profile_name) = @_;
+    my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1]},
+        $profile_name);
+    if (scalar @$idp >= 1) {
+        return $idp->[0];
+    } else {
+        return 0;       # not found
+    }
+}
+
+# Return facility_id given external_facility_id and facility_type
+sub lookup_fac_poly {
     my ($box) = @_;
-    my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2,3,4,5]},
+    my $idp = SC->dbh->selectcol_arrayref($sth_lookup_fac_poly, {Columns=>[1,2,3,4,5]},
         $box->{EAST}, $box->{WEST}, $box->{NORTH}, $box->{SOUTH});
     if (scalar @$idp >= 1) {
         return $idp;
@@ -671,7 +658,7 @@ sub lookup_group_id {
         $profile_name);
 
     if (scalar @$idp > 1) {
-        epr "multiple matching profiles for $profile_name";
+        epr "multiple matching groups for $profile_name";
         return -1;      # valid IDs are all greater than 0
     } elsif (scalar @$idp == 1) {
         return $$idp[0];

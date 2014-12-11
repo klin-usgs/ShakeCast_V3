@@ -174,7 +174,8 @@ sub process_xml {
    # eval {
     my $xml = XMLin($file);
     #my $worksheet = $xml->{Worksheet};
-	my $data = $xml->{FacilityRow};
+	my $key = (keys %$xml)[0];
+	my $data = $xml->{$key};
 
 	my $facility = shift @$data;
 
@@ -183,6 +184,14 @@ sub process_xml {
 	"manage_facility_xml" => {
 	'EXTERNAL_FACILITY_ID'      => 1,
 	'FACILITY_TYPE'             => 1,
+	},
+	"manage_group_xml" => {
+	'GROUP_NAME'      => 1,
+	'NOTIFICATION'             => 1,
+	},
+	"manage_user_xml" => {
+	'USER_TYPE'      => 1,
+	'USERNAME'             => 1,
 	},
     );
 
@@ -207,7 +216,7 @@ sub process_xml {
   #  };
     
     if ($@) {
-	SC->log(0,"process_conf $@");
+	SC->log(0,"process_xml $@");
 	$result{'status'} = $@;
 	return 0;
     }
