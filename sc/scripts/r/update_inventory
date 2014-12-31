@@ -81,6 +81,29 @@ sub shake_fetch {
 }
 
     # Authenticated
+sub atlas_fetch {
+    my ($event_id) = @_;
+    
+    my $sc_id = $event_id;
+    $sc_id =~ s/^\atlas//i;
+    $sc_id = 'us'.$sc_id;
+    
+    my $result = `$sc_home/bin/manage_event.pl -delete -verbose $sc_id`;
+
+    SC->log(0, "erase event: $sc_id, $result");
+	
+	my $cmd = "$sc_home/bin/gs_json.pl $event_id";
+	SC->log(0, $cmd);
+	$result =  `$cmd`;
+	
+	my $json = {};
+	$json->{prog} = $cmd;
+	$json->{result} = 1;
+
+	return $json;
+}
+
+    # Authenticated
 sub scenario_event {
 	my ($filename) = @_;
 	

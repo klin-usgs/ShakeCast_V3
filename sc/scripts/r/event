@@ -83,6 +83,32 @@ sub event_list {
 	return $events;
 }
 
+    # Authenticated
+sub comcat_list {
+    my $start = ($self->param('start')) ? ($self->param('start'))-1 : 0;
+    my $length = ($self->param('length')) ? $self->param('length') : 100000;
+    my $type = ($self->param('type')) ? lc($self->param('type')) : '';
+    my $age = $self->param('age') || 'week';
+    my $timestamp = age_trans($age);
+    my $options = {'start' => $start,
+		    'length' => $length,
+		    'type' => $type,
+		    'age' => $age,
+		    'timestamp' => $timestamp,
+		    };
+    my $events;
+    my $count;
+	if ($type =~ /scenario|major/i) {
+		$events = new API::Event->event_list($type);
+	} elsif ($type =~ /test/i) {
+		$events = get_test_events();
+	} elsif ($age) {
+		($count, $events) = new API::Event->newer_than($options);
+	}
+
+	return $events;
+}
+
 sub erase {
 
     # Authenticated
