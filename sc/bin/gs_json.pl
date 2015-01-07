@@ -105,7 +105,15 @@ my @servers = SC::Server->servers_to_rss;
 SC->log(scalar @servers);
 SC->log($servers[0]);
 my $rc = 0;
-if (@servers) {
+if (@ARGV) {
+	my $url = 'http://comcat.cr.usgs.gov/fdsnws/event/1/query?format=geojson&eventid=';
+	foreach my $evid (@ARGV) {
+		my $event = {};
+		$event->{net} = substr($evid, 0, 2);
+		$event->{code} = substr($evid, 2, length($evid)-2);
+		fetch_evt_json($url, $url.$evid, $event);
+	}
+} elsif (@servers) {
 	foreach my $server (@servers) {
 		# http://earthquake.usgs.gov/eqcenter/catalogs/7day-M2.5.xml
 		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/week";
@@ -150,6 +158,8 @@ sub fetch_evt_json
     # these are some nice json options to relax restrictions a bit:
     my $json_text = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($content);
  
+	$json_text = $json_text->{properties} if (@ARGV);
+
 	#exit unless (ref $json_text->{features} eq 'ARRAY');
     # iterate over each feature in the JSON structure:
     while (my ($key, $product) = each(%{$json_text->{products}})){
@@ -160,7 +170,7 @@ sub fetch_evt_json
 			($rv, $parms) = &{ 'parse_'.$key }($server, $product, $event);
 	    };
     }
-	&check_duplicated_event($json_text->{'summary'}, $event);
+	&check_duplicated_event($json_text->{'summary'}, $event) unless (@ARGV);
 	};
 	
   # catch crashes:
@@ -208,21 +218,23 @@ sub parse_shakemap
 	mkpath( $mirror_dir ) if not -d $mirror_dir;
 	my $rv;
 	
-	foreach my $product (@$products) {
-		while (my ($mirror, $shakemap) = each( %{$product->{'contents'}})) {
-			next unless ($mirror =~ /^download\//i);
-			$mirror =~ s/^download\///;
-			#my $content_url = "http://" . $server . $shakemap->{'url'};
-			my $content_url = $shakemap->{'url'};
-			my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
-			$rv=1 if ($resp->is_success);
-		}
-		#print ref $product,"\n";
-		my $perl = SC->config->{perlbin};
-		my $root = SC->config->{RootDir};
-		my $cmd = "$perl $root/bin/scfeed_local.pl -event ".$event->{net}.$event->{code};
-		my $rv = `$cmd`;
+	#foreach my $product (@$products) {
+	my $product = shift @$products;
+	while (my ($mirror, $shakemap) = each( %{$product->{'contents'}})) {
+		next unless ($mirror =~ /^download\//i);
+		$mirror =~ s/^download\///;
+		#my $content_url = "http://" . $server . $shakemap->{'url'};
+		my $content_url = $shakemap->{'url'};
+		my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
+		$rv=1 if ($resp->is_success);
 	}
+	#print ref $product,"\n";
+	my $perl = SC->config->{perlbin};
+	my $root = SC->config->{RootDir};
+	my $cmd = "$perl $root/bin/scfeed_local.pl -event ".$event->{net}.$event->{code};
+	$cmd .= ' -force_run -scenario' if (@ARGV);
+	$rv = `$cmd`;
+	#}
 	
 	return $rv;
 }

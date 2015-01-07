@@ -13,16 +13,34 @@ Event Time: %EVENT_TIMESTAMP%<br>
 Generated at %GENERATION_TIMESTAMP%<br>
 Reported by: Server ID = %SERVER_ID%, DNS = %DNS_ADDRESS%
 <p>
-<font size=+2><b>Damage Summary</b></font><br>
-Number of Facilities Reported: %_ITEMNO%<br>
-Max Value: MMI: %_MAX_METRIC_MMI%; 
-Acceleration: %_MAX_METRIC_PGA:|NULL|;(not measured)%<br>
-Number of Reports of Likely Damage: %_NUM_DAMAGE_LEVEL_RED%<br>
-Number of Reports of Possible Damage: %_NUM_DAMAGE_LEVEL_YELLOW%
+<font size=+2><b>Estimated Impact Summary</b></font><br>
+<table border=0 bordercolor=gray cellpadding=0 cellspacing=0>
+<tr>
+  <td><b>Number of Facilities Evaluated</b></td>
+  <td> : <b>%_ITEMNO:|NULL|;0%</b></td>
+</tr>
+<tr>
+  <td><font color = "red"><b>High Impact</b></font></td>
+  <td> : <b>%_NUM_DAMAGE_LEVEL_RED:|NULL|;0%</b></td>
+</tr>
+<tr>
+  <td><font color = "orange"><b>Moderate High Impact</b></font></td>
+  <td> : <b>%_NUM_DAMAGE_LEVEL_ORANGE:|NULL|;0%</b></td>
+</tr>
+<tr>
+  <td><font color = "gold"><b>Moderate Impact</b></font></td>
+  <td> : <b>%_NUM_DAMAGE_LEVEL_YELLOW:|NULL|;0%</b></td>
+</tr>
+<tr>
+  <td><font color = "green"><b>Low Impact</b></font></td>
+  <td> : <b>%_NUM_DAMAGE_LEVEL_GREEN:|NULL|;0%</b></td>
+</tr>
+</table>
+
 <p>
 <img src="cid:intensity.jpg">
 <p>
-<font size=+2><b>Facility Damage Estimates from ShakeMap</b></font>
+<font size=+2><b>Impact Estimates from ShakeMap</b></font>
 <table border=1 bordercolor=black cellpadding=5 cellspacing=0>
 <tr>
   <th>Facility
