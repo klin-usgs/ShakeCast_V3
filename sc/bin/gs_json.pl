@@ -117,13 +117,14 @@ if (@ARGV) {
 	foreach my $server (@servers) {
 		# http://earthquake.usgs.gov/eqcenter/catalogs/7day-M2.5.xml
 		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/week";
-		my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/day";
+		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/day";
+		my $url = "http://" . $server->dns_address . "/earthquakes/feed/v1.0/summary/1.0_day.geojson";
 		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/hour";
 		my $event_list = fetch_json_page($server->dns_address, $url);
-		#print ref $event_list;
 		next if (ref $event_list ne 'ARRAY');
 		foreach my $event (@$event_list) {
-			my $evt_url = $event->{url} . '.json';
+			#my $evt_url = $event->{url} . '.json';
+			my $evt_url = $event->{detail};
 			fetch_evt_json($server->dns_address, $evt_url, $event);
 		}
 	}
@@ -158,7 +159,8 @@ sub fetch_evt_json
     # these are some nice json options to relax restrictions a bit:
     my $json_text = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($content);
  
-	$json_text = $json_text->{properties} if (@ARGV);
+	#$json_text = $json_text->{properties} if (@ARGV);
+	$json_text = $json_text->{properties};
 
 	#exit unless (ref $json_text->{features} eq 'ARRAY');
     # iterate over each feature in the JSON structure:
