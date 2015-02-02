@@ -527,7 +527,6 @@ sub creae_notification_profile {
 	my ($profile_id, $colp) = @_;
 	my $cnt = 0;
 
-print Dumper($colp);
 	my $result = $sth_ins_notification_request->execute(
        $colp->{DAMAGE_LEVEL},
        $colp->{NOTIFICATION_TYPE},
