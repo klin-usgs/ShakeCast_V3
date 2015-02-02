@@ -117,6 +117,10 @@ my $flgs = [{ FLAG => 'event',
 			  . 'Note: this flag usually is not necessary (i.e., if '
 			  . 'the event id ends with "_se" or tag has run with '
 			  . 'the -scenario flag).'},
+            { FLAG => 'sc_id',
+	      ARG  => 'sc_id',
+              TYPE => 's',
+              DESC => 'Specifies the final ShakeCast id of the event.'},
             { FLAG => 'force_run',
               DESC => 'Force run a ShakeMap event.'},
             { FLAG => 'verbose',
@@ -136,6 +140,7 @@ defined $options->{'event'}
 
 my $evid     = $options->{'event'};
 my $verbose  = defined $options->{'verbose'}  ? 1 : 0;
+my $sc_id  =  $options->{'sc_id'} if (defined $options->{'sc_id'});
 my ($scenario, $forcerun, $cancel, $test);
 my $scenario = defined $options->{'scenario'} ? 1 : 0;
 my $force_run = defined $options->{'force_run'} ? 1 : 0;
@@ -443,10 +448,11 @@ my $evid = shift;
 	return (0) if (-d "$download_dir/$evid-$version");
 	rename("$download_dir/$evid", "$download_dir/$evid-$version");
 	#my $sc_data = "$download_dir/$evid";
-	$sc_data = "$download_dir/$evid-$version";
+	$sc_data = ($sc_id) ? "$download_dir/$sc_id-$version" : "$download_dir/$evid-$version";
 	my $earthquake = $xml->{'earthquake'};
     $earthquake->{'created'} = _ts($earthquake->{'created'});
    
+	$sc_id = ($sc_id) ? $sc_id : $earthquake->{'id'};
   #-----------------------------------------------------------------------
   # Generate event.xml:
   #
@@ -467,7 +473,7 @@ my $evid = shift;
 			 $earthquake->{'hour'}, $earthquake->{'minute'}, $earthquake->{'second'},
 			 $earthquake->{'timezone'});
   $writer->emptyTag("event",
-		    "event_id"          => $earthquake->{'id'},
+		    "event_id"          => $sc_id,
 		    "event_version"     => $version,
 		    "event_status"      => 'NORMAL',
 		    "event_type"        => $scenario ? 'SCENARIO' : 'ACTUAL',
@@ -499,9 +505,9 @@ my $evid = shift;
   #----------------------------------------------------------------------
   $writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
   $writer->startTag("shakemap", 
-		    "shakemap_id"          => $earthquake->{'id'}, 
+		    "shakemap_id"          => $sc_id, 
 		    "shakemap_version"     => $version, 
-		    "event_id"             => $earthquake->{'id'}, 
+		    "event_id"             => $sc_id, 
 		    "event_version"        => $version, 
 		    "shakemap_status"      => 'RELEASED',
 		    "generating_server"    => "1",
@@ -532,7 +538,7 @@ my $evid = shift;
   my %products = product_list();
   foreach $product (keys %products) {
 	my $filename = $product;
-	$filename =~ s/%EVENT_ID%/$earthquake->{'id'}/;
+	$filename =~ s/%EVENT_ID%/$sc_id/;
     next if(not -e "$sc_data/$filename");
     $file = sprintf "p%02d.xml", $pid++;
     $ofile = "$sc_data/$file";
@@ -541,7 +547,7 @@ my $evid = shift;
     $writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
 
     $writer->emptyTag("product",
-		      "shakemap_id"          => $earthquake->{'id'}, 
+		      "shakemap_id"          => $sc_id, 
 		      "shakemap_version"     => $version, 
 		      "product_type"         => $products{$product},
 		      "product_status"       => 'RELEASED',
@@ -590,7 +596,8 @@ my $evid = shift;
 	my $evt_network = ($event_spec{'event_network'}) ? lc($event_spec{'event_network'}) : lc($shakemap_spec{'shakemap_originator'});
 	my $evt_id = ($event_spec{'event_id'}) ? lc($event_spec{'event_id'}) : lc($shakemap_spec{'shakemap_id'});
 	$evt_id =~ s/^$evt_network//;
-	$sc_data = "$download_dir/$evt_network$evt_id-$version";
+	$sc_data = ($sc_id) ? "$download_dir/$sc_id-$version" : 
+			"$download_dir/$evt_network$evt_id-$version";
 	return (0) if (-d $sc_data);
 	rename("$download_dir/$evid", $sc_data);
 	
@@ -623,6 +630,8 @@ my $evid = shift;
 	  }
 	}
 	$remote_event = lc($evt_network).$remote_event;
+
+	$sc_id = ($sc_id) ? $sc_id : $evt_network.$evt_id;
   #print "remote event, $remote_event\n";
 
   #-----------------------------------------------------------------------
@@ -641,7 +650,7 @@ my $evid = shift;
   $writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
 
   $writer->emptyTag("event",
-		    "event_id"          => $evt_network.$evt_id,
+		    "event_id"          => $sc_id,
 		    "event_version"     => $version,
 		    "event_status"      => $shakemap_spec{'map_status'},
 		    "event_type"        => $scenario ? 'SCENARIO' : $shakemap_spec{'shakemap_event_type'},
@@ -673,9 +682,9 @@ my $evid = shift;
   #----------------------------------------------------------------------
 	$writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
 	$writer->startTag("shakemap", 
-		"shakemap_id"          => $evt_network.$evt_id, 
+		"shakemap_id"          => $sc_id, 
 		"shakemap_version"     => $version, 
-		"event_id"             => $evt_network.$evt_id, 
+		"event_id"             => $sc_id, 
 		"event_version"        => $shakemap_spec{'shakemap_version'}, 
 		"shakemap_status"      => $shakemap_spec{'map_status'},
 		"generating_server"    => "1",
@@ -708,7 +717,7 @@ my $evid = shift;
   my %products = product_list();
   foreach $product (keys %products) {
 	my $filename = $product;
-	$filename =~ s/%EVENT_ID%/$shakemap_spec{'shakemap_id'}/;
+	$filename =~ s/%EVENT_ID%/$sc_id/;
     next if(not -e "$sc_data/$filename");
     $file = sprintf "p%02d.xml", $pid++;
     $ofile = "$sc_data/$file";
@@ -717,7 +726,7 @@ my $evid = shift;
     $writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
 
     $writer->emptyTag("product",
-		      "shakemap_id"          => $evt_network.$evt_id, 
+		      "shakemap_id"          => $sc_id, 
 		      "shakemap_version"     => $version, 
 		      "product_type"         => $products{$product},
 		      "product_status"       => $shakemap_spec{'map_status'},
