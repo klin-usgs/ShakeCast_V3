@@ -459,6 +459,47 @@ sub write_to_db {
 	#		 where event_id = ?/, undef,
 	#		$self->event_id);
 	#}
+	if ($num_recs) {
+	SC->dbh->do(qq/
+	    update event set
+		event_id = ?, 
+		event_version = ?,  
+		event_status = ?, 
+		event_type = ?,
+		event_name = ?, 
+		event_location_description = ?, 
+		event_timestamp = $SC::to_date,
+		external_event_id = ?, 
+		receive_timestamp = $SC::to_date,
+		magnitude = ?, 
+		mag_type = ?, 
+		lat = ?, 
+		lon = ?, 
+		depth = ?, 
+		event_region = ?, 
+		event_source_type = ?, 
+		initial_version = ?
+		where event_id = ?/,
+            undef,
+	    $self->event_id,
+	    $self->event_version,
+	    $self->event_status,
+	    $self->event_type,
+	    $self->event_name,
+	    $self->event_location_description,
+	    $self->event_timestamp,
+	    $self->external_event_id,
+	    $self->receive_timestamp,
+	    $self->magnitude,
+	    $self->mag_type,
+	    $self->lat,
+	    $self->lon,
+	    $self->depth,
+	    $self->event_region,
+	    $self->event_source_type,
+	    0,
+	    $self->event_id);
+	} else {
 	SC->dbh->do(qq/
 	    insert into event (
 		event_id, event_version,  event_status, event_type,
@@ -483,7 +524,8 @@ sub write_to_db {
 	    $self->depth,
 	    $self->event_region,
 	    $self->event_source_type,
-	    ($num_recs ? 0 : 1));
+	    1);
+	}
 	# Supercede all other versions of this event.
 	SC->dbh->do(qq/
 	    update event

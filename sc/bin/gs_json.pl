@@ -89,6 +89,7 @@ use SC::Event;
 SC->initialize;
 my $config = SC->config;
 my $perl = $config->{perlbin};
+my $scan_int = ($config->{SCAN_INT}) ? $config->{SCAN_INT} : 600;
 my $mag_cutoff = ($config->{MAG_CUTOFF}) ? $config->{MAG_CUTOFF} : 3.0;
 my $json_dir = $config->{DataRoot}.'/eq_product';
 mkpath( $json_dir ) if not -d $json_dir;
@@ -124,6 +125,7 @@ if (@ARGV) {
 		next if (ref $event_list ne 'ARRAY');
 		foreach my $event (@$event_list) {
 			#my $evt_url = $event->{url} . '.json';
+			next unless (time-$scan_int < $event->{'updated'}/1000);
 			my $evt_url = $event->{detail};
 			fetch_evt_json($server->dns_address, $evt_url, $event);
 		}
@@ -233,7 +235,8 @@ sub parse_shakemap
 	#print ref $product,"\n";
 	my $perl = SC->config->{perlbin};
 	my $root = SC->config->{RootDir};
-	my $cmd = "$perl $root/bin/scfeed_local.pl -event ".$event->{net}.$event->{code};
+	my $sc_id = $event->{net}.$event->{code};
+	my $cmd = "$perl $root/bin/scfeed_local.pl -event $sc_id -sc_id $sc_id";
 	$cmd .= ' -force_run -scenario' if (@ARGV);
 	$rv = `$cmd`;
 	#}
@@ -393,8 +396,10 @@ sub parse_origin
 	my $mrkcenter;
 	
 	foreach my $product (@$products) {		
-		my $ts = ts($product->{eventtime}/1000);	
-		$version = $product->{indexid};	
+		#my $ts = ts($product->{eventtime}/1000);	
+		my $ts = $product->{'properties'}->{eventtime};	
+		$version = ($product->{'properties'}->{'version'}) ? 
+			$product->{'properties'}->{'version'} : 1;	
 		#$version = ($product->{version} =~ /[a-zA-Z]/) ?
 		#			ord($product->{version}) - 55 : $product->{version};
 		my $xml_text =<<__SQL1__ 
@@ -411,9 +416,9 @@ sub parse_origin
 	external_event_id=""
 	magnitude="$event->{mag}"
 	mag_type="$product->{'properties'}->{'magnitude-type'}"
-	lat="$product->{eventlatitude}"
-	lon="$product->{eventlongitude}"
-	depth="$product->{eventdepth}"
+	lat="$product->{'properties'}->{latitude}"
+	lon="$product->{'properties'}->{longitude}"
+	depth="$product->{'properties'}->{depth}"
 />
 __SQL1__
 ;
