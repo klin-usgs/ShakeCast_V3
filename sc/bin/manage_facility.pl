@@ -115,13 +115,15 @@ my %required = (
 
 # translate damage level to array index
 my %damage_levels = (
-    'GREEN'     => 0,
-    'YELLOW'    => 1,
-    'ORANGE'       => 2,
-    'RED'       => 3
+    'GREY'     => 0,
+    'GREEN'     => 1,
+    'YELLOW'    => 2,
+    'ORANGE'       => 3,
+    'RED'       => 4
 );
 # map array index to damage level
 my @damage_levels = (
+    'GREY',
     'GREEN',
     'YELLOW',
     'ORANGE',
@@ -400,7 +402,7 @@ sub process {
                 }
 				my $level;
 				my $lo;
-				foreach my $ix (0 .. 3) {
+				foreach my $ix (0 .. scalar @damage_levels) {
 					next unless $valp->[$ix];	# col not present in input file
 					my $val = $colp->[$valp->[$ix]];
 					next unless defined $val;	# treat blank like missing
