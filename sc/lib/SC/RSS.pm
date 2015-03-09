@@ -631,9 +631,10 @@ sub process_new_rss {
 	
 	# Parse Event ID
 	my ($evid) = $grid =~ /shake\/(.+)\/download/;
+	$evid = $network.$evid;
 
 	#validate directory
-	my $dest = SC->config->{'DataRoot'}."/$network$evid";
+	my $dest = SC->config->{'DataRoot'}."/$evid";
 	if (not -e "$dest") {
 	  mkpath("$dest", 0, 0755) 
 	    or return(SC_FAIL, "Local file create failed: $!");
@@ -781,14 +782,14 @@ my ($dest, $evid, %products) = @_;
 			 $earthquake->{'hour'}, $earthquake->{'minute'}, $earthquake->{'second'},
 			 $earthquake->{'timezone'});
   $writer->emptyTag("event",
-		    "event_id"          => $earthquake->{'id'},
+		    "event_id"          => $evid,
 		    "event_version"     => $version,
 		    "event_status"      => 'NORMAL',
 		    "event_type"        => $scenario ? 'SCENARIO' : 'ACTUAL',
-		    "event_name"        => $earthquake->{'id'},
+		    "event_name"        => $evid,
 		    "event_location_description" => $earthquake->{'locstring'},
 		    "event_timestamp"   => $ts,
-		    "external_event_id" => $earthquake->{'id'},
+		    "external_event_id" => $evid,
 		    "magnitude"         => $earthquake->{'mag'},
 		    "mag_type"         => $earthquake->{'mag_type'},
 		    "lat"               => $earthquake->{'lat'},
@@ -812,9 +813,9 @@ my ($dest, $evid, %products) = @_;
   #----------------------------------------------------------------------
   $writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
   $writer->startTag("shakemap", 
-		    "shakemap_id"          => $earthquake->{'id'}, 
+		    "shakemap_id"          => $evid, 
 		    "shakemap_version"     => $version, 
-		    "event_id"             => $earthquake->{'id'}, 
+		    "event_id"             => $evid, 
 		    "event_version"        => $version, 
 		    "shakemap_status"      => 'RELEASED',
 		    "generating_server"    => SC->config->{'LocalServerId'},
@@ -856,7 +857,7 @@ my ($dest, $evid, %products) = @_;
     $writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
 
     $writer->emptyTag("product",
-		      "shakemap_id"          => $earthquake->{'id'}, 
+		      "shakemap_id"          => $evid, 
 		      "shakemap_version"     => $version, 
 		      "product_type"         => $products{$product},
 		      "product_status"       => 'RELEASED',
@@ -870,7 +871,7 @@ my ($dest, $evid, %products) = @_;
     $fh->close;
   }
 
-  &sm_inject($sc_data);
+  &sm_inject($sc_data, $evid);
 
 return 0;
 }
@@ -960,14 +961,14 @@ my ($dest, $evid, %products) = @_;
   $writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
 
   $writer->emptyTag("event",
-		    "event_id"          => $evt_network.$evt_id,
+		    "event_id"          => $evid,
 		    "event_version"     => $version,
 		    "event_status"      => $ev_status,
 		    "event_type"        => $shakemap_spec{'shakemap_event_type'},
 		    "event_name"        => $shakemap_spec{'event_name'},
 		    "event_location_description" => $event_spec{'event_description'},
 		    "event_timestamp"   => "$event_spec{'event_timestamp'}",
-		    "external_event_id" => "$shakemap_spec{'event_id'}",
+		    "external_event_id" => "$evid",
 		    "event_region" 		=> "$evt_network",
 		    "magnitude"         => $event_spec{'magnitude'},
 		    "mag_type"         => $event_spec{'mag_type'},
@@ -991,9 +992,9 @@ my ($dest, $evid, %products) = @_;
   #----------------------------------------------------------------------
 	$writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
 	$writer->startTag("shakemap", 
-		"shakemap_id"          => $evt_network.$evt_id, 
+		"shakemap_id"          => $evid, 
 		"shakemap_version"     => $version, 
-		"event_id"             => $evt_network.$evt_id, 
+		"event_id"             => $evid, 
 		"event_version"        => $shakemap_spec{'shakemap_version'}, 
 		"shakemap_status"      => $shakemap_spec{'map_status'},
 		"generating_server"    => SC->config->{'LocalServerId'},
@@ -1034,7 +1035,7 @@ my ($dest, $evid, %products) = @_;
     $writer = new XML::Writer(OUTPUT => \*$fh, NEWLINES => 0);
 
     $writer->emptyTag("product",
-		      "shakemap_id"          => $evt_network.$evt_id, 
+		      "shakemap_id"          => $evid, 
 		      "shakemap_version"     => $version, 
 		      "product_type"         => $products{$product},
 		      "product_status"       => $shakemap_spec{'map_status'},
@@ -1048,7 +1049,7 @@ my ($dest, $evid, %products) = @_;
     $fh->close;
   }
 
-  &sm_inject($sc_data, $evt_network.$evt_id);
+  &sm_inject($sc_data, $evid);
   
 return 0;
 }
