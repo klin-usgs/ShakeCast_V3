@@ -172,7 +172,7 @@ sub process_xml {
 
     use XML::LibXML::Simple;
    # eval {
-    my $xml = XMLin($file);
+    my $xml = XMLin($file, ForceArray => 1);
     #my $worksheet = $xml->{Worksheet};
 	my $key = (keys %$xml)[0];
 	my $data = $xml->{$key};
@@ -193,20 +193,32 @@ sub process_xml {
 	'USER_TYPE'      => 1,
 	'USERNAME'             => 1,
 	},
+	"manage_inventory_xml" => {
+	'FacilityT'      => 1,
+	'GroupRow'      => 1,
+	'UserRow'      => 1,
+	},
     );
 
+        SC->log(0,  keys %$facility);
     # check for required fields
     foreach my $app (keys %apps) {
-	$result{$app}{'result'} = 1;
+	$result{$app}{'result'} = 1 unless ($app eq 'manage_inventory_xml');
 	my @fields;
 	my $err_cnt;
     while (my ($req, $req_type) = each %{$apps{$app}}) {
-        unless (defined $facility->{$req}) {
-        SC->log(0,  "required field $req is missing");
-	    push @fields, $req;
-	    $result{$app}{'result'} = 0;
-		$err_cnt++;
-        }
+	if ($app eq 'manage_inventory_xml') {
+	    $result{$app}{'result'} = 1
+		if (defined $facility->{$req});
+
+	} else {
+	    unless (defined $facility->{$req}) {
+	    SC->log(0,  "required field $req is missing");
+		push @fields, $req;
+		$result{$app}{'result'} = 0;
+		    $err_cnt++;
+	    }
+	}
     }
      $result{$app}{'err_cnt'} = \@fields;
    }

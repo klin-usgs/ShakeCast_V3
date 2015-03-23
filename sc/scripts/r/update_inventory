@@ -11,6 +11,9 @@ use Carp;
 use CGI;
 use JSON::XS;
 use Data::Dumper;
+use XML::LibXML;
+use XML::LibXML::Simple;
+use XML::Simple;
 
 use SC;
 use API::User;
@@ -181,6 +184,41 @@ sub manage_user_xml {
 
 
     # Authenticated
+sub manage_inventory_xml {
+    my ($filename, $param) = @_;
+    my $xml = XML::LibXML::Simple::XMLin("$sc_home/tmp/$filename");
+	SC->log(0, "save facility $filename");
+    save_data_as_xml($xml->{FacilityTable}, "$sc_home/tmp/facility.xml");
+    save_data_as_xml($xml->{GroupTable}, "$sc_home/tmp/group.xml");
+    save_data_as_xml($xml->{UserTable}, "$sc_home/tmp/user.xml");
+
+	my $json = {};
+	my $bin_file = "$sc_home/bin/manage_facility_xml.pl";
+	my $file_path = "$sc_home/tmp/facility.xml";
+	my $cmd = "$bin_file $param \"$file_path\"";
+	
+	$json->{prog} .= $cmd;
+	$json->{result} .= `$cmd -verbose`;
+	
+	$bin_file = "$sc_home/bin/manage_group_xml.pl";
+	$file_path = "$sc_home/tmp/group.xml";
+	$cmd = "$bin_file $param \"$file_path\"";
+	
+	$json->{prog} .= $cmd;
+	$json->{result} .= `$cmd -verbose`;
+
+	$bin_file = "$sc_home/bin/manage_user_xml.pl";
+	$file_path = "$sc_home/tmp/user.xml";
+	$cmd = "$bin_file $param \"$file_path\"";
+	
+	$json->{prog} .= $cmd;
+	$json->{result} .= `$cmd -verbose`;
+
+	return $json;
+}
+
+
+    # Authenticated
 sub manage_facility {
 	my ($filename, $param) = @_;
 	my $bin_file = "$sc_home/bin/manage_facility.pl";
@@ -223,4 +261,21 @@ sub manage_group {
 	return $json;
 }
 
+
+sub save_data_as_xml {
+    my $data = shift || return;
+    my $file = shift || return;
+    my $new_raw_xml = XML::Simple::XMLout($data);
+    SC->log(0, $new_raw_xml);
+    my $parser = XML::LibXML->new();
+    $parser->recover(1);
+    my $new_node = $parser->parse_string($new_raw_xml);
+    _save($new_node, $file);
+}
+
+sub _save {
+    my $doc = shift;
+    my $file = shift || return;
+    $doc->toFile($file);
+}
 
