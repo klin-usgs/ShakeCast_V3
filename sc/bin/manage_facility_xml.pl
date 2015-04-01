@@ -144,6 +144,7 @@ my $sth_ins;
 my $sth_repl;
 my $sth_upd;
 my $sth_del;
+my $sth_ins_fac_type;
 my $sth_ins_metric;
 my $sth_del_metrics;
 my $sth_del_one_fragility;
@@ -258,6 +259,12 @@ $sth_del_one_fragility = SC->dbh->prepare(qq{
     delete from facility_fragility
      where facility_id = ?
        and damage_level = ?});
+
+$sth_ins_fac_type = SC->dbh->prepare(qq{
+    insert into facility_type (
+           facility_type, name,
+           description, update_username, update_timestamp)
+    values (?,?,?,?,?)});
 
 $sth_ins_metric = SC->dbh->prepare(qq{
     insert into facility_fragility (
@@ -426,8 +433,11 @@ sub process {
         if ($fac_type <= 0) {
             # error looking up TYPE
             $err_cnt++;
-            next;
-        } 
+            #next;
+            $sth_ins_fac_type->execute($type, $type, $type,
+		'admin', SC::time_to_ts(time));
+            $fac_type = lookup_facility_type($type);
+       } 
 		
         my $fac_id = lookup_facility($ext_id, $type);
 		if (!$processed_fac{$fac_id}) {
