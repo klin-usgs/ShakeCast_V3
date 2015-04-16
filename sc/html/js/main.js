@@ -27,6 +27,12 @@
             },
         'complete'   : function() {
                 $('#spinner').hide();
+            },
+        'ajaxStop'   : function() {
+                $('#spinner').hide();
+            },
+        'ajaxError'   : function() {
+                $('#spinner').hide();
             }
         });
     });
