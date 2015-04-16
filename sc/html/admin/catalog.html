@@ -108,7 +108,7 @@
           </div><!--/.well -->
 	  
 	            <div class="panel panel-default">
-	    <div class="panel-heading">Fetch ShakeMap from USGS ShakeMap Web (e.g. Scenario)</div>
+	    <div class="panel-heading">Fetch Earthquake from USGS Web</div>
 	    <div id="sidebar_prod">
 	      <select class="form-control" id="net_id">
 		<option value=''> - Select Network - </option>
@@ -123,19 +123,9 @@
 		<option value='global'>Global System</option>
 	      </select>
 	      <div class="form-group">
-		<input type="text" class="form-control" id="event_id" placeholder="Event ID">
+		<input type="text" class="form-control" id="event_id" placeholder="Earthquake ID">
 	      </div>
 	      <button type="button" class="btn btn-primary" id="shake_fetch">Submit</button>
-	    </div>
-          </div><!--/.well -->
-	  
-	            <div class="panel panel-default">
-	    <div class="panel-heading">Fetch ShakeMap from USGS Composite Catalog (e.g. Archive and Atlas)</div>
-	    <div id="sidebar_prod">
-	      <div class="form-group">
-		<input type="text" class="form-control" id="atlas_id" placeholder="Earthquake ID">
-	      </div>
-	      <button type="button" class="btn btn-primary" id="atlas_fetch">Submit</button>
 	    </div>
           </div><!--/.well -->
 	  
@@ -405,23 +395,6 @@
     submit_data.program = 'shake_fetch';
     submit_data.filename = event_id;
     submit_data.option = net_id;
-    
-    var local_url = '/scripts/r/update_inventory';
-    $.post(local_url, submit_data, function(data) {
-      if (data.result) {
-	alert(data.result);
-      } else {
-	alert("Error in fetching ShakeMap.");
-      }
-    });
-  });
-  
-  /* Add a click handler for the delete row */
-  $('#atlas_fetch').bind('click', function() {
-    var event_id = $("#atlas_id").val();
-
-    submit_data.program = 'atlas_fetch';
-    submit_data.filename = event_id;
     
     var local_url = '/scripts/r/update_inventory';
     $.post(local_url, submit_data, function(data) {
