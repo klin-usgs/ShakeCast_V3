@@ -450,7 +450,6 @@
 			      cell_array = cell_array.concat([
 			      '</table>',
 			      '</div>']);
-			  }
 			  fac_feature = new google.maps.Polygon({
 				    clickable: false,
 					path: feature_coords,
@@ -462,6 +461,7 @@
 				  });
 			  if (fac_feature) fac_feature.setMap(map);
 			  map.setCenter(new google.maps.LatLng(lat,lon));
+			  }
 
 			} else {
 			  cell_tabs = cell_tabs.concat([

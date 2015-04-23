@@ -191,7 +191,7 @@ MAPAPP = (function() {
 				//map = MAPAPP.init(latlng, 8);
 
 				loadSM(rectBounds, img);
-				var html_array = ['<a href="./event.html?event=' + sm_id + '"><h3>M'+ data.magnitude,
+				var html_array = ['<a href="/html/event.html?event=' + sm_id + '"><h3>M'+ data.magnitude,
 						(facility.mag_type) ? ' (' + facility.mag_type + ') ' : ' ',
 						'<small>' + data.event_location_description,
 						', ' + data.event_timestamp,
