@@ -223,7 +223,7 @@ sub from_id {
 	my @geometry_facility_profile;
 	$sth = SC->dbh->prepare(qq/
 	    select count(gfp.facility_id) as count, gp.geom
-	      from geometry_profile gp inner join geometry_facility_profile gfp
+	      from geometry_profile gp left join geometry_facility_profile gfp
 		on gp.profile_id = gfp.profile_id
 		inner join shakecast_user su
 		on gp.profile_name = su.username
