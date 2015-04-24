@@ -179,7 +179,7 @@
     <script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
-    <script type="text/javascript" src="./js/shakemap.js"></script>
+    <script type="text/javascript" src="../js/shakemap.js"></script>
     <script type="text/javascript" src="../js/loadXML.js"></script>
     <script type="text/javascript" src="../js/mapapp_event.js"></script>
     <script type="text/javascript" src="../js/sc_constant.js"></script>
@@ -197,17 +197,20 @@
 	var oTable;
 	var anOpen = [];
 
-	    SC_DEF.init();
-        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-        var username = SC_DEF.user ? SC_DEF.user : 'guest';
-        var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var sm_url = '/scripts/r/user/from_id/'+username;
-        var submit_data = {
-            'username': username,
-            'password': password,
-        };
-
-	$(window).load(function() {
+      SC_DEF.init();
+      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+      var username = SC_DEF.user ? SC_DEF.user : 'guest';
+      var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
+      var submit_data = {
+	'username': username,
+	'password': password,
+      };
+    
+      $(window).load(function() {
+	user_auth(submit_data);
+      });
+		
+	function load_list() {
 		SC_DEF.DEFAULT_ZOOM=4;
 		map = MAPAPP.init(SC_DEF);
 	 
@@ -299,7 +302,7 @@
 					 $(window).trigger('resize');
 		});
 
-	});
+	}
 		
 		  function row_click (data) {
 		    if ( $(data).hasClass('row_selected') ) {

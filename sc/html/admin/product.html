@@ -160,6 +160,10 @@
   };
 
   $(window).load(function() {
+    user_auth(submit_data);
+  });
+  
+  function load_list() {
 
     //map = MAPAPP.init(sc_id);
 	    //google.maps.event.trigger(map, 'resize');
@@ -262,7 +266,7 @@
       $(window).trigger('resize');
     });
 
-  });
+  }
 		
 	  function row_click (data) {
 	    if ( $(data).hasClass('row_selected') ) {

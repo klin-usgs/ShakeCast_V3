@@ -221,22 +221,21 @@
   }
 
   SC_DEF.init();
+  //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
   var username = SC_DEF.user ? SC_DEF.user : 'guest';
   var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
   var submit_data = {
-      'username': username,
-      'password': password,
+    'username': username,
+    'password': password,
   };
 
   $(window).load(function() {
-
+    user_auth(submit_data);
     map = MAPAPP.init(sc_id);
     $("#list_"+type+age).addClass("active");
-    
-    load_eq();
   });
-		
-  function load_eq( oTableLocal ) {
+  
+  function load_list( oTableLocal ) {
     //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
     //var sm_url = '/scripts/event.pl/event_list?type='+type+'&age='+age;
     var sm_url = '/scripts/r/event/event_list?type='+type+'&age='+age;

@@ -54,3 +54,22 @@ function make_base_auth(user, password) {
   var hash = btoa(tok);
   return "Basic " + hash;
 }
+
+function user_auth(submit_data) {
+    var username = submit_data.username
+    var sm_url = '/scripts/r/user/from_id/'+username;
+        
+    $.post(sm_url, submit_data, function(data) {
+	  // Are there even any EQ to display?
+	  if (data.user_type != 'ADMIN') {
+	    alert("The user "+username+" does not have administration privileges.");
+	    window.location.replace("/html/preference.html");
+	  }
+          load_list();
+      }, "json")
+      .error(function() {
+	alert("The user "+username+" does not have administration privileges.");
+	window.location.replace("/html/preference.html");
+	});
+      
+}

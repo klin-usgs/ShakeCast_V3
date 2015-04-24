@@ -176,22 +176,18 @@
         //console.log(username + ' ' + password);
 	
 	$(window).load(function() {
-	    $.post(sm_url, submit_data, function(data) {
-		// Are there even any EQ to display?
-		if (data.user_type != 'ADMIN') {
-		  alert("The user "+username+" does not have administration privileges.");
-		  window.location.replace("../preference.html");
-		}
-		//retrieve_config();
-		user_info();
-		facility_info();
-		event_info();
-		station_info();
-		server_info();
-		product_info();
-	    }, "json");
+	  user_auth(submit_data);
 	});
 
+        function load_list() {
+	  user_info();
+	  facility_info();
+	  event_info();
+	  station_info();
+	  server_info();
+	  product_info();
+	}
+	
 	function product_info() {
 
 		var config_url = '/scripts/r/product/product_source_list/';
