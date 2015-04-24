@@ -213,20 +213,17 @@
   //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
   var username = SC_DEF.user ? SC_DEF.user : 'guest';
   var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-  var sm_url = '/scripts/r/user/from_id/'+username;
   var submit_data = {
     'username': username,
     'password': password,
   };
-  $(window).load(function() {
 
+  $(window).load(function() {
+    user_auth(submit_data);
     map = MAPAPP.init(sc_id);
-    //google.maps.event.trigger(map, 'resize');
-    load_list();
     $(window).trigger('resize');
-     
   });
-	  
+  	  
   function load_list() {
     //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
     //var sm_url = '/scripts/event.pl/event_list?type='+type+'&age='+age;

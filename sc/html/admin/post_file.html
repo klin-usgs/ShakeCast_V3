@@ -125,12 +125,24 @@
 		<!-- The main script file -->
         <script src="../js/post_file.js"></script>
     
-    <script>
-      $(window).load(function() {
-	SC_DEF.init();
-      });
-			
-    </script>
+  <script>
+  SC_DEF.init();
+  //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+  var username = SC_DEF.user ? SC_DEF.user : 'guest';
+  var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
+  var submit_data = {
+    'username': username,
+    'password': password,
+  };
+
+  $(window).load(function() {
+    user_auth(submit_data);
+  });
+  
+  
+  function load_list() {}
+
+  </script>
 
     </body>
 </html>
