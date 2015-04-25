@@ -14,6 +14,7 @@ use JSON::XS;
 use SC;
 use API::Shakemap;
 use SC::Shakemap;
+use API::User;
 use API::APIUtil;
 
 SC->initialize;
@@ -25,6 +26,11 @@ shift @args;
 my $action = shift @args;
 
 print "Content-Type: application/json\n\n";
+# Authenticated
+my $username = $self->param('username') || '';
+my $password = $self->param('password') || '';
+my $valid = API::User->validate($username, $password, 1);
+
 if (not defined *{$action} ) {
 } else {
     SC->log(0, "user: task is $action $args[0]");
@@ -43,7 +49,7 @@ sub from_id {
 
 	my ($shakemap_id, $shakemap_version) = $shakemap =~ /(.*)-(\d+)$/;
     #my $shakemap_version = $self->param('shakemap_version') || 1;
-	my $shakemap = new API::Shakemap->from_id($shakemap_id, $shakemap_version);
+	my $shakemap = new API::Shakemap->from_id($shakemap_id, $shakemap_version, $valid);
 	if ($shakemap_id =~ /_scte$/) {
 		my $xml = read_xml($shakemap_id, 'event') or exit;
 		$xml =~ s/\?event_version/1/g;

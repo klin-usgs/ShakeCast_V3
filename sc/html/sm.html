@@ -2,10 +2,13 @@
 <html>
   <head>
     <title>ShakeCast Mobile Application</title>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
-	<script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+    <link rel="stylesheet" href="css/jquery.mobile-1.0a4.1.min.css" />
+	<script src="js/jquery-1.5.2.min.js"></script>
+	<script src="js/jquery.mobile-1.0a4.1.min.js"></script>
 	<script src="js/json2.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>
+    <script type="text/javascript" src="./js/sc_constant.js"></script>
+    <script type="text/javascript" src="./js/storage.js"></script>
 	<style>
 .ui-li .ui-btn-text a.ui-link-inherit { 
   white-space: normal;
@@ -311,8 +314,15 @@ border-radius:25px;
   
 	<script src="js/storage.js"></script>
   <script>
-	SC_DEF.init();
-	alert(concat(SC_DEF.keys()));
+	    SC_DEF.init();
+        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+        var username = SC_DEF.user ? SC_DEF.user : 'guest';
+        var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
+        var sm_url = '/scripts/r/user/from_id/'+username;
+        var submit_data = {
+            'username': username,
+            'password': password,
+        };
 
 function update_time() {
   var $page = $("#pageEQList");

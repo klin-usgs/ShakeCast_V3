@@ -195,8 +195,17 @@
 		    var markers_index = [];
 		var markerCluster;	
 
+	    SC_DEF.init();
+        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+        var username = SC_DEF.user ? SC_DEF.user : 'guest';
+        var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
+        var sm_url = '/scripts/r/user/from_id/'+username;
+        var submit_data = {
+            'username': username,
+            'password': password,
+        };
+
       $(window).load(function() {
-	SC_DEF.init();
 	map = MAPAPP.init(SC_DEF);
 	menu_update();
 	$("#fac_shaking").hide();
@@ -241,7 +250,7 @@
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
 		var local_url = '/scripts/r/damage/from_id/' + sc_id + '?facility=' + facility_id;
 		if (SC_DEF.allmarker_flag) local_url += '?all=1';
-		$.getJSON(local_url, function(data) {
+		$.post(local_url, submit_data, function(data) {
 
 			// Are there even any EQ to display?
 			if (typeof data.grid.shakemap_id === "undefined") {
@@ -398,7 +407,7 @@
 	  $(window).trigger('resize');
 
 
-		});
+		}, 'json');
 			}
 
 	function makeGraph()
@@ -446,7 +455,7 @@
 	  var sm_url = '/scripts/r/product/from_id/'+ sc_id;
 	  var html_array = [];
 
-	  $.getJSON(sm_url, function(data) {
+	  $.post(sm_url, submit_data, function(data) {
 
 	    // Are there even any EQ to display?
 	    if (data.product.length <= 0) {
@@ -486,13 +495,13 @@
 	      ]);
 
 	    $("#sidebar_prod").append(html_array.join(''));
-	  });
+	  }, 'json');
 	}
 
       function load_fac(){
 		//sm_url = '/scripts/shaking.pl/shaking_summary/' + sc_id;
 		sm_url = '/scripts/r/shaking/shaking_summary/' + sc_id;
-		$.getJSON(sm_url, function(data) {
+		$.post(sm_url, submit_data, function(data) {
 
 			// Are there even any EQ to display?
 			if (data.length <= 0) {
@@ -547,14 +556,14 @@
 			  });
 	$('#sidebar a:first').trigger('click');
 
-		});
+		}, 'json');
 		}
 
       function load_sibar_fac(){
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
 		var local_url = '/scripts/r/damage/from_id/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
 		if (SC_DEF.allmarker_flag) local_url += '?all=1';
-		$.getJSON(local_url, function(data) {
+		$.post(local_url, submit_data, function(data) {
 
 			// Are there even any EQ to display?
 			if (typeof data.grid.shakemap_id === "undefined") {
@@ -587,13 +596,13 @@
 			$("#sidebar_fac").show();
 
 
-		});
+		}, 'json');
 		}
 
       function load_sm(){
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = '/scripts/r/shakemap/from_id/' + sc_id;
-		$.getJSON(sm_url, function(data) {
+		$.post(sm_url, submit_data, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data.shakemap_id === "undefined") {
@@ -619,7 +628,7 @@
 		MAPAPP.loadSM(rectBounds, img);
 		$(window).trigger('resize');
 
-		});
+		}, 'json');
       }
 
       function load_marker(){
@@ -631,7 +640,7 @@
 		} else {
 			sm_url += '?type='+fac_type;
 		}
-		$.getJSON(sm_url, function(data) {
+		$.post(sm_url, submit_data, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {
@@ -757,7 +766,7 @@
 		      });
 		    }
 				  });
-		});
+		}, 'json');
       }
 
     </script>

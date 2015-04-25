@@ -61,7 +61,7 @@ MAPAPP = (function() {
 		
 		//var local_url = '/scripts/facility.pl/from_id/'+facility_id;
 		var local_url = '/scripts/r/facility/from_id/'+facility_id;
-		$.getJSON(local_url, function(data) {
+		$.post(local_url, submit_data, function(data) {
 			var infocontent = '';
 			if (data.feature.length) {
 				infocontent = data.feature[0].description;
@@ -131,7 +131,7 @@ MAPAPP = (function() {
 			infowindow.setContent(infocontent);
 			infowindow.setPosition(point);
 			infowindow.open(map);
-		});
+		}, 'json');
 
     } // addMarker
     
@@ -175,7 +175,7 @@ MAPAPP = (function() {
 			sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
 			//var sm_url = '/scripts/shakemap.pl/from_id/' + sm_id;
 			var sm_url = '/scripts/r/shakemap/from_id/' + sm_id;
-			$.getJSON(sm_url, function(data) {
+			$.post(sm_url, submit_data, function(data) {
 				$("#map_title").html('');
 				var lat_min = parseFloat(data.lat_min);
 				var lat_max = parseFloat(data.lat_max);
@@ -200,11 +200,16 @@ MAPAPP = (function() {
 				var strHtml =  html_array.join('');				
 				if (data.event_type !="ACTUAL") {strHtml += '<span class="lead label label-danger pull-right">Earthquake Scenario</span>';}
 				$("#map_title").html(strHtml).fadeIn("slow");
-			});
+				if (data.notification) {
+				    $("#notification").html('<div class="alert alert-success">' +
+						'<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+						'<span class="label label-default">Default Label</span>Server Info Updated.</strong></div>');
+				}
+			}, 'json');
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
 			var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
 			if (allmarker_flag) dmg_url += '&all=1';
-			$.getJSON(dmg_url, function(summary) {
+			$.post(dmg_url, submit_data, function(summary) {
 				var damage_summary = '<div class="progress">';
 				// Are there even any EQ to display?
 				if (summary.count > 0) {
@@ -214,7 +219,7 @@ MAPAPP = (function() {
 				}
 				damage_summary += '</div>';
 				$("#caption").html(damage_summary);
-			});
+			}, 'json');
 		});
 			
 		facMarkers[facility.event_id] = marker;
@@ -501,7 +506,7 @@ MAPAPP = (function() {
 		//var local_url = '/scripts/shaking.pl/shaking_point/' + sm_id +
 		var local_url = '/scripts/r/shaking/shaking_point/' + sm_id +
 			'?longitude=' + event.latLng.lng() + '&latitude=' + event.latLng.lat();
-		$.getJSON(local_url, function(data) {
+		$.post(local_url, submit_data, function(data) {
 		var infoContent = '<div  class="panel panel-warning"><div class="panel-heading text-center">' +
 			'<h4>No Information at Location (' + 
 			parseFloat(data.latitude).toFixed(4) + ',' + parseFloat(data.longitude).toFixed(4) + 
@@ -534,7 +539,7 @@ MAPAPP = (function() {
 		infowindow.setContent(infoContent);
 		infowindow.setPosition(event.latLng);
 		infowindow.open(map);
-		});
+		}, 'json');
 	     });
 	     
 	    google.maps.event.addListener(map, 'zoom_changed', function() {
