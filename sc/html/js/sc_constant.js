@@ -7,4 +7,6 @@ var concern_level = {'RED':'High', 'ORANGE': 'Moderate High', 'YELLOW':'Moderate
 var badge = {'GREY':'badge-grey', 'GREEN':'badge-success', 'YELLOW':'badge-yellow', 'ORANGE':'badge-warning', 'RED':'badge-important'};
 var label = {'GREY':'label-default', 'GREEN':'label-success', 'YELLOW':'label-yellow', 'ORANGE':'label-warning', 'RED':'label-danger'};
 
+var notification = {'PENDING':'label-default', 'COMPLETED':'label-success', 'ERRORS':'label-warning', 'FAILED':'label-danger'};
+
 
