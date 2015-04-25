@@ -187,10 +187,18 @@
 		var anOpen = [];
 		var oTable;
 
+	    SC_DEF.init();
+        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+        var username = SC_DEF.user ? SC_DEF.user : 'guest';
+        var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
+        var sm_url = '/scripts/r/user/from_id/'+username;
+        var submit_data = {
+            'username': username,
+            'password': password,
+        };
 			
 
       $(window).load(function() {
-	SC_DEF.init();
 	SC_DEF.tab = 1;
 	map = MAPAPP.init(SC_DEF);
 	menu_update();
@@ -240,7 +248,7 @@
 		var local_url = '/scripts/r/damage/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
 			  MAPAPP.addCaption(sc_id, type);
 	  $(".breadcrumb li").last().html(type + ' List');
-		$.getJSON(local_url, function(data) {
+		$.post(local_url, submit_data, function(data) {
 
 			// Are there even any EQ to display?
 			if (typeof data.grid.shakemap_id === "undefined") {
@@ -308,14 +316,14 @@ var eqDiv = {
 		  fnAccordion(data.id);
 		  load_marker(data.id);
 		});
-		});
+		}, 'json');
       }
 
       function fnAccordion(facility_id){
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
 		var local_url = '/scripts/r/damage/from_id/' + sc_id + '?facility=' + facility_id;
 		if (SC_DEF.allmarker_flag) local_url += '?all=1';
-		$.getJSON(local_url, function(data) {
+		$.post(local_url, submit_data, function(data) {
 
 			// Are there even any EQ to display?
 			if (typeof data.grid.shakemap_id === "undefined") {
@@ -472,7 +480,7 @@ var eqDiv = {
 	  $(window).trigger('resize');
 
 
-		});
+		}, 'json');
 			}
 
 	function makeGraph()
@@ -520,7 +528,7 @@ var eqDiv = {
 	  var sm_url = '/scripts/r/product/from_id/'+ sc_id;
 	  var html_array = [];
 
-	  $.getJSON(sm_url, function(data) {
+	  $.post(sm_url, submit_data, function(data) {
 
 	    // Are there even any EQ to display?
 	    if (data.product.length <= 0) {
@@ -561,13 +569,13 @@ var eqDiv = {
 
 	    $("#sidebar_prod").append(html_array.join(''));
 	    $("#sidebar_prod").show();
-	  });
+	  }, 'json');
 	}
 
       function load_fac(){
 		//sm_url = '/scripts/shaking.pl/shaking_summary/' + sc_id;
 		sm_url = '/scripts/r/shaking/shaking_summary/' + sc_id;
-		$.getJSON(sm_url, function(data) {
+		$.post(sm_url, submit_data, function(data) {
 
 			// Are there even any EQ to display?
 			if (data.length <= 0) {
@@ -616,13 +624,13 @@ var eqDiv = {
 	$('#sidebar').show();
 	$('#sidebar a:first').trigger('click');
 
-		});
+		}, 'json');
 		}
 
       function load_sm(){
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = '/scripts/r/shakemap/from_id/' + sc_id;
-		$.getJSON(sm_url, function(data) {
+		$.post(sm_url, submit_data, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data.shakemap_id === "undefined") {
@@ -648,7 +656,7 @@ var eqDiv = {
 		MAPAPP.loadSM(rectBounds, img);
 		$(window).trigger('resize');
 
-		});
+		}, 'json');
       }
 
       function load_marker(facility_id){
@@ -661,7 +669,7 @@ var eqDiv = {
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var local_url = '/scripts/r/damage/from_id/' + sc_id + '?facility=' + facility_id;
 		if (SC_DEF.allmarker_flag) local_url += '?all=1';
-		$.getJSON(local_url, function(data) {
+		$.post(local_url, submit_data, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {
@@ -713,7 +721,7 @@ var eqDiv = {
 				  });
 		  
 		}
-		});
+		}, 'json');
       }
 
     </script>

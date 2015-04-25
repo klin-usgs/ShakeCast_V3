@@ -168,8 +168,17 @@
       //var sm_url = '/scripts/event.pl/datatables';
       var sm_url = '/scripts/r/event/datatables';
 			
+	    SC_DEF.init();
+        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+        var username = SC_DEF.user ? SC_DEF.user : 'guest';
+        var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
+        var sm_url = '/scripts/r/user/from_id/'+username;
+        var submit_data = {
+            'username': username,
+            'password': password,
+        };
+
       $(window).load(function() {
-	SC_DEF.init();
 	map = MAPAPP.init(SC_DEF);
 	menu_update();
 
@@ -194,7 +203,7 @@
 			
       function fnAccordion ( )
       {
-	$.getJSON(sm_url, function(eqdata) {
+	$.post(sm_url, submit_data, function(eqdata) {
 
 	  var data = eqdata.data;
 	  // Are there even any EQ to display?
@@ -256,7 +265,7 @@
 	    sm_url = '/scripts/r/event/datatables?type='+type+'&age='+age+'&start='+start+'&length='+length;
 	  }
 	  $(window).trigger('resize');
-	});
+	}, 'json');
       }
 			
 
@@ -280,7 +289,7 @@
 	  var sm_url = '/scripts/r/product/from_id/'+ sm_id;
 	  var html_array = [];
 
-	  $.getJSON(sm_url, function(data) {
+	  $.post(sm_url, submit_data, function(data) {
 
 	    // Are there even any EQ to display?
 	    if (data.product.length <= 0) {
@@ -337,7 +346,7 @@
 
 	    $("#"+selector(sm_id)+"_detail").html(html_array.join(''));
 	    $(".accordion").accordion( "refresh" );
-	  });
+	  }, 'json');
 	}
 
 function selector(sm_id) {
@@ -377,7 +386,7 @@ function selector(sm_id) {
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = '/scripts/r/damage/marker/' + sc_id;
 		if (SC_DEF.allmarker_flag) sm_url += '?all=1';
-		$.getJSON(sm_url, function(data) {
+		$.post(sm_url, submit_data, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {
@@ -479,7 +488,7 @@ function selector(sm_id) {
 		      });
 		    }
 				  });
-		});
+		}, 'json');
       }
     </script>
 

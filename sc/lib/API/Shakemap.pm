@@ -144,7 +144,7 @@ sub newer_than {
 }
 
 sub from_id {
-    my ($class, $shakemap_id, $shakemap_version) = @_;
+    my ($class, $shakemap_id, $shakemap_version, $notification) = @_;
 
     undef $SC::errstr;
     my $shakemap;
@@ -179,6 +179,28 @@ sub from_id {
 	    push @metric, \%h;
 	}
 	$shakemap->{'metric'} = \@metric;
+	
+	if ($notification) {
+	    my @notification;
+	    $sth = SC->dbh->prepare(qq/
+		select n.delivery_status,
+		       n.delivery_timestamp,
+		       n.tries,
+		       n.event_id,
+		       n.shakecast_user,
+		       su.username
+		  from notification n inner join shakecast_user su
+		    on n.shakecast_user = su.shakecast_user
+		 where n.event_id = ?
+		   group by n.shakecast_user/);
+	    $sth->execute($shakemap_id);
+	    while ($p = $sth->fetchrow_hashref('NAME_lc')) {
+		my %h = %$p;
+		push @notification, \%h;
+	    }
+	    $shakemap->{'notification'} = \@notification;
+	}
+	
     };
     if ($@) {
 	$SC::errstr = $@;

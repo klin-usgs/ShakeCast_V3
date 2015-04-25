@@ -53,7 +53,7 @@ MAPAPP = (function() {
 		
 		//var local_url = '/scripts/facility.pl/from_id/'+facility_id;
 		var local_url = '/scripts/r/facility/from_id/'+facility_id;
-		$.getJSON(local_url, function(data) {
+		$.post(local_url, submit_data, function(data) {
 			var infocontent = '';
 			if (data.feature.length) {
 				infocontent = data.feature[0].description;
@@ -123,7 +123,7 @@ MAPAPP = (function() {
 			infowindow.setContent(infocontent);
 			infowindow.setPosition(point);
 			infowindow.open(map);
-		});
+		}, 'json');
 
     } // addMarker
     
@@ -338,7 +338,7 @@ MAPAPP = (function() {
 			  dmg_url += '?type=' + facTypes;
 			}
 			console.log(dmg_url);
-			$.getJSON(dmg_url, function(summary) {
+			$.post(dmg_url, submit_data, function(summary) {
 				var damage_summary = '<div class="progress">';
 				// Are there even any EQ to display?
 				if (summary.count > 0) {
@@ -349,7 +349,7 @@ MAPAPP = (function() {
 				}
 				damage_summary += '</div>';
 				$("#caption").html(damage_summary);
-			});
+			}, 'json');
     } // watchHash
 
 	    var module = {
@@ -480,7 +480,7 @@ MAPAPP = (function() {
 				//var local_url = '/scripts/shaking.pl/shaking_point/' + sm_id +
 				var local_url = '/scripts/r/shaking/shaking_point/' + sm_id +
 					'?longitude=' + event.latLng.lng() + '&latitude=' + event.latLng.lat();
-				$.getJSON(local_url, function(data) {
+				$.post(local_url, submit_data, function(data) {
 		var infoContent = '<div  class="panel panel-warning"><div class="panel-heading text-center">' +
 			'<h4>No Information at Location (' + 
 			parseFloat(data.latitude).toFixed(4) + ',' + parseFloat(data.longitude).toFixed(4) + 
@@ -513,7 +513,7 @@ MAPAPP = (function() {
 				infowindow.setContent(infoContent);
 				infowindow.setPosition(event.latLng);
 				infowindow.open(map);
-				});
+				}, 'json');
 			 });
 			 
 	    google.maps.event.addListener(map, 'zoom_changed', function() {
