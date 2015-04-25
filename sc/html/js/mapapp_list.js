@@ -200,10 +200,19 @@ MAPAPP = (function() {
 				var strHtml =  html_array.join('');				
 				if (data.event_type !="ACTUAL") {strHtml += '<span class="lead label label-danger pull-right">Earthquake Scenario</span>';}
 				$("#map_title").html(strHtml).fadeIn("slow");
+				$("#notification").html('');
 				if (data.notification) {
-				    $("#notification").html('<div class="alert alert-success">' +
-						'<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-						'<span class="label label-default">Default Label</span>Server Info Updated.</strong></div>');
+					var notif_html = ['<div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">&times;</button>Notification Delivery Status : '];
+					jQuery.each(data.notification, function(i, val) {
+						notif_html.push('<span class="label ' + 
+						notification[val.delivery_status] + '">' + val.username);
+						if (val.tries) {
+							notif_html.push('<span class="ui-li-count">' + val.delivery_timestamp + '</span>');
+						}
+						notif_html.push('</span> ');
+					});
+					notif_html.push('</div>');
+					$("#notification").html(notif_html.join(''));
 				}
 			}, 'json');
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';

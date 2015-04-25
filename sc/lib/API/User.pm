@@ -207,7 +207,7 @@ sub from_id {
 	my @geometry_user_profile;
 	$sth = SC->dbh->prepare(qq/
 	    select gp.profile_name
-	    from geometry_profile gp inner join shakecast_user su
+	    from geometry_profile gp left join shakecast_user su
 		on gp.profile_name = su.username
 	    where su.shakecast_user IN (select profile_id
 		from geometry_user_profile
@@ -220,22 +220,60 @@ sub from_id {
 	}
 	$user->{'geometry_user_profile'} = \@geometry_user_profile;
 	
-	my @geometry_facility_profile;
-	$sth = SC->dbh->prepare(qq/
-	    select count(gfp.facility_id) as count, gp.geom
-	      from geometry_profile gp left join geometry_facility_profile gfp
-		on gp.profile_id = gfp.profile_id
-		inner join shakecast_user su
-		on gp.profile_name = su.username
-	     where su.shakecast_user = ?
-		 /);
-	$sth->execute($shakecast_user);
-	while ($p = $sth->fetchrow_hashref('NAME_lc')) {
-	    my %h = %$p;
-	    push @geometry_facility_profile, \%h;
-	}
-	$user->{'geometry_facility_profile'} = \@geometry_facility_profile;
+	if ($user->{'user_type'} eq 'GROUP') {
+		my @geometry_facility_profile;
+		$sth = SC->dbh->prepare(qq/
+			select count(gfp.facility_id) as count, gp.geom
+			  from geometry_profile gp left join geometry_facility_profile gfp
+			on gp.profile_id = gfp.profile_id
+			inner join shakecast_user su
+			on gp.profile_name = su.username
+			 where su.shakecast_user = ?
+			 /);
+		$sth->execute($shakecast_user);
+		while ($p = $sth->fetchrow_hashref('NAME_lc')) {
+			my %h = %$p;
+			push @geometry_facility_profile, \%h;
+		}
+
+		$user->{'geometry_facility_profile'} = \@geometry_facility_profile;
+
+		my @group_facility;
+		$sth = SC->dbh->prepare(qq/
+			select count(f.facility_id) as count, f.facility_type
+			  from geometry_profile gp left join geometry_facility_profile gfp
+			on gp.profile_id = gfp.profile_id
+			inner join facility f on f.facility_id = gfp.facility_id
+			inner join shakecast_user su
+			on gp.profile_name = su.username
+			 where su.shakecast_user = ?
+			group by f.facility_type
+			 /);
+		$sth->execute($shakecast_user);
+		while ($p = $sth->fetchrow_hashref('NAME_lc')) {
+			my %h = %$p;
+			push @group_facility, \%h;
+		}
+
+		$user->{'group_facility'} = \@group_facility;
+
+		my @geometry_user_group;
+		$sth = SC->dbh->prepare(qq/
+			select su.username, su.full_name
+			from geometry_user_profile gup left join shakecast_user su
+			on gup.shakecast_user = su.shakecast_user
+			where gup.profile_id = ?
+			 /);
+
+		$sth->execute($shakecast_user);
+		while ($p = $sth->fetchrow_hashref('NAME_lc')) {
+			my %h = %$p;
+			push @geometry_user_group, \%h;
+
+		}
+		$user->{'geometry_user_group'} = \@geometry_user_group;
 	
+	}
     };
     if ($@) {
 	$SC::errstr = $@;

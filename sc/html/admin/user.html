@@ -260,7 +260,7 @@
 						//"product_type":facility.product_type,
 						"id":facility.username,
 						"user_type":facility.user_type,  
-						"user_id":facility.shakecast_user,  
+						"username":facility.username,  
 						"full_name":(facility.full_name) ? facility.full_name : facility.username,  
 						"email_address":facility.email_address, 
 						"phone_number":facility.phone_number, 
@@ -279,7 +279,7 @@
 			[
 			{'sTitle': 'Index',"mDataProp": "index"},
 			{'sTitle': 'User Type',"mDataProp": "user_type"},
-			{'sTitle': 'User ID',"mDataProp": "user_id"},
+			{'sTitle': 'User ID',"mDataProp": "username"},
 			{'sTitle': 'Name',"mDataProp": "full_name"},
 			{'sTitle': 'Email Address',"mDataProp": "email_address"}, 
 			{'sTitle': 'Phone Number',"mDataProp": "phone_number"}, 
@@ -378,7 +378,7 @@
 				'<div class="tab-pane" id="' + data.shakecast_user + '_info">',
 				'<table class="table table-striped table-responsive">',
 				'<tr><td><b>User Type</b></td><td>' + data.user_type + '</td></tr>',
-				'<tr><td><b>User ID</b></td><td>' + data.shakecast_user + '</td></tr>',
+				'<tr><td><b>User ID</b></td><td>' + data.user_id + '</td></tr>',
 				'<tr><td><b>User Name</b></td><td>' +  ((data.full_name) ? data.full_name : data.username) + '</td></tr>',
 				'<tr><td><b>Email</b></td><td>' + data.email_address + '</td></tr>',
 				'<tr><td><b>Phone Number</b></td><td>' + data.phone_number + '</td></tr>',
@@ -398,6 +398,8 @@
 			  cell_tabs = cell_tabs.concat([
 			  '<li><a href="#fea"'+data.shakecast_user+'" data-toggle="tab">Notification Request</a></li>',
 			  '<li><a href="#geom"'+data.shakecast_user+'" data-toggle="tab">Geometry</a></li>',
+			  '<li><a href="#facility"'+data.shakecast_user+'" data-toggle="tab">Group Facility</a></li>',
+			  '<li><a href="#group"'+data.shakecast_user+'" data-toggle="tab">Group User</a></li>',
 			  ]);
 			  cell_array = cell_array.concat([
 			  '<div class="tab-pane" id="fea"'+data.shakecast_user+'">',
@@ -465,6 +467,42 @@
 			  if (fac_feature) fac_feature.setMap(map);
 			  map.setCenter(new google.maps.LatLng(lat,lon));
 			  }
+
+			  cell_array = cell_array.concat([
+			  '<div class="tab-pane" id="facility"'+data.shakecast_user+'">',
+			  '<table class="table table-striped table-responsive">',
+			  '<tr><td>Facility Type</td><td>Count</td></tr>',
+			  ]);
+  
+			  var group_facility = data.group_facility;
+			  if (group_facility) {
+			  jQuery.each(group_facility, function(i, val) {
+						cell_array = cell_array.concat(['<tr>',
+				  '<td>' + val.facility_type + '</td>',
+				  '<td>' + val.count + '</td>',
+				  '</tr>',
+				  ]);
+					});
+						cell_array = cell_array.concat(['</table>',  '</div>']);
+			}
+
+			  cell_array = cell_array.concat([
+			  '<div class="tab-pane" id="group"'+data.shakecast_user+'">',
+			  '<table class="table table-striped table-responsive">',
+			  '<tr><td>User ID</td><td>User Name</td></tr>',
+			  ]);
+  
+			  var geometry_user_group = data.geometry_user_group;
+			  if (geometry_user_group) {
+			  jQuery.each(geometry_user_group, function(i, val) {
+						cell_array = cell_array.concat(['<tr>',
+				  '<td>' + val.username + '</td>',
+				  '<td>' + val.full_name + '</td>',
+				  '</tr>',
+				  ]);
+					});
+						cell_array = cell_array.concat(['</table>',  '</div>']);
+			}
 
 			} else {
 			  cell_tabs = cell_tabs.concat([
