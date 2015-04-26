@@ -383,7 +383,6 @@ sub write_to_db {
 			$rc = 1;
 			return; # returns from the eval, not the sub!
         } else {
-SC->log(0,"write_to_db ".$self->event_status.",".$self->event_type);
             # check for existing record
             #my $sth_getkey = SC->dbh->prepare_cached(qq/
             #    select event_id

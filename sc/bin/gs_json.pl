@@ -550,15 +550,15 @@ sub event_filter {
 
 	use Graphics_2D;
 	my $sth_lookup_poly = SC->dbh->prepare(qq{
-		select profile_name, geom
-		  from geometry_profile});
+		select gp.profile_name, gp.geom
+		  from geometry_profile gp inner join shakecast_user su
+		  on gp.profile_name = su.username});
 
     my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
 	return ($rc) unless (scalar @$idp >= 1);
 	while (@$idp) {
 		my $profile_name = shift @$idp;
 		my $geom = shift @$idp;
-
 		my $polygon = load_geometry($profile_name,$geom);
 		#print "$facility::$lon::$lat\n";
 		if ($polygon->{POLY}->crossingstest([$xml->{'lon'}, $xml->{'lat'}])) {
