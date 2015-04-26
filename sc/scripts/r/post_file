@@ -23,7 +23,7 @@ my $sc_home = SC->config->{'RootDir'};
 my $username = $self->param('username') || '';
 my $password = $self->param('password') || '';
 my $valid = API::User->validate($username, $password, 1);
-#exit 1 unless $valid;
+exit 1 unless $valid;
 
 #Getting parametres from form
 my $filename = $self->param("pic");

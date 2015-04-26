@@ -41,6 +41,8 @@ $(function(){
 				'</div>' +
 				'<div class="form-group">' +
 				'<input type="hidden" name="filename" value="' + results.filename + '">' +
+				'<input type="hidden" name="username" value="' + username + '">' +
+				'<input type="hidden" name="password" value="' + password + '">' +
 				'</div>' + 
 				'<button type="submit" class="btn btn-default">Submit</button>' + 
 			      '</form>'
@@ -63,6 +65,8 @@ $(function(){
 				'</div>' + 
 				'<div class="form-group">' +
 				'<input type="hidden" name="filename" value="' + results.filename + '">' +
+				'<input type="hidden" name="username" value="' + username + '">' +
+				'<input type="hidden" name="password" value="' + password + '">' +
 				'</div>' + 
 				'<button type="submit" class="btn btn-default">Submit</button>' + 
 			      '</form>'
@@ -74,7 +78,6 @@ $(function(){
 			$("#update_inventory").submit(function() {
 
 			var url = "/scripts/r/update_inventory"; // the script where you handle the form input.
-	    
 			$.ajax({
 			       type: "POST",
 			       url: url,
