@@ -384,17 +384,17 @@ sub write_to_db {
 			return; # returns from the eval, not the sub!
         } else {
             # check for existing record
-            my $sth_getkey = SC->dbh->prepare_cached(qq/
-                select event_id
-                  from event
-                 where event_id=?
-                   and event_version=?/);
-            if (SC->dbh->selectrow_array($sth_getkey, undef,
-                    $self->{'event_id'},
-                    $self->{'event_version'})) {
-                $rc = 2;
-                return; # returns from the eval, not the sub!
-            }
+            #my $sth_getkey = SC->dbh->prepare_cached(qq/
+            #    select event_id
+            #      from event
+            #     where event_id=?
+            #       and event_version=?/);
+            #if (SC->dbh->selectrow_array($sth_getkey, undef,
+            #        $self->{'event_id'},
+            #        $self->{'event_version'})) {
+            #    $rc = 2;
+            #    return; # returns from the eval, not the sub!
+            #}
             # check for existing record
             #my $sth_getkey = SC->dbh->prepare_cached(qq/
             #    select event_id
@@ -567,7 +567,7 @@ sub is_local_test {
 sub process_new_event {
     my $self = shift;
 
-	my $mag_cutoff = (defined SC->config->{'MAG_CUTOFF'}) ? SC->config->{'MAG_CUTOFF'} : 4.0;
+	my $mag_cutoff = (defined SC->config->{'MAG_CUTOFF'}) ? SC->config->{'MAG_CUTOFF'} : 3.0;
 	return 0 unless ( $self->magnitude >= $mag_cutoff || $self->event_status eq 'CANCELLED');
     # Add it to the database.
     my $write_status = $self->write_to_db;

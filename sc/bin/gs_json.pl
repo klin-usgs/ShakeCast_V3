@@ -79,6 +79,7 @@ use SC::Server;
 use LWP::UserAgent;
 use JSON -support_by_pp;
 use Time::Local;
+use Storable;
 
 use SC::Event;
 
@@ -97,7 +98,8 @@ my $ua = new LWP::UserAgent();
 $ua->agent('ShakeCast');
 $ua->proxy(['http'], $config->{'ProxyServer'})
 	if (defined $config->{'ProxyServer'});
-
+my $eq_hash_file = "$json_dir/eq.hash";
+my $eq_hash = retrieve($eq_hash_file) if (-e $eq_hash_file);
 
 #######################################################################
 # Run the program
@@ -398,10 +400,9 @@ sub parse_origin
 	foreach my $product (@$products) {		
 		#my $ts = ts($product->{eventtime}/1000);	
 		my $ts = $product->{'properties'}->{eventtime};	
-		$version = ($product->{'properties'}->{'version'}) ? 
-			$product->{'properties'}->{'version'} : 1;	
-		#$version = ($product->{version} =~ /[a-zA-Z]/) ?
-		#			ord($product->{version}) - 55 : $product->{version};
+		$version = 1;	
+		#$version = ($product->{'properties'}->{'version'}) ? 
+		#	$product->{'properties'}->{'version'} : 1;	
 		my $xml_text =<<__SQL1__ 
 <event
 	event_id="$event->{net}$event->{code}"
@@ -471,6 +472,12 @@ sub fetch_json_page
 {
 	my ($server, $json_url) = @_;
 
+	my $header = $ua->head($json_url);
+	my $eq_expires = SC->ts_to_time($header->{'_headers'}->{'expires'});
+	return if ($eq_hash->{'eq_expires'} > SC->ts_to_time($header->{'_headers'}->{'last-modified'}));
+
+	$eq_hash->{'eq_expires'} = $eq_expires;
+
 	my $mirror = $json_dir.'/'.$server.'.json';
 	#get current rss
 	my $resp = $ua->mirror($json_url, $mirror);
@@ -489,12 +496,32 @@ sub fetch_json_page
  
 	#exit unless (ref $json_text->{features} eq 'ARRAY');
     # iterate over each feature in the JSON structure:
+	my %active_eq;
     foreach my $feature (@{$json_text->{features}}){
 		my $prop = $feature->{properties};
+		my $geom = $feature->{geometry}->{'coordinates'};
+		$active_eq{$prop->{'net'}.$prop->{'code'}} = 1;
+		next if ($eq_hash->{$prop->{'code'}} > $prop->{'updated'});
 		next if ($prop->{mag} < $mag_cutoff);
+
+		$eq_hash->{$prop->{'net'}.$prop->{'code'}} = $prop->{'updated'};
+		my $ts = SC->time_to_ts($prop->{'time'});
+		my $eq_geom = {
+			event_timestamp => $ts,
+			event_region => $prop->{net},
+			lat	=>	$geom->[1],
+			lon	=>	$geom->[0],
+		};
+		next unless (event_filter($eq_geom));
 		# print episode information:
 		push @evt_list, $prop;
     }
+
+	foreach my $hash_eq (%$eq_hash) {
+		delete $eq_hash->{$hash_eq} unless (($hash_eq eq 'eq_expires') || $active_eq{$hash_eq});
+	}
+	store $eq_hash, $eq_hash_file;
+
   };
   # catch crashes:
   if($@){
@@ -522,8 +549,9 @@ sub event_filter {
 
 	use Graphics_2D;
 	my $sth_lookup_poly = SC->dbh->prepare(qq{
-		select profile_name, geom
-		  from geometry_profile});
+		select gp.profile_name, gp.geom
+		  from geometry_profile gp inner join shakecast_user su
+		  on gp.profile_name = su.username});
 
     my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
 	return ($rc) unless (scalar @$idp >= 1);
