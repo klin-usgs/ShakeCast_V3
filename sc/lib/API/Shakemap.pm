@@ -190,10 +190,11 @@ sub from_id {
 		       n.shakecast_user,
 		       su.username
 		  from notification n inner join shakecast_user su
-		    on n.shakecast_user = su.shakecast_user
-		 where n.event_id = ?
+		    on n.shakecast_user = su.shakecast_user left join grid g
+		    on g.grid_id = n.grid_id
+		 where (g.shakemap_id = ? and g.shakemap_version = ?) or n.event_id = ?
 		   group by n.shakecast_user/);
-	    $sth->execute($shakemap_id);
+	    $sth->execute($shakemap_id,$shakemap_version,$shakemap_id);
 	    while ($p = $sth->fetchrow_hashref('NAME_lc')) {
 		my %h = %$p;
 		push @notification, \%h;
