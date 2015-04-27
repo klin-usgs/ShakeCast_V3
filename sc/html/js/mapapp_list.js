@@ -207,7 +207,7 @@ MAPAPP = (function() {
 						notif_html.push('<span class="label ' + 
 						notification[val.delivery_status] + '">' + val.username);
 						if (val.tries) {
-							notif_html.push('<span class="ui-li-count">' + val.delivery_timestamp + '</span>');
+							notif_html.push(' <span class="ui-li-count">(' + val.delivery_timestamp + ')</span>');
 						}
 						notif_html.push('</span> ');
 					});
