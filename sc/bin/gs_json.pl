@@ -517,7 +517,7 @@ sub fetch_json_page
 		push @evt_list, $prop;
     }
 
-	foreach my $hash_eq (%$eq_hash) {
+	foreach my $hash_eq (keys %$eq_hash) {
 		delete $eq_hash->{$hash_eq} unless (($hash_eq eq 'eq_expires') || $active_eq{$hash_eq});
 	}
 	store $eq_hash, $eq_hash_file;

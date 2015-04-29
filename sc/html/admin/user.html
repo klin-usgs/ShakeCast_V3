@@ -258,7 +258,7 @@
 					eqTable.push({
 						"index":i+1,
 						//"product_type":facility.product_type,
-						"id":facility.username,
+						"id":facility.shakecast_user,
 						"user_type":facility.user_type,  
 						"username":facility.username,  
 						"full_name":(facility.full_name) ? facility.full_name : facility.username,  
@@ -277,9 +277,9 @@
 		aaData: eqTable, 
 		aoColumns: 
 			[
-			{'sTitle': 'Index',"mDataProp": "index"},
+			{'sTitle': 'ID',"mDataProp": "id"},
 			{'sTitle': 'User Type',"mDataProp": "user_type"},
-			{'sTitle': 'User ID',"mDataProp": "username"},
+			{'sTitle': 'User Name',"mDataProp": "username"},
 			{'sTitle': 'Name',"mDataProp": "full_name"},
 			{'sTitle': 'Email Address',"mDataProp": "email_address"}, 
 			{'sTitle': 'Phone Number',"mDataProp": "phone_number"}, 
@@ -318,7 +318,7 @@
 			    var oData = oTable.fnGetData( data );
 			    var sLat = parseFloat(oData.latitude);
 			    var sLon = parseFloat(oData.longitude);
-			    fnAccordion(oData.id);
+			    fnAccordion(oData.username);
 			    //load_marker(data.id);
 			    //MAPAPP.addFacMarker(oData);
 			    //google.maps.event.trigger(MAPAPP.facMarkers[oData.facility_id], 'click');
@@ -574,8 +574,9 @@
 		      var oData = oTable.fnGetData( anSelected[i] );
 		      submit_data.id = oData.id;
 		      submit_data.type = oData.user_type;
-		      submit_data.user_id = oData.user_id;
-		      var sm_url = '/scripts/r/user/erase/?user_id='+oData.user_id;
+		      submit_data.sc_username = oData.username;
+		      //var sm_url = '/scripts/r/user/erase/?user_id='+oData.user_id;
+		      var sm_url = '/scripts/r/user/erase/';
 		      $.post(sm_url, submit_data, function(data) {
 			// Are there even any EQ to display?
 			if (data.status > 0) {

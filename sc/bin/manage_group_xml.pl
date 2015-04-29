@@ -416,9 +416,10 @@ exit;
 
     
 sub process {
-	my $data = $xml->{GroupRow};
+	my @data = (ref $xml->{GroupRow} eq 'HASH') ? 
+		($xml->{GroupRow}) : @{$xml->{GroupRow}};
 
-	my $row = $data->[0];
+	my $row = $data[0];
     unless (defined $row->{GROUP_NAME}) {
         vpr "file had errors, skipping";
         return;
@@ -433,7 +434,8 @@ sub process {
     my $nrepl = 0;
     my $nskip = 0;
 	my $sql;
-	foreach my $colp (@$data) {
+
+	foreach my $colp (@data) {
         if ($nrec and $nrec % 100 == 0) {
             vpr "$nrec records processed";
         }

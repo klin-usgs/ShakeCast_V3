@@ -92,9 +92,9 @@ sub erase_type {
   
     # Authenticated
 sub erase {
-    my $user_id = $self->param('user_id');
+    my $user_id = $self->param('id');
     my $user_type = $self->param('type');
-    my $user_name = $self->param('id');
+    my $user_name = $self->param('sc_username');
    my $valid = API::User->validate($username, $password, 1);
     return 1 unless $valid;
 	SC->log(0, "$user_id, $user_type, $user_name");
