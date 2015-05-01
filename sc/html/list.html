@@ -189,7 +189,7 @@
 	  age = SC_DEF.recent_events ? parseInt(SC_DEF.recent_events) : 'week';
 	}
 	//sm_url = '/scripts/event.pl/datatables?type='+type+'&age='+age;
-	sm_url = '/scripts/r/event/datatables?type='+type+'&age='+age;
+	sm_url = '/scripts/r/event/datatables';
 
 	if (type == 'actual') {
 	  $(".breadcrumb li").last().html(age.toUpperCase() + ' List');
@@ -203,7 +203,7 @@
 			
       function fnAccordion ( )
       {
-	$.post(sm_url, submit_data, function(eqdata) {
+	$.post(sm_url, {submit_data, type:type, age:age}, function(eqdata) {
 
 	  var data = eqdata.data;
 	  // Are there even any EQ to display?
@@ -385,8 +385,8 @@ function selector(sm_id) {
       function load_marker(sc_id){
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = '/scripts/r/damage/marker/' + sc_id;
-		if (SC_DEF.allmarker_flag) sm_url += '?all=1';
-		$.post(sm_url, submit_data, function(data) {
+		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
+		$.post(sm_url, {submit_data, all:all}, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {
