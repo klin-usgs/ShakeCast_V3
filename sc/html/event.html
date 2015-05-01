@@ -248,9 +248,10 @@
 
       function fnAccordion(facility_id){
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		var local_url = '/scripts/r/damage/from_id/' + sc_id + '?facility=' + facility_id;
-		if (SC_DEF.allmarker_flag) local_url += '?all=1';
-		$.post(local_url, submit_data, function(data) {
+		var local_url = '/scripts/r/damage/from_id/' + sc_id;
+		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
+		$.post(local_url, {submit_data, facility : facility_id, all : all}
+			, function(data) {
 
 			// Are there even any EQ to display?
 			if (typeof data.grid.shakemap_id === "undefined") {
@@ -561,9 +562,10 @@
 
       function load_sibar_fac(){
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		var local_url = '/scripts/r/damage/from_id/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		if (SC_DEF.allmarker_flag) local_url += '?all=1';
-		$.post(local_url, submit_data, function(data) {
+		var local_url = '/scripts/r/damage/from_id/' + sc_id;
+		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
+		$.post(local_url, {submit_data, type:type, start:start, length:length, all:all}
+			, function(data) {
 
 			// Are there even any EQ to display?
 			if (typeof data.grid.shakemap_id === "undefined") {
@@ -635,12 +637,8 @@
 		MAPAPP.addCaption(sc_id, fac_type);
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = '/scripts/r/damage/marker/' + sc_id;
-		if (SC_DEF.allmarker_flag) {
-			sm_url += '?all=1';
-		} else {
-			sm_url += '?type='+fac_type;
-		}
-		$.post(sm_url, submit_data, function(data) {
+		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
+		$.post(sm_url, {submit_data, type:fac_type, all:all}, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {

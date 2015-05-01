@@ -239,9 +239,9 @@
   function load_list( oTableLocal ) {
     //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
     //var sm_url = '/scripts/event.pl/event_list?type='+type+'&age='+age;
-    var sm_url = '/scripts/r/event/event_list?type='+type+'&age='+age;
+    var sm_url = '/scripts/r/event/event_list';
 
-    $.getJSON(sm_url, function(data) {
+    $.post(sm_url, {submit_data, type:type, age:age}, function(data) {
 
       // Are there even any EQ to display?
       if (data.length <= 0) {
@@ -303,7 +303,7 @@
       google.maps.event.trigger(MAPAPP.facMarkers[data[0].event_id], 'click');
       map.setCenter(MAPAPP.facMarkers[data[0].event_id].getPosition());
       $(window).trigger('resize');
-    });
+    }, 'json');
   }
 
   function row_click(data) {

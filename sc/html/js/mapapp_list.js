@@ -216,10 +216,9 @@ MAPAPP = (function() {
 				}
 			}, 'json');
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
-			var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
-			var dmg_submit = {submit_data, 'action':'summary'};
-			if (allmarker_flag) dmg_submit.all = 1;
-			$.post(dmg_url, dmg_submit, function(summary) {
+			var dmg_url = '/scripts/r/damage/from_id/'+sm_id;
+			var all = (allmarker_flag) ? 1 : 0;
+			$.post(dmg_url, {submit_data, action:'summary', all:all}, function(summary) {
 				var damage_summary = '<div class="progress">';
 				// Are there even any EQ to display?
 				if (summary.count > 0) {
@@ -516,8 +515,8 @@ MAPAPP = (function() {
 		//var local_url = '/scripts/shaking.pl/shaking_point/' + sm_id +
 		var local_url = '/scripts/r/shaking/shaking_point/' + sm_id +
 			'?longitude=' + event.latLng.lng() + '&latitude=' + event.latLng.lat();
-		var local_sub = {submit_data, 'longitude': event.latLng.lng(), 'latitude': event.latLng.lat()};
-		$.post(local_url, local_sub, function(data) {
+		$.post(local_url, {submit_data, 'longitude': event.latLng.lng(), 'latitude': event.latLng.lat()}
+			, function(data) {
 		var infoContent = '<div  class="panel panel-warning"><div class="panel-heading text-center">' +
 			'<h4>No Information at Location (' + 
 			parseFloat(data.latitude).toFixed(4) + ',' + parseFloat(data.longitude).toFixed(4) + 

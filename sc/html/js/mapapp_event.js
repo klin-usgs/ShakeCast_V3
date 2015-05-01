@@ -333,7 +333,7 @@ MAPAPP = (function() {
     function addCaption(sm_id, facTypes) {
 			//sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
-			var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
+			var dmg_url = '/scripts/r/damage/from_id/'+sm_id;
 			var dmg_submit = {submit_data,  'action':'summary'};
 			if (facTypes != "ALL") {
 			  dmg_submit.type= facTypes;

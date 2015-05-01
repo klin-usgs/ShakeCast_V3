@@ -211,7 +211,7 @@
 		//var sm_url = '/scripts/station.pl/';
 		var sm_url = '/scripts/r/station/station_list/';
 
-		$.getJSON(sm_url, function(data) {
+		$.post(sm_url, {submit_data}, function(data) {
 
 			// Are there even any EQ to display?
 			if (data.length <= 0) {
@@ -235,7 +235,7 @@
 				var sm_url = '/scripts/r/station/station_type/' + type.id;
 				$("#sidebar a").removeClass("active");
 				$("#"+type.id).addClass("active");
-				$.getJSON(sm_url, function(data) {
+				$.post(sm_url, {submit_data}, function(data) {
 
 					// Are there even any EQ to display?
 					if (data.length <= 0) {
@@ -292,11 +292,11 @@
 	    row_click(this);
 	  });
 
-				});
+				}, 'json');
 				});
 	$("#sidebar a").first().trigger('click');
 					 $(window).trigger('resize');
-		});
+		}, 'json');
 
 	}
 		

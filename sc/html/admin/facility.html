@@ -363,8 +363,8 @@
 		$("#confirm_delete").on('click', function() {
 				$('#myModal').modal('hide');
 		      submit_data.type = type;
-				var sm_url = '/scripts/r/facility/erase_type/?type='+type;
-				$.post(sm_url, submit_data, function(data) {
+				var sm_url = '/scripts/r/facility/erase_type/';
+				$.post(sm_url, {submit_data, type:type}, function(data) {
 			// Are there even any EQ to display?
 			if (data.status > 0) {
 			  alert("Facility type "+type+" is deleted from the database.");
@@ -380,8 +380,8 @@
 		    for (var i=0; i < anSelected.length; i++) {
 		      var oData = oTable.fnGetData( anSelected[i] );
 		      submit_data.facility_id = oData.facility_id;
-				var sm_url = '/scripts/r/facility/erase/?facility_id='+oData.facility_id;
-		      $.post(sm_url, submit_data, function(data) {
+				var sm_url = '/scripts/r/facility/erase/';
+		      $.post(sm_url, {submit_data, facility_id:oData.facility_id}, function(data) {
 			// Are there even any EQ to display?
 			if (data.status > 0) {
 			  alert("Facility is deleted from the database.");

@@ -173,7 +173,7 @@
     //var sm_url = '/scripts/product.pl/';
     var sm_url = '/scripts/r/product/product_source_list';
 
-    $.getJSON(sm_url, function(data) {
+    $.post(sm_url, {submit_data}, function(data) {
 
       // Are there even any EQ to display?
       if (data.length <= 0) {
@@ -202,7 +202,7 @@
 	$("#"+type.id).addClass("active");
 	//var sm_url = '/scripts/product.pl/type/' + type.id;
 	var sm_url = '/scripts/r/product/product_type/' + type.id;
-	$.getJSON(sm_url, function(data) {
+	$.post(sm_url, {submit_data}, function(data) {
 
 	  // Are there even any EQ to display?
 	  if (data.length <= 0) {
@@ -260,11 +260,11 @@
 	    row_click(this);
 	  });
 
-	});
+	}, 'json');
       });
       	$("#sidebar a").first().trigger('click');
       $(window).trigger('resize');
-    });
+    }, 'json');
 
   }
 		
@@ -286,16 +286,17 @@
 	      var oData = oTable.fnGetData( anSelected[i] );
 	      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 	      //var evt_url = '/scripts/event.pl/toggle?event_id='+oData.event_id;
-	      var evt_url = '/scripts/r/product/toggle?product_id='+oData.product_type;
+	      var evt_url = '/scripts/r/product/toggle';
 	      var arch_f = (oData.display) ? '' : 'Yes';
 	      oTable.fnUpdate(arch_f, anSelected[i], 7);
 	      
-	      $.getJSON(evt_url, function(data) {
+	      $.post(evt_url, {submit_data, product_id:oData.product_type},
+			function(data) {
 		// Are there even any EQ to display?
 		if (data.length <= 0) {
 			return;
 		}
-	      });
+	      }, 'json');
 	    }
 	  } );
       
