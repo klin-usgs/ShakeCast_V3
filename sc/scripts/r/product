@@ -18,6 +18,8 @@ use API::APIUtil;
 
 SC->initialize;
 my $default_options = API::APIUtil::config_options();
+my $hash_file = SC->config->{'RootDir'}.'/db/product.hash';
+store_hash() unless (-e $hash_file);
 
 my $self = new CGI;
 my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
@@ -75,7 +77,27 @@ sub toggle {
     $event->{'result'} = new API::Product->toggle_product_display($product_id);
     $event->{'flag'} = $save_flag;
 	
+	store_hash();
+
     return $event;
+  };
+  
+sub store_hash {
+    # Authenticated
+
+	my %product_list;
+
+	my $product = new API::Product->product_type_list('ALL');
+	
+	foreach my $item (@$product) {
+		$product_list{$item->{'filename'}} = $item->{'display'};
+	}
+
+	use Storable;
+
+	store \%product_list, $hash_file;
+    
+	return \%product_list;
   };
   
 
