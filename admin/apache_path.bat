@@ -1,0 +1,5 @@
+echo Include "C:/Shakecast/sc/conf/httpd-sc.conf" > "C:\newFile.txt"
+echo Include "C:/Shakecast/sc/conf/https-sc.conf" >> "C:\newFile.txt"
+type "C:\Program Files\Apache24\conf\httpd.conf" >> "C:\newFile.txt"
+type "C:\newFile.txt" > "C:\Program Files\Apache24\conf\httpd.conf"
+del "C:\newFile.txt"
