@@ -454,7 +454,7 @@ __SQL1__
 	close(FH);
 	};
 	my $xml = SC->xml_in($xml_text) or return($SC::errstr);
-	return (1) unless (event_filter($xml->{'event'}));
+	#return (1) unless (event_filter($xml->{'event'}));
 	
     my $event = SC::Event->new(%{ $xml->{'event'} }) or die "error processing XML for Event";
     # store and pass along to downstream servers
