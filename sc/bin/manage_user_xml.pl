@@ -301,9 +301,10 @@ exit;
 
     
 sub process {
-	my $data = $xml->{UserRow};
+	my @data = (ref $xml->{UserRow} eq 'HASH') ? 
+		($xml->{UserRow}) : @{$xml->{UserRow}};
 
-	my $row = $data->[0];
+	my $row = $data[0];
     unless (defined $row->{USERNAME} &&
 		defined $row->{USER_TYPE}) {
         epr "file had errors, skipping";
@@ -317,7 +318,7 @@ sub process {
     my $ndel = 0;
     my $nskip = 0;
 
-	foreach my $colp (@$data) {
+	foreach my $colp (@data) {
         if ($nrec and $nrec % 100 == 0) {
             vpr "$nrec records processed";
         }

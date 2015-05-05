@@ -369,9 +369,10 @@ foreach my $file (@ARGV) {
 exit;
 
 sub process {
-	my $data = $xml->{FacilityRow};
+	my @data = (ref $xml->{FacilityRow} eq 'HASH') ? 
+		($xml->{FacilityRow}) : @{$xml->{FacilityRow}};
 
-	my $row = $data->[0];
+	my $row = $data[0];
     unless (defined $row->{EXTERNAL_FACILITY_ID} &&
 		defined $row->{FACILITY_TYPE}) {
         epr "file had errors, skipping";
@@ -386,7 +387,7 @@ sub process {
     my $nskip = 0;
 	my ($ext_id, $type);
 	
-	foreach my $colp (@$data) {
+	foreach my $colp (@data) {
         if ($nrec and $nrec % 100 == 0) {
             vpr "$nrec records processed";
         }

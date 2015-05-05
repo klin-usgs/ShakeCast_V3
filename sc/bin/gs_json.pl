@@ -82,7 +82,9 @@ use Time::Local;
 use Storable;
 
 use SC::Event;
+use API::Product;
 
+use Data::Dumper;
 #######################################################################
 # Stuff to handle command line options and program documentation:
 #######################################################################
@@ -100,6 +102,20 @@ $ua->proxy(['http'], $config->{'ProxyServer'})
 	if (defined $config->{'ProxyServer'});
 my $eq_hash_file = "$json_dir/eq.hash";
 my $eq_hash = retrieve($eq_hash_file) if (-e $eq_hash_file);
+
+my @req_prod = ('grid.xml', 'stationlist.xml', 'intensity.jpg', 'info.xml',
+	'ii_overlay.png');
+my $prod_hash_file = $config->{'RootDir'}.'/db/product.hash';
+my $prod_hash; 
+if (-e $prod_hash_file) {
+	$prod_hash = retrieve($prod_hash_file) ;
+} else {
+	my $product = new API::Product->product_type_list('ALL'); 
+	foreach my $item (@$product) {
+		$prod_hash->{$item->{'filename'}} = $item->{'display'};
+	}
+}
+foreach my $req_prod (@req_prod) {$prod_hash->{$req_prod} = 1;}
 
 #######################################################################
 # Run the program
@@ -231,6 +247,7 @@ sub parse_shakemap
 		$mirror =~ s/^download\///;
 		#my $content_url = "http://" . $server . $shakemap->{'url'};
 		my $content_url = $shakemap->{'url'};
+		next unless (_retrieve($content_url, $event));
 		my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
 		$rv=1 if ($resp->is_success);
 	}
@@ -255,6 +272,7 @@ sub parse_dyfi
 		while (my ($mirror, $dyfi) = each( %{$product->{'contents'}})) {
 			#my $content_url = "http://" . $server . $dyfi->{'url'};
 			my $content_url = $dyfi->{'url'};
+			next unless (_retrieve($content_url, $event));
 			my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
 			return 0 unless ($resp->is_success);
 		}
@@ -271,6 +289,7 @@ sub parse_losspager
 		while (my ($mirror, $losspager) = each( %{$product->{'contents'}})) {
 			#my $content_url = "http://" . $server . $losspager->{'url'};
 			my $content_url = $losspager->{'url'};
+			next unless (_retrieve($content_url, $event));
 			my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
 			return 0 unless ($resp->is_success);
 		}
@@ -287,6 +306,7 @@ sub parse_eq_location_map
 		while (my ($mirror, $eq_location_map) = each( %{$product->{'contents'}})) {
 			#my $content_url = "http://" . $server . $eq_location_map->{'url'};
 			my $content_url = $eq_location_map->{'url'};
+			next unless (_retrieve($content_url, $event));
 			my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
 			return 0 unless ($resp->is_success);
 		}
@@ -302,6 +322,7 @@ sub parse_geoserve
 	foreach my $product (@$products) {
 		#my $nearby_url = "http://" . $server . 
 		my $nearby_url = $product->{'contents'}->{'geoserve.json'}->{'url'};
+		next unless (_retrieve($nearby_url, $event));
 		my $resp = $ua->mirror($nearby_url, $mirror);
 		return 0 unless ($resp->is_success);
 		#print ref $product,"\n";
@@ -316,6 +337,7 @@ sub parse_historical_moment_tensor_map
 	foreach my $product (@$products) {
 		#my $nearby_url = "http://" . $server . 
 		my $nearby_url = $product->{'contents'}->{'historicMoments.jpg'}->{'url'};
+		next unless (_retrieve($nearby_url, $event));
 		my $resp = $ua->mirror($nearby_url, $mirror);
 		return 0 unless ($resp->is_success);
 		#print ref $product,"\n";
@@ -331,6 +353,7 @@ sub parse_historical_seismicity_map
 		while (my ($mirror, $hist_seism_map) = each( %{$product->{'contents'}})) {
 			#my $content_url = "http://" . $server . $hist_seism_map->{'url'};
 			my $content_url = $hist_seism_map->{'url'};
+			next unless (_retrieve($content_url, $event));
 			my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
 			return 0 unless ($resp->is_success);
 		}
@@ -347,6 +370,7 @@ sub parse_tectonic_summary
 	foreach my $product (@$products) {
 		#my $nearby_url = "http://" . $server . 
 		my $nearby_url = $product->{'contents'}->{'tectonic-summary.inc.html'}->{'url'};
+		next unless (_retrieve($nearby_url, $event));
 		my $resp = $ua->mirror($nearby_url, $mirror);
 		return 0 unless ($resp->is_success);
 		#print ref $product,"\n";
@@ -383,6 +407,7 @@ sub parse_nearby_cities
 	foreach my $product (@$products) {
 		#my $nearby_url = "http://" . $server . 
 		my $nearby_url = $product->{'contents'}->{'nearby-cities.json'}->{'url'};
+		next unless (_retrieve($nearby_url, $event));
 		my $resp = $ua->mirror($nearby_url, $mirror);
 		return 0 unless ($resp->is_success);
 		#print ref $product,"\n";
@@ -429,7 +454,7 @@ __SQL1__
 	close(FH);
 	};
 	my $xml = SC->xml_in($xml_text) or return($SC::errstr);
-	return (1) unless (event_filter($xml->{'event'}));
+	#return (1) unless (event_filter($xml->{'event'}));
 	
     my $event = SC::Event->new(%{ $xml->{'event'} }) or die "error processing XML for Event";
     # store and pass along to downstream servers
@@ -614,5 +639,18 @@ sub _min {
 
 sub _max {
     (defined $_[0] && (!defined $_[1] || $_[0] >= $_[1])) ? $_[0] : $_[1];
+}
+
+sub _retrieve {
+    my ($url, $event) = @_;
+	
+	my $rc = 0;
+	my @parse = split '/', $url;
+	my $product = $parse[$#parse];
+	my $evid = $event->{net}.$event->{code};
+
+	$product =~ s/$evid(\_*)//;
+
+	return $prod_hash->{$product};
 }
 
