@@ -1,5 +1,5 @@
 @echo off
 
-net stop Apache2.2
+net stop Apache2.4
 
-net start Apache2.2
+net start Apache2.4
