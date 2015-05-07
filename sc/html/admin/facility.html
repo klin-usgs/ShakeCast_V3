@@ -228,7 +228,7 @@
     //var sm_url = '/scripts/facility.pl/';
     var sm_url = '/scripts/r/facility/facility_list';
     
-    $.getJSON(sm_url, function(data) {
+    $.post(sm_url, submit_data, function(data) {
     
       // Are there even any EQ to display?
       if (data.length <= 0) {
@@ -254,7 +254,7 @@
 	type = fac_type.id;
 	$("#sidebar a").removeClass("active");
 	$("#"+fac_type.id).addClass("active");
-	$.getJSON(sm_url, function(data) {
+	$.post(sm_url, submit_data, function(data) {
 
 	  if (data.length <= 0) {
 	    return;
@@ -314,7 +314,8 @@
 	});
       });
 	$("#sidebar a").first().trigger('click');
-    });
+
+    }, 'json');
   }
   
   function row_click (data) {
@@ -362,9 +363,9 @@
  
 		$("#confirm_delete").on('click', function() {
 				$('#myModal').modal('hide');
-		      submit_data.type = type;
 				var sm_url = '/scripts/r/facility/erase_type/';
-				$.post(sm_url, {submit_data, type:type}, function(data) {
+				submit_data.type = type;
+				$.post(sm_url, submit_data, function(data) {
 			// Are there even any EQ to display?
 			if (data.status > 0) {
 			  alert("Facility type "+type+" is deleted from the database.");
@@ -381,7 +382,7 @@
 		      var oData = oTable.fnGetData( anSelected[i] );
 		      submit_data.facility_id = oData.facility_id;
 				var sm_url = '/scripts/r/facility/erase/';
-		      $.post(sm_url, {submit_data, facility_id:oData.facility_id}, function(data) {
+		      $.post(sm_url, submit_data, function(data) {
 			// Are there even any EQ to display?
 			if (data.status > 0) {
 			  alert("Facility is deleted from the database.");
