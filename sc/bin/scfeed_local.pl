@@ -198,13 +198,13 @@ sub main {
 	exit unless (&shakemap_filter || $force_run);
 	# Determine whether this is the first version of this event we
 	# have received or not
-	my $num_recs =
-		SC->dbh->selectrow_array(qq/
-	    select count(*)
-	      from event
-	     where event_id = ?/, undef, $evid);
+	#my $num_recs =
+	#	SC->dbh->selectrow_array(qq/
+	#    select count(*)
+	#      from event
+	#     where event_id = ?/, undef, $evid);
 		 
-	if ($num_recs <= 0) {
+	#if ($num_recs <= 0) {
 		#-----------------------------------------------------------------------
 		# Send the event message
 		#-----------------------------------------------------------------------
@@ -215,7 +215,7 @@ sub main {
 		$result = `$command`;
 		logscr "Error in sm_new_event: '$result'" if ($result !~ /STATUS=SUCCESS/);
 		print "Result: '$result'\n" if $verbose;
-	}
+	#}
 
   #-----------------------------------------------------------------------
   # Send the shakemap message
@@ -474,7 +474,7 @@ my $evid = shift;
 			 $earthquake->{'timezone'});
   $writer->emptyTag("event",
 		    "event_id"          => $sc_id,
-		    "event_version"     => $version,
+		    "event_version"     => "1",
 		    "event_status"      => 'NORMAL',
 		    "event_type"        => $scenario ? 'SCENARIO' : 'ACTUAL',
 		    "event_name"        => $earthquake->{'id'},
@@ -508,7 +508,7 @@ my $evid = shift;
 		    "shakemap_id"          => $sc_id, 
 		    "shakemap_version"     => $version, 
 		    "event_id"             => $sc_id, 
-		    "event_version"        => $version, 
+		    "event_version"        => "1", 
 		    "shakemap_status"      => 'RELEASED',
 		    "generating_server"    => "1",
 		    "shakemap_region"      => "",
@@ -651,7 +651,7 @@ my $evid = shift;
 
   $writer->emptyTag("event",
 		    "event_id"          => $sc_id,
-		    "event_version"     => $version,
+		    "event_version"     => "1",
 		    "event_status"      => $shakemap_spec{'map_status'},
 		    "event_type"        => $scenario ? 'SCENARIO' : $shakemap_spec{'shakemap_event_type'},
 		    "event_name"        => $shakemap_spec{'event_name'},
@@ -685,7 +685,7 @@ my $evid = shift;
 		"shakemap_id"          => $sc_id, 
 		"shakemap_version"     => $version, 
 		"event_id"             => $sc_id, 
-		"event_version"        => $shakemap_spec{'shakemap_version'}, 
+		"event_version"        => "1", 
 		"shakemap_status"      => $shakemap_spec{'map_status'},
 		"generating_server"    => "1",
 		"shakemap_region"      => lc($shakemap_spec{'shakemap_originator'}),

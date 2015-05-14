@@ -12,7 +12,7 @@
     <NetworkLink>
       <name>Epicenter</name>
       <Url>
-        <href>http://earthquake.usgs.gov/eqcenter/shakemap/[% shakemap.shakemap_originator %]/shake/[% shakemap.shakemap_id %]/download/epicenter.kmz</href>
+        <href>[% shakemap.gs_url %]/download/epicenter.kmz</href>
         <refreshMode>onInterval</refreshMode>
         <refreshInterval>300</refreshInterval>
       </Url>
@@ -20,7 +20,7 @@
     <NetworkLink>
       <name>ShakeMap: Intensity</name>
       <Url>
-        <href>http://earthquake.usgs.gov/eqcenter/shakemap/[% shakemap.shakemap_originator %]/shake/[% shakemap.shakemap_id %]/download/overlay.kmz</href>
+        <href>[% shakemap.gs_url %]/download/overlay.kmz</href>
         <refreshMode>onInterval</refreshMode>
         <refreshInterval>300</refreshInterval>
       </Url>
@@ -28,7 +28,7 @@
     <NetworkLink>
       <name>Seismic Stations</name>
       <Url>
-        <href>http://earthquake.usgs.gov/eqcenter/shakemap/[% shakemap.shakemap_originator %]/shake/[% shakemap.shakemap_id %]/download/stations.kmz</href>
+        <href>[% shakemap.gs_url %]/download/stations.kmz</href>
         <refreshMode>onInterval</refreshMode>
         <refreshInterval>300</refreshInterval>
       </Url>
@@ -125,13 +125,13 @@
 			<Placemark>
 			  <name>[% item.name %]</name>
 			  <visibility>1</visibility>
-			  <description>Lat: [% item.latitude %] Lon: [% item.longitude %] &lt;br&gt;MMI: &lt;b&gt;[% item.MMI %] &lt;/b&gt;&lt;br&gt;PGA: &lt;b&gt;[% item.PGA %] %g&lt;/b&gt;&lt;br&gt;PGV: &lt;b&gt;[% item.PGV %] cm/sec&lt;/b&gt;&lt;br&gt;PSA 0.3sec: [% item.PSA03 %] %g&lt;br&gt;PSA 1.0sec: [% item.PSA10 %] %g&lt;br&gt;PSA 3.0sec: [% item.PSA30 %] %g&lt;br&gt;</description>
+			  <description>Lat: [% item.lat_min %] Lon: [% item.lon_min %] &lt;br&gt;mmi: &lt;b&gt;[% item.mmi %] &lt;/b&gt;&lt;br&gt;PGA: &lt;b&gt;[% item.pga %] %g&lt;/b&gt;&lt;br&gt;pgv: &lt;b&gt;[% item.pgv %] cm/sec&lt;/b&gt;&lt;br&gt;PSA 0.3sec: [% item.psa03 %] %g&lt;br&gt;PSA 1.0sec: [% item.psa10 %] %g&lt;br&gt;PSA 3.0sec: [% item.psa30 %] %g&lt;br&gt;</description>
 			  <styleUrl>#[% item.damage_level %]</styleUrl>
 			  <Point>
 				<extrude>0</extrude>
 				<tessellate>0</tessellate>
 				<altitudeMode>clampToGround</altitudeMode>
-				<coordinates>[% item.longitude %],[% item.latitude %]</coordinates>
+				<coordinates>[% item.lon_min %],[% item.lat_min %]</coordinates>
 			  </Point>
 			</Placemark>
 			[%- END -%]

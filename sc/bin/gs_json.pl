@@ -242,7 +242,15 @@ sub parse_shakemap
 	
 	#foreach my $product (@$products) {
 	my $product = shift @$products;
+	my $gs_url;
 	while (my ($mirror, $shakemap) = each( %{$product->{'contents'}})) {
+		if (!$gs_url) {
+			$gs_url = $shakemap->{'url'};
+			$gs_url =~ s/$mirror$//;
+			open (FH, ">$mirror_dir/gs_url.txt") or next;
+			print FH $gs_url;
+			close(FH);
+		}
 		next unless ($mirror =~ /^download\//i);
 		$mirror =~ s/^download\///;
 		#my $content_url = "http://" . $server . $shakemap->{'url'};

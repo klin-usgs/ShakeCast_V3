@@ -191,6 +191,11 @@ sub local_product {
 		$shakemap_xml->{'shakemap_originator'} = 'global' if ($shakemap_xml->{'shakemap_originator'} eq 'us');
 	}
 
+	if (-e "$data_dir/gs_url.txt") {
+		open(FH, "< $data_dir/gs_url.txt") or die "Couldn't open file";
+		$shakemap_xml->{'gs_url'} = <FH>;
+		close(FH);	
+	}
 	my $tt = Template->new(INCLUDE_PATH => $config->{'TemplateDir'}."/xml/", OUTPUT_PATH => $data_dir);
 	my $shakecast = {};
 	$shakecast->{'code_version'} = "ShakeCast 1.0";
@@ -209,9 +214,13 @@ sub local_product {
 	my $sql = "select ff.damage_level, f.facility_id, f.facility_type, 
 		f.external_facility_id, f.facility_name, f.short_name,
 		f.description, f.lat_min, f.lon_min,
+       dl.damage_level,
+       dl.name AS damage_level_name,
+       dl.is_max_severity,
+       dl.severity_rank,
 		ff.low_limit, ff.high_limit, fs.dist
 		$sql_metric
-      from ((((facility f 
+      from (((((facility f 
 	  inner join facility_shaking fs on f.facility_id = fs.facility_id)
 	  inner join grid g on g.grid_id = fs.grid_id)
 	  inner join shakemap s on g.shakemap_id = s.shakemap_id
@@ -219,73 +228,14 @@ sub local_product {
 	  inner join facility_fragility ff on fs.facility_id = ff.facility_id and 
 			ff.metric = '".$metric_unit."' and
 			fs.value_".$metrics{$metric_unit}." between ff.low_limit and ff.high_limit)
+		inner join damage_level dl on dl.damage_level = ff.damage_level)
      where s.event_id = '$shakemap_id' and g.shakemap_version = $shakemap_version";
 	my $sth = SC->dbh->prepare($sql);
 	 
     $sth->execute() || vvpr "couldn't execute sql $metric_unit\n";
-	while (my $hash_ref =  $sth->fetchrow_hashref) {
-		my $item;
-		my $facility_type = $hash_ref->{'facility_type'};
-		my $facility_name = encode_entities($hash_ref->{'facility_name'});
-		my $lat_min = $hash_ref->{'lat_min'};
-		my $lon_min = $hash_ref->{'lon_min'};
-		my $damage_level = $hash_ref->{'damage_level'};
-		my $dist = $hash_ref->{'dist'};
-		my $mmi = $hash_ref->{'MMI'};
-		my $pga = $hash_ref->{'PGA'};
-		my $pgv = $hash_ref->{'PGV'};
-		my $psa03 = (defined $hash_ref->{'PSA03'}) ? $hash_ref->{'PSA03'} : 'NA';
-		my $psa10 = (defined $hash_ref->{'PSA10'}) ? $hash_ref->{'PSA10'} : 'NA';
-		my $psa30 = (defined $hash_ref->{'PSA30'}) ? $hash_ref->{'PSA30'} : 'NA';
-		my $sdpga = (defined $hash_ref->{'SDPGA'}) ? $hash_ref->{'SDPGA'} : 'NA';
-		my $stdpga = (defined $hash_ref->{'STDPGA'}) ? $hash_ref->{'STDPGA'} : 'NA';
-		my $svel = (defined $hash_ref->{'SVEL'}) ? $hash_ref->{'SVEL'} : 'NA';
-
-		my $capital = 'no';
-		if ($facility_type =~ /CAPITAL/) {
-			$capital = 'yes';
-			$facility_type = 'CITY';
-		}
-		
-		my ($city, $pop, $unit);
-		if ($facility_name =~ /pop\./) {
-			($city, $pop, $unit) = $facility_name
-			   =~ /^(.*)\s+\(pop\. [\<\s]*([\d\.]+)([KM])\)/;
-			   
-			if (defined $unit) {
-				$pop = ($unit eq 'M') ? $pop * 1000000 : $pop;
-				$pop = ($unit eq 'K') ? $pop * 1000 : $pop;
-			}
-		} else {
-			$city = $facility_name;
-		}
-		$item = { "name"	=>	$city,
-				"population"	=>	$pop,
-				"facility_id"	=>	$hash_ref->{'facility_id'},
-				"facility_name"	=>	$facility_name,
-				"external_facility_id"	=>	$hash_ref->{'external_facility_id'},
-				"short_name"	=>	$hash_ref->{'short_name'},
-				"description"	=>	$hash_ref->{'description'},
-				"metric"	=>	$metric_unit,
-				"low_limit"	=>	$hash_ref->{'low_limit'},
-				"high_limit"	=>	$hash_ref->{'high_limit'},
-				"latitude"	=>	$lat_min,
-				"longitude"	=>	$lon_min,
-				"capital"	=>	$capital,
-				"damage_level"		=>	$damage_level,
-				"DIST"		=>	$dist,
-				"MMI"		=>	$mmi,
-				"PGA"		=>	$pga,
-				"PGV"		=>	$pgv,
-				"PSA03"		=>	$psa03,
-				"PSA10"		=>	$psa10,
-				"PSA30"		=>	$psa30,
-				"SDPGA"		=>	$sdpga,
-				"STDPGA"		=>	$stdpga,
-				"SVEL"		=>	$svel
-				};
-		lookup_facility_attributes($item, $hash_ref->{'facility_id'});
-		push @{$exposure{$facility_type}}, $item;
+	while (my $item =  $sth->fetchrow_hashref('NAME_lc')) {
+		lookup_facility_attributes($item, $item->{'facility_id'});
+		push @{$exposure{$item->{'facility_type'}}}, $item;
 	}
 	}
 	foreach my $type (keys %exposure) {
@@ -300,7 +250,7 @@ sub local_product {
     # exclude .* files
     my @files = grep !/^\./, readdir TEMPDIR;
     # exclude non-directories
-	my $prog = $config->{'RootDir'} . '/bin/template.pl -event '. $shakemap_id;
+	#my $prog = $config->{'RootDir'} . '/bin/template.pl -event '. $shakemap_id;
 	my $n = 0;
 	my $rc;
     foreach my $file (@files) {
