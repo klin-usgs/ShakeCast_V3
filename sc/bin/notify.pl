@@ -760,7 +760,7 @@ my $ dbh;
 
 my $iswin32 = $^O eq 'MSWin32';
 
-my (@sortby, %sort_fields);
+my (@sortby, %sort_fields, $row_cap);
 
 
 ##### Sub Declarations #####
@@ -982,6 +982,12 @@ sub notify {
 	my (%attachment);
 
     my $r = $ip->[0];        # first (or only) record
+	if (-e "$config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/gs_url.txt") {
+		open(FH, "< $config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/gs_url.txt") or die "Couldn't open file";
+		$r->{'gs_url'} = <FH>;
+		close(FH);	
+	}
+
     my $xr = {HEADER_FROM => $config->{Notification}->{From},
           HEADER_TO => $r->{DELIVERY_ADDRESS}};
     $xr->{_MIME_BOUNDARY} = md5_hex(scalar localtime);
@@ -1059,7 +1065,7 @@ sub notify {
         my $a = expand($condok, "${base}_body.$suffix", $rr, $xr,
                   \%stats);
         return -1 unless defined $a;
-        push @blines, @$a;
+        push @blines, @$a unless ($row_cap && ($itemno > $row_cap));
         }
 		
 		$attachment{$rr->{'PRODUCT_TYPE'}} = 
@@ -1087,6 +1093,11 @@ sub notify {
         @flines = @$a;
     }
     @lines = (@hlines, @blines, @flines);
+	if (-d "$config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}") {
+		open (N_MES, "> $config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/$r->{AGGREGATION_GROUP}.txt") or last;
+		print N_MES @lines;
+		close(N_MES); 
+	}
     }
     else {
     my $a = expand($condok, $file, $r, $xr);
@@ -1561,6 +1572,7 @@ sub process_configuration {
 
     undef @sortby;
     undef %sort_fields;
+    undef $row_cap;
     my $fname = "${base}.conf";
     return unless -r $fname;
     unless (open CNF, $fname) {
@@ -1600,7 +1612,9 @@ sub process_configuration {
             $sort_fields{$name}->{DIR} = $dir;
             $sort_fields{$name}->{TYPE} = $type;
         }
-        }
+        } elsif ($cmd eq 'row_cap') {
+			$row_cap = shift @fields;
+		}
         else { error "Unknown command <$cmd>" }
     }
 #    epr Dumper \@sortby;

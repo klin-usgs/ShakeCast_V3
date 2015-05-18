@@ -406,8 +406,8 @@ sub process {
 			unless (ref  $colp->{FACILITY_MODEL} eq 'HASH');
         my $facility_name   = $colp->{FACILITY_NAME}
 			unless (ref  $colp->{FACILITY_NAME} eq 'HASH');
-        my $short_name   = $colp->{SHROT_NAME}
-			unless (ref  $colp->{SHROT_NAME} eq 'HASH');
+        my $short_name   = $colp->{SHORT_NAME}
+			unless (ref  $colp->{SHORT_NAME} eq 'HASH');
         my $description   = $colp->{DESCRIPTION}
 			unless (ref  $colp->{DESCRIPTION} eq 'HASH');
         #my $damage_metric   = $colp->[$metric_column];
