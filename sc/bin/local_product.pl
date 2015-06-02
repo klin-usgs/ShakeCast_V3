@@ -214,13 +214,17 @@ sub local_product {
 	my $sql = "select ff.damage_level, f.facility_id, f.facility_type, 
 		f.external_facility_id, f.facility_name, f.short_name,
 		f.description, f.lat_min, f.lon_min,
+		ffea.geom_type, ffea.geom, ffea.description as html_desc,
+		fs.value_".$metrics{$metric_unit}." as grid_value,
+		ff.metric,
        dl.damage_level,
        dl.name AS damage_level_name,
        dl.is_max_severity,
        dl.severity_rank,
 		ff.low_limit, ff.high_limit, fs.dist
 		$sql_metric
-      from (((((facility f 
+      from ((((((facility f 
+		left join facility_feature ffea on f.facility_id = ffea.facility_id)
 	  inner join facility_shaking fs on f.facility_id = fs.facility_id)
 	  inner join grid g on g.grid_id = fs.grid_id)
 	  inner join shakemap s on g.shakemap_id = s.shakemap_id
