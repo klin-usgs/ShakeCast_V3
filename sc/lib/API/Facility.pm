@@ -302,12 +302,12 @@ sub facility_type_list {
 		FROM 
 			facility
 		/;
-	$sql .= " where facility_type ='$type'" unless ($type=~ /all/i);
+	$sql .= " where facility_type =?" unless ($type=~ /all/i);
 
     eval {
 	my $sth = SC->dbh->prepare($sql);
 	#$sth->execute(@args);
-	$sth->execute();
+	$sth->execute(($type =~ /all/i)? undef:$type);
 	while (my $p = $sth->fetchrow_hashref('NAME_lc')) {
 	    push @facilities, new API::Facility(%$p);
 	}

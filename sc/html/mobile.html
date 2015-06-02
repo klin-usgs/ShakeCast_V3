@@ -560,7 +560,7 @@ var updateEQDetail = function() {
       $page.find(".content").empty();
 
       // Are there even any EQ to display?
-	  if (data.products.length == 0) {
+	  if (data.properties.products.length == 0) {
 	  	
 	  	// display an error message in the error dialog
 	  	var strHtml = "<h3>No EQ Found</h3>";
@@ -582,7 +582,7 @@ var updateEQDetail = function() {
 		var $winwidth = $(window).width();
 	  $page.find(".content").html('<ul data-role="listview"></ul>');
 	  $list = $page.find(".content ul");
-      $.each(data.products, function(key, obj) {
+      $.each(data.properties.products, function(key, obj) {
         // Build HTML that contains the desired information
 		//var epi_png = '/images/epicenter/' + parseInt(data.products[i].geometry.coordinates[1]/5+0.5)*5 +'_'+ 
 		//	parseInt(data.products[i].geometry.coordinates[0]/5+0.5)*5 + '.png';
@@ -590,8 +590,9 @@ var updateEQDetail = function() {
 		switch (key) {
 			case 'dyfi':
 				strHtml += '<li>Did You Feel It!</li>';
-				strHtml += '<div id="'+key+'" class="div-detail"><img src="/data/eq_product/' + objTweet.event_id + '/' +
-					objTweet.event_id + '_ciim.jpg" class="image_fit"></div>\n';
+				strHtml += '<div id="'+key+'" class="div-detail"><img src="' +
+				  obj[0].contents[objTweet.event_id + '_ciim.jpg'].url +
+					'" class="image_fit"></div>\n';
 				break;
 			case 'losspager':
 				strHtml += '<li>Loss PAGER</li>';
