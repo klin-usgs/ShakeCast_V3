@@ -217,18 +217,28 @@ sub local_product {
 		ffea.geom_type, ffea.geom, ffea.description as html_desc,
 		fs.value_".$metrics{$metric_unit}." as grid_value,
 		ff.metric,
+		s.shakemap_id, s.shakemap_version, s.shakemap_region, s.generation_timestamp,
+       e.event_id,
+       e.event_version,
+       e.event_name,
+       e.magnitude,
+       e.event_location_description,
+       e.event_timestamp,
+       e.lat,
+       e.lon,
        dl.damage_level,
        dl.name AS damage_level_name,
        dl.is_max_severity,
        dl.severity_rank,
 		ff.low_limit, ff.high_limit, fs.dist
 		$sql_metric
-      from ((((((facility f 
+      from (((((((facility f 
 		left join facility_feature ffea on f.facility_id = ffea.facility_id)
 	  inner join facility_shaking fs on f.facility_id = fs.facility_id)
 	  inner join grid g on g.grid_id = fs.grid_id)
 	  inner join shakemap s on g.shakemap_id = s.shakemap_id
 		and g.shakemap_version = s.shakemap_version)
+	  inner join event e on e.event_id = s.event_id)
 	  inner join facility_fragility ff on fs.facility_id = ff.facility_id and 
 			ff.metric = '".$metric_unit."' and
 			fs.value_".$metrics{$metric_unit}." between ff.low_limit and ff.high_limit)
