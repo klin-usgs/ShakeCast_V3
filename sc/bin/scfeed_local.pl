@@ -748,51 +748,14 @@ sub _ts {
 	if ($ts =~ /[\:\-]/) {
 		$ts =~ s/[a-zA-Z]/ /g;
 		$ts =~ s/\s+$//g;
-		$ts = time_to_ts(ts_to_time($ts));
+print "$ts\n";
+		$ts = SC->time_to_ts(SC->ts_to_time($ts));
 	} else {
-		$ts = time_to_ts($ts);
+		$ts = SC->time_to_ts($ts);
 	}
 	return ($ts);
 }
 
-sub time_to_ts {
-    my $time = (@_ ? shift : time);
-    my ($sec, $min, $hr, $mday, $mon, $yr);
-    if (SC->config->{board_timezone} > 0) {
-		($sec, $min, $hr, $mday, $mon, $yr) = localtime $time;
-	} else {
-		($sec, $min, $hr, $mday, $mon, $yr) = gmtime $time;
-	}
-    sprintf ("%04d-%02d-%02d %02d:%02d:%02d",
-	     $yr+1900, $mon+1, $mday,
-	     $hr, $min, $sec);
-}
-
-sub ts_to_time {
-    my ($time_str) = @_;
-	
-	use Time::Local;
-	my %months = ('jan' => 0, 'feb' =>1, 'mar' => 2, 'apr' => 3, 'may' => 4, 'jun' => 5,
-		'jul' => 6, 'aug' => 7, 'sep' => 8, 'oct' => 9, 'nov' => 10, 'dec' => 11);
-	my ($mday, $mon, $yr, $hr, $min, $sec);
-	my $timegm;
-	
-	print "$time_str\n";
-	if ($time_str =~ /[a-zA-Z]+/) {
-		# <pubDate>Tue, 04 Mar 2008 20:57:43 +0000</pubDate>
-		($mday, $mon, $yr, $hr, $min, $sec) = $time_str 
-			=~ /(\d+)\s+(\w+)\s+(\d+)\s+(\d+)\:(\d+)\:(\d+)\s+/;
-		$timegm = timegm($sec, $min, $hr, $mday, $months{lc($mon)}, $yr-1900);
-	} else {
-		#2008-10-04 20:57:43
-		($yr, $mon, $mday, $hr, $min, $sec) = $time_str 
-			=~ /(\d+)\-(\d+)\-(\d+)\s+(\d+)\:(\d+)\:(\d+)/;
-	   
-		$timegm = timegm($sec, $min, $hr, $mday, $mon-1, $yr-1900);
-	}
-    
-	return ($timegm);
-}
 
 #######################################################################
 # End configuration subroutines

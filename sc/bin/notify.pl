@@ -144,6 +144,8 @@ SELECT e.event_id,
        e.lat,
        e.lon,
        e.external_event_id,
+	   s.shakemap_id,
+	   s.shakemap_version,
        n.notification_id,
        n.tries,
        n.delivery_status,
@@ -166,7 +168,7 @@ SELECT e.event_id,
         f.lat_min AS facility_lat,    # kwl 20060916   
         f.lon_min AS facility_lon,    # kwl 20060916
        r.aggregate
-  FROM ((((((notification n
+  FROM (((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
         r.notification_request_id)
     INNER JOIN notification_type t ON r.notification_type =
@@ -177,6 +179,7 @@ SELECT e.event_id,
      d.shakecast_user AND r.delivery_method = d.delivery_method)
     LEFT JOIN facility f ON n.facility_id = f.facility_id)
     LEFT JOIN product_type pt ON r.product_type = pt.product_type)
+	LEFT JOIN shakemap s ON s.event_id = e.event_id)
  WHERE n.shakecast_user = ? AND t.notification_class = 'EVENT'
    AND n.delivery_status IN ('PENDING', 'ERRORS')
    AND (n.next_delivery_timestamp IS NULL OR n.next_delivery_timestamp >= ?)
@@ -425,6 +428,8 @@ SELECT e.event_id,
        e.lat,
        e.lon,
        e.external_event_id,
+	   s.shakemap_id,
+	   s.shakemap_version,
        n.notification_id,
        n.tries,
        n.delivery_status,
@@ -447,7 +452,7 @@ SELECT e.event_id,
         f.lat_min AS facility_lat,    # kwl 20060916   
         f.lon_min AS facility_lon,    # kwl 20060916
        r.aggregate
-  FROM (((((notification n
+  FROM ((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
         r.notification_request_id)
     INNER JOIN notification_type t ON r.notification_type =
@@ -456,6 +461,7 @@ SELECT e.event_id,
       e.event_version)
     LEFT JOIN facility f ON n.facility_id = f.facility_id)
     LEFT JOIN product_type pt ON r.product_type = pt.product_type)
+	LEFT JOIN shakemap s ON s.event_id = e.event_id)
  WHERE n.shakecast_user = ? AND t.notification_class = 'EVENT'
    AND r.notification_type = ?
    AND n.delivery_status IN ('PENDING', 'ERRORS')
@@ -984,8 +990,10 @@ sub notify {
     my $r = $ip->[0];        # first (or only) record
 	if (-e "$config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/gs_url.txt") {
 		open(FH, "< $config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/gs_url.txt") or die "Couldn't open file";
-		$r->{'gs_url'} = <FH>;
+		$r->{'GS_URL'} = <FH>;
 		close(FH);	
+	} else {
+		$r->{'GS_URL'} = parse_gs_url($r->{EVENT_ID});
 	}
 
     my $xr = {HEADER_FROM => $config->{Notification}->{From},
@@ -1094,7 +1102,7 @@ sub notify {
     }
     @lines = (@hlines, @blines, @flines);
 	if (-d "$config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}") {
-		open (N_MES, "> $config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/$r->{AGGREGATION_GROUP}.txt") or last;
+		open (N_MES, "> $config->{DataRoot}/$r->{SHAKEMAP_ID}-$r->{SHAKEMAP_VERSION}/$r->{SHAKECAST_USER}_$r->{NOTIFICATION_TYPE}_$r->{AGGREGATION_GROUP}.txt") or last;
 		print N_MES @lines;
 		close(N_MES); 
 	}
@@ -1888,6 +1896,36 @@ sub vvvpr {
 sub quit {
     epr "QUIT:", @_;
     finish(1);
+}
+
+sub parse_gs_url {
+    my ($shakemap_id) = @_;
+	
+	my $gs_url;
+
+	use JSON -support_by_pp;
+	my $evt_mirror = $config->{'DataRoot'}."/eq_product/$shakemap_id/event.json";
+	open (FH, "< $evt_mirror") or return 0;
+	my @contents = <FH>;
+	close (FH);
+	my $content = join '', @contents;
+
+	eval{
+    my $json = new JSON;
+ 
+    # these are some nice json options to relax restrictions a bit:
+    my $json_text = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($content);
+ 
+	my $product = $json_text->{properties}->{products}->{shakemap}->[0];
+
+	if ($product) {
+		my ($mirror, $shakemap) = each( %{$product->{'contents'}});
+			$gs_url = $shakemap->{'url'};
+			$gs_url =~ s/$mirror$//;
+    }
+	};
+
+	return $gs_url;
 }
 
 

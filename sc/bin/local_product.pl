@@ -187,14 +187,17 @@ sub local_product {
 												 Default => \&default);
 		$parser->parsefile($grid_file);
 		#$grid_xml = $xsl->XMLin($grid_file);
-		$shakemap_xml->{'shakemap_originator'} = 'sc' if ($shakemap_xml->{'shakemap_originator'} eq 'ci');
-		$shakemap_xml->{'shakemap_originator'} = 'global' if ($shakemap_xml->{'shakemap_originator'} eq 'us');
+		#$shakemap_xml->{'shakemap_originator'} = 'sc' if ($shakemap_xml->{'shakemap_originator'} eq 'ci');
+		#$shakemap_xml->{'shakemap_originator'} = 'global' if ($shakemap_xml->{'shakemap_originator'} eq 'us');
 	}
 
+	$shakemap_xml =	lookup_shakemap($shakemap_id, $shakemap_version);
 	if (-e "$data_dir/gs_url.txt") {
 		open(FH, "< $data_dir/gs_url.txt") or die "Couldn't open file";
 		$shakemap_xml->{'gs_url'} = <FH>;
 		close(FH);	
+	} else {
+		$shakemap_xml->{'gs_url'} = parse_gs_url($shakemap_id);
 	}
 	my $tt = Template->new(INCLUDE_PATH => $config->{'TemplateDir'}."/xml/", OUTPUT_PATH => $data_dir);
 	my $shakecast = {};
@@ -217,15 +220,6 @@ sub local_product {
 		ffea.geom_type, ffea.geom, ffea.description as html_desc,
 		fs.value_".$metrics{$metric_unit}." as grid_value,
 		ff.metric,
-		s.shakemap_id, s.shakemap_version, s.shakemap_region, s.generation_timestamp,
-       e.event_id,
-       e.event_version,
-       e.event_name,
-       e.magnitude,
-       e.event_location_description,
-       e.event_timestamp,
-       e.lat,
-       e.lon,
        dl.damage_level,
        dl.name AS damage_level_name,
        dl.is_max_severity,
@@ -366,6 +360,65 @@ sub lookup_facility_attributes {
     }
 }
 
+#
+# Return grid_id given event_id and version
+#
+sub lookup_shakemap {
+    my ($shakemap_id, $shakemap_version) = @_;
+	
+    my $sql = "select 
+		s.shakemap_id, s.shakemap_version, s.shakemap_region, s.generation_timestamp,
+		s.lat_min, s.lat_max, s.lon_min, s.lon_max,
+       e.event_id,
+       e.event_version,
+       e.event_name,
+       e.magnitude,
+       e.event_location_description,
+       e.event_timestamp,
+       e.lat,
+       e.lon
+	  from shakemap s 
+	  inner join event e on e.event_id = s.event_id
+     where s.event_id = ? and s.shakemap_version = ?";
+	my $sth = SC->dbh->prepare($sql);
+	 
+    if ($sth->execute($shakemap_id, $shakemap_version)) {
+		$shakemap_xml = $sth->fetchrow_hashref;
+    }
+
+	return $shakemap_xml;
+}
+
+sub parse_gs_url {
+    my ($shakemap_id) = @_;
+	
+	my $gs_url;
+
+	use JSON -support_by_pp;
+	my $evt_mirror = $config->{'DataRoot'}."/eq_product/$shakemap_id/event.json";
+	open (FH, "< $evt_mirror") or return 0;
+	my @contents = <FH>;
+	close (FH);
+	my $content = join '', @contents;
+
+	eval{
+    my $json = new JSON;
+ 
+    # these are some nice json options to relax restrictions a bit:
+    my $json_text = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($content);
+ 
+	my $product = $json_text->{properties}->{products}->{shakemap}->[0];
+
+	if ($product) {
+		my ($mirror, $shakemap) = each( %{$product->{'contents'}});
+			$gs_url = $shakemap->{'url'};
+			$gs_url =~ s/$mirror$//;
+    }
+	};
+
+	return $gs_url;
+}
+
 sub initialize_sql {
     $dbh = SC->dbh;
     # dwb 2003-07-29 took this out because the DBI version we've been
@@ -395,38 +448,38 @@ sub startElement {
                 if ($element eq "shakemap_grid") {
                         $count++;
                         $tag = "shakemap_grid";
-                        print "shakemap_grid $count:\n";
+                        #print "shakemap_grid $count:\n";
 						foreach my $key (keys %attrs) {
 							$shakemap_xml->{$key} = $attrs{$key};
-							print $key,": ", $shakemap_xml->{$key}, "\n";
+							#print $key,": ", $shakemap_xml->{$key}, "\n";
 						}
 						last SWITCH;
                 }
                 if ($element eq "event") {
                         $count++;
                         $tag = "event";
-                        print "event $count:\n";
+                        #print "event $count:\n";
 						foreach my $key (keys %attrs) {
 							$event_xml->{$key} = $attrs{$key};
-							print $key,": ", $event_xml->{$key}, "\n";
+							#print $key,": ", $event_xml->{$key}, "\n";
 						}
 						last SWITCH;
                 }
                 if ($element eq "grid_specification") {
                         $count++;
                         $tag = "grid_specification";
-                        print "grid_specification $count:\n";
+                        #print "grid_specification $count:\n";
 						foreach my $key (keys %attrs) {
 							$grid_spec->{$key} = $attrs{$key};
-							print $key,": ", $grid_spec->{$key}, "\n";
+							#print $key,": ", $grid_spec->{$key}, "\n";
 						}
 						last SWITCH;
                 }
                 if ($element eq "grid_field") {
-                        print "grid_field: $count:\n";
+                        #print "grid_field: $count:\n";
                         $tag = "grid_field";
 						$grid_metric->{$attrs{'name'}} = $attrs{'index'};
-						print $attrs{'index'},": ", $attrs{'name'}, "\n";
+						#print $attrs{'index'},": ", $attrs{'name'}, "\n";
 						last SWITCH;
                 }
                 if ($element eq "grid_data") {
@@ -492,7 +545,7 @@ sub ts_to_time {
 	my ($mday, $mon, $yr, $hr, $min, $sec);
 	my $timegm;
 	
-	print "$time_str\n";
+	#print "$time_str\n";
 	if ($time_str =~ /[a-zA-Z]+/) {
 		# <pubDate>Tue, 04 Mar 2008 20:57:43 +0000</pubDate>
 		($mday, $mon, $yr, $hr, $min, $sec) = $time_str 
