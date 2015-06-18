@@ -125,7 +125,7 @@ SC->log(scalar @servers);
 SC->log($servers[0]);
 my $rc = 0;
 if (@ARGV) {
-	my $url = 'http://comcat.cr.usgs.gov/fdsnws/event/1/query?format=geojson&eventid=';
+	my $url = 'http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventid=';
 	foreach my $evid (@ARGV) {
 		my $event = {};
 		$event->{net} = substr($evid, 0, 2);
