@@ -432,7 +432,7 @@ sub parse_origin
 	
 	foreach my $product (@$products) {		
 		#my $ts = ts($product->{eventtime}/1000);	
-		my $ts = $product->{'properties'}->{eventtime};	
+		my $ts = _ts($product->{'properties'}->{eventtime});	
 		$version = 1;	
 		#$version = ($product->{'properties'}->{'version'}) ? 
 		#	$product->{'properties'}->{'version'} : 1;	
@@ -448,7 +448,7 @@ sub parse_origin
 	event_region="$event->{net}"
 	event_source_type=""
 	external_event_id=""
-	magnitude="$event->{mag}"
+	magnitude="$product->{'properties'}->{magnitude}"
 	mag_type="$product->{'properties'}->{'magnitude-type'}"
 	lat="$product->{'properties'}->{latitude}"
 	lon="$product->{'properties'}->{longitude}"
@@ -480,25 +480,31 @@ __SQL1__
  
 	};
 	
-	$epicenter = $product->{eventlatitude}.",".$product->{eventlongitude};
-	$mrkcenter = ($product->{eventlatitude}-6).",".$product->{eventlongitude};
+	$epicenter = $product->{'properties'}->{latitude}.",".$product->{'properties'}->{longitude};
+	$mrkcenter = ($product->{'properties'}->{latitude}-6).",".$product->{'properties'}->{longitude};
 	}
 	
 	my $gm_epicenter = $json_dir.'/'.$event->{net}.$event->{code}.'/gm_epicenter.png';
 	return if (-e $gm_epicenter);
 	my $gm_url = "http://maps.google.com/maps/api/staticmap?center=".$epicenter.
 			"&zoom=1&size=72x72&maptype=terrain&sensor=false".
-			"&markers=icon:http://shakecast.awardspace.com/images/epicenter.png|".$mrkcenter;
+			"&markers=icon:http://earthquake.usgs.gov/research/software/shakecast/icons/epicenter.png|".$mrkcenter;
 	$ua->mirror($gm_url, $gm_epicenter);
 
 }
 
-sub ts
+sub _ts
 {
-	my ($time) = @_;
-
-	my ($sec, $min, $hr, $mday, $mon, $yr) = gmtime $time;
-	return sprintf("%04d-%02d-%02d %02d:%02d:%02d", $yr+1900, $mon+1, $mday, $hr, $min, $sec);												
+	my ($ts) = @_;
+	if ($ts =~ /[\:\-]/) {
+		$ts =~ s/[a-zA-Z]/ /g;
+		$ts =~ s/\s+$//g;
+print "$ts\n";
+		$ts = SC->time_to_ts(SC->ts_to_time($ts));
+	} else {
+		$ts = SC->time_to_ts($ts);
+	}
+	return ($ts);
 }
 
 sub fetch_json_page
@@ -588,7 +594,7 @@ sub event_filter {
 		  on gp.profile_name = su.username});
 
     my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
-	return ($rc) unless (scalar @$idp >= 1);
+	return (1) unless (scalar @$idp >= 1);
 	while (@$idp) {
 		my $profile_name = shift @$idp;
 		my $geom = shift @$idp;
