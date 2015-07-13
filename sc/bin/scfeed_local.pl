@@ -276,7 +276,7 @@ sub shakemap_filter {
 		  from geometry_profile});
 
     my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
-	return (0) unless (scalar @$idp >= 1);
+	return (1) unless (scalar @$idp >= 1);
 	while (@$idp) {
 		my $profile_name = shift @$idp;
 		my $geom = shift @$idp;

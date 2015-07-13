@@ -351,12 +351,12 @@ sub ts_to_time {
 			=~ /(\d+)\-(\d+)\-(\d+)\s+(\d+)\:(\d+)\:(\d+)/;
 		$mon--;
 	}
-    
-    if ($config->{board_timezone} > 0) {
-		$timegm = timelocal($sec, $min, $hr, $mday, $mon, $yr-1900);
-	} else {
+
+    #if ($config->{board_timezone} > 0) {
+	#	$timegm = timelocal($sec, $min, $hr, $mday, $mon, $yr-1900);
+	#} else {
 		$timegm = timegm($sec, $min, $hr, $mday, $mon, $yr-1900);
-	}
+	#}
 	return ($timegm);
 }
 
