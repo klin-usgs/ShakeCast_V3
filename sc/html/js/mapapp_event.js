@@ -334,7 +334,7 @@ MAPAPP = (function() {
 			//sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
 			var dmg_url = '/scripts/r/damage/from_id/'+sm_id;
-			var dmg_submit = {submit_data,  'action':'summary'};
+			var dmg_submit = $.extend(submit_data,  {'action':'summary'});
 			if (facTypes != "ALL") {
 			  dmg_submit.type= facTypes;
 			}
@@ -480,7 +480,7 @@ MAPAPP = (function() {
 				//var local_url = '/scripts/shaking.pl/shaking_point/' + sm_id +
 				var local_url = '/scripts/r/shaking/shaking_point/' + sm_id +
 					'?longitude=' + event.latLng.lng() + '&latitude=' + event.latLng.lat();
-		var local_sub = {submit_data, 'longitude': event.latLng.lng(), 'latitude': event.latLng.lat()};
+		var local_sub = $.extend(submit_data, {'longitude': event.latLng.lng(), 'latitude': event.latLng.lat()});
 				$.post(local_url, local_sub, function(data) {
 		var infoContent = '<div  class="panel panel-warning"><div class="panel-heading text-center">' +
 			'<h4>No Information at Location (' + 

@@ -203,7 +203,7 @@
 			
       function fnAccordion ( )
       {
-	$.post(sm_url, {submit_data, type:type, age:age}, function(eqdata) {
+	$.post(sm_url, $.extend(submit_data, {type:type, age:age}), function(eqdata) {
 
 	  var data = eqdata.data;
 	  // Are there even any EQ to display?
@@ -386,7 +386,7 @@ function selector(sm_id) {
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = '/scripts/r/damage/marker/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(sm_url, {submit_data, all:all}, function(data) {
+		$.post(sm_url, $.extend(submit_data, {all:all}), function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {

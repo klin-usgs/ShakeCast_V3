@@ -248,7 +248,7 @@
 		var local_url = '/scripts/r/damage/datatables/' + sc_id;
 			  MAPAPP.addCaption(sc_id, type);
 	  $(".breadcrumb li").last().html(type + ' List');
-		$.post(local_url, {submit_data, type:type, start:start, length:length}
+		$.post(local_url, $.extend(submit_data, {type:type, start:start, length:length})
 			, function(data) {
 
 			// Are there even any EQ to display?
@@ -324,7 +324,7 @@ var eqDiv = {
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
 		var local_url = '/scripts/r/damage/from_id/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(local_url, {submit_data, facility:facility_id, all:all}
+		$.post(local_url, $.extend(submit_data, {facility:facility_id, all:all})
 			, function(data) {
 
 			// Are there even any EQ to display?
@@ -671,7 +671,7 @@ var eqDiv = {
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
 		var local_url = '/scripts/r/damage/from_id/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(local_url, {submit_data, facility:facility_id, all:all}, function(data) {
+		$.post(local_url, $.extend(submit_data, {facility:facility_id, all:all}), function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {

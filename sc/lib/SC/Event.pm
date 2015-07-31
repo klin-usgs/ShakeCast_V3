@@ -497,7 +497,7 @@ sub write_to_db {
 	    $self->depth,
 	    $self->event_region,
 	    $self->event_source_type,
-	    0,
+	    1,
 	    $self->event_id);
 	} else {
 	SC->dbh->do(qq/
