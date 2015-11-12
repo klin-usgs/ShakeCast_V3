@@ -99,12 +99,13 @@ sub screen_capture {
     my ($event_id, $event_version) = @_;
 	
     my $wkhtmltopdf = SC->config->{wkhtmltopdf};
-    my $url = 'http://guest:guest@localhost/html/screenshot.html?event='."$event_id-$event_version";
+    #my $url = 'http://guest:guest@localhost/html/screenshot.html?event='."$event_id-$event_version";
+    my $url = 'https://localhost/index.cgi?dest=screenshot1&event='."$event_id-$event_version";
     my $filesize = 20*1024;	#20k
     my $proxy = (SC->config->{ProxyServer}) ? ' -p '.SC->config->{ProxyServer} : '';
     
     my $rv = `/bin/touch $tmpfile`;
-    $rv = `$wkhtmltopdf --javascript-delay 8000 $proxy --width 1024 --height 534 $url $tmpfile`;
+    $rv = `$wkhtmltopdf --javascript-delay 8000 $proxy --width 1024 --height 534 '$url' $tmpfile`;
     
     SC->log(0, "Screen Capture: $event_id-$event_version ".$rv);
 

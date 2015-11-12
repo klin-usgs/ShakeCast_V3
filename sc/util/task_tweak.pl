@@ -112,22 +112,11 @@ $month=$month - 1;
 my $epoch_time = timelocal($sec, $min, $hour, $day, $month, $year);
 
 $sth_clear_dispatch = SC->dbh->do(qq{
-    delete from dispatch_task
+    update dispatch_task
+    set next_dispatch_ts = "$ts"
     where status = "PLAN"
         and request like "%$prog%"
 	});
-
-$repeat = 86400 unless ($repeat);
-$count = 99999 unless ($count);
-
-require Dispatch::Client;
-
-Dispatch::Client::set_logger($SC::logger);
-
-Dispatch::Client::dispatch(
-SC->config->{'Dispatcher'}->{'RequestPort'},
-$prog, SC::Server->this_server->server_id, "12345", $epoch_time, $repeat, $count);    
-
 
 exit;
 

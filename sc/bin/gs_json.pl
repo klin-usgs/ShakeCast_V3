@@ -499,7 +499,6 @@ sub _ts
 	if ($ts =~ /[\:\-]/) {
 		$ts =~ s/[a-zA-Z]/ /g;
 		$ts =~ s/\s+$//g;
-print "$ts\n";
 		$ts = SC->time_to_ts(SC->ts_to_time($ts));
 	} else {
 		$ts = SC->time_to_ts($ts);

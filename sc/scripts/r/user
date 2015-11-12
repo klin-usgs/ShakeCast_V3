@@ -9,6 +9,7 @@ use lib "$FindBin::Bin/../../lib";
 use Carp;
 
 use CGI;
+use CGI::Session;
 use JSON::XS;
 use Data::Dumper;
 
@@ -20,6 +21,8 @@ SC->initialize;
 my $default_options = API::APIUtil::config_options();
 
 my $self = new CGI;
+my $session = new CGI::Session(undef, $self);
+$session->expires("+10m");
 my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
 my (@args) = split '/', $arg;
 shift @args;
@@ -28,10 +31,14 @@ my $action = shift @args;
 print "Content-Type: application/json\n\n";
 
 # Authenticated
-my $username = $self->param('username') || '';
-my $password = $self->param('password') || '';
-my $valid = API::User->validate($username, $password, 1);
-return 1 unless $valid;
+#my $username = $self->param('username') || '';
+#my $password = $self->param('password') || '';
+#my $valid = API::User->validate($username, $password, 1);
+#return 1 unless $valid;
+unless ( $session->param("~logged-in") && $session->param("admin_user")) {
+    exit(0);
+}
+
 
 if (not defined *{$action}) {
 } else {
@@ -75,8 +82,8 @@ sub user_type {
 
 sub erase_type {
 
-    my $valid = API::User->validate($username, $password, 1);
-    return 1 unless $valid;
+    #my $valid = API::User->validate($username, $password, 1);
+    #return 1 unless $valid;
 	
     # Authenticated
 	my $event_results;
@@ -95,8 +102,8 @@ sub erase {
     my $user_id = $self->param('id');
     my $user_type = $self->param('type');
     my $user_name = $self->param('sc_username');
-   my $valid = API::User->validate($username, $password, 1);
-    return 1 unless $valid;
+   #my $valid = API::User->validate($username, $password, 1);
+    #return 1 unless $valid;
 	SC->log(0, "$user_id, $user_type, $user_name");
     # Authenticated
 	my $event_results;

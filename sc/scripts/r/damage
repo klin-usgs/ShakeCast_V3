@@ -9,6 +9,7 @@ use lib "$FindBin::Bin/../../lib";
 use Carp;
 
 use CGI;
+use CGI::Session;
 use JSON::XS;
 
 use SC;
@@ -22,12 +23,17 @@ my %damage_levels = new API::Damage->damage_level();
 $damage_levels{'GREY'} = "10";
 
 my $self = new CGI;
+my $session = new CGI::Session(undef, $self);
+$session->expires("+10m");
 my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
 my (@args) = split '/', $arg;
 shift @args;
 my $action = shift @args;
 
 print "Content-Type: application/json\n\n";
+unless ( $session->param("~logged-in")) {
+    exit(0);
+}
 if (not defined *{$action} ) {
 } else {
     SC->log(0, "damage: task is $action $args[0]");
