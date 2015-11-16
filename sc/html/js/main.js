@@ -12,7 +12,7 @@
         $.post(sm_url, submit_data, function(data) {
             // Are there even any EQ to display?
             if (data.user_type == 'ADMIN') {
-              $("#nav_menu").append("<li><a href='admin/'>"
+              $("#nav_menu").append("<li><a href='?dest=admin_index'>"
                   +"Administration Panel [" + username + "]</a></li>");
             }
             

@@ -165,8 +165,8 @@ SELECT e.event_id,
        f.facility_name,
        f.short_name,
        f.description,
-        f.lat_min AS facility_lat,    # kwl 20060916   
-        f.lon_min AS facility_lon,    # kwl 20060916
+        f.lat_min AS facility_lat,     
+        f.lon_min AS facility_lon,  
        r.aggregate
   FROM (((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
@@ -222,8 +222,8 @@ SELECT p.product_id,
        f.facility_name,
        f.short_name,
        f.description,
-        f.lat_min AS facility_lat,    # kwl 20060916   
-        f.lon_min AS facility_lon,    # kwl 20060916
+        f.lat_min AS facility_lat,     
+        f.lon_min AS facility_lon,  
        r.aggregate
   FROM ((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
@@ -281,12 +281,12 @@ SELECT s.shakemap_id,
        f.facility_name,
        f.short_name,
        f.description,
-        f.lat_min AS facility_lat,    # kwl 20060916   
-        f.lon_min AS facility_lon,    # kwl 20060916
-        g.lat_min AS bound_south,    # kwl 20060916
-        g.lat_max AS bound_north,    # kwl 20060916
-        g.lon_min AS bound_west,        # kwl 20060916
-        g.lon_max AS bound_east,        # kwl 20060916
+        f.lat_min AS facility_lat,     
+        f.lon_min AS facility_lon,  
+        g.lat_min AS bound_south,   
+        g.lat_max AS bound_north,   
+        g.lon_min AS bound_west,    
+        g.lon_max AS bound_east,    
        r.aggregate
   FROM ((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
@@ -350,12 +350,12 @@ SELECT s.shakemap_id,
        f.facility_name,
        f.short_name,
        f.description,
-        f.lat_min AS facility_lat,    # kwl 20060916   
-        f.lon_min AS facility_lon,    # kwl 20060916
-        g.lat_min AS bound_south,    # kwl 20060916
-        g.lat_max AS bound_north,    # kwl 20060916
-        g.lon_min AS bound_west,        # kwl 20060916
-        g.lon_max AS bound_east,        # kwl 20060916
+        f.lat_min AS facility_lat,     
+        f.lon_min AS facility_lon,  
+        g.lat_min AS bound_south,   
+        g.lat_max AS bound_north,   
+        g.lon_min AS bound_west,    
+        g.lon_max AS bound_east,    
        r.aggregate
   FROM ((((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
@@ -421,6 +421,7 @@ __SQL__
 SELECT e.event_id,
        e.event_version,
        e.event_status,
+       e.event_type,
        e.event_name,
        e.magnitude,
        e.event_location_description,
@@ -449,8 +450,8 @@ SELECT e.event_id,
        f.facility_name,
        f.short_name,
        f.description,
-        f.lat_min AS facility_lat,    # kwl 20060916   
-        f.lon_min AS facility_lon,    # kwl 20060916
+        f.lat_min AS facility_lat,    
+        f.lon_min AS facility_lon, 
        r.aggregate
   FROM ((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
@@ -504,8 +505,8 @@ SELECT p.product_id,
        f.facility_name,
        f.short_name,
        f.description,
-        f.lat_min AS facility_lat,    # kwl 20060916   
-        f.lon_min AS facility_lon,    # kwl 20060916
+        f.lat_min AS facility_lat,    
+        f.lon_min AS facility_lon, 
        r.aggregate
   FROM (((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
@@ -560,12 +561,12 @@ SELECT s.shakemap_id,
        f.facility_name,
        f.short_name,
        f.description,
-        f.lat_min AS facility_lat,    # kwl 20060916   
-        f.lon_min AS facility_lon,    # kwl 20060916
-        g.lat_min AS bound_south,    # kwl 20060916
-        g.lat_max AS bound_north,    # kwl 20060916
-        g.lon_min AS bound_west,        # kwl 20060916
-        g.lon_max AS bound_east,        # kwl 20060916
+        f.lat_min AS facility_lat,    
+        f.lon_min AS facility_lon, 
+        g.lat_min AS bound_south,  
+        g.lat_max AS bound_north,  
+        g.lon_min AS bound_west,   
+        g.lon_max AS bound_east,   
        r.aggregate
   FROM (((((((notification n
     INNER JOIN notification_request r ON
@@ -626,12 +627,12 @@ SELECT s.shakemap_id,
        f.facility_name,
        f.short_name,
        f.description,
-        f.lat_min AS facility_lat,    # kwl 20060916   
-        f.lon_min AS facility_lon,    # kwl 20060916
-        g.lat_min AS bound_south,    # kwl 20060916
-        g.lat_max AS bound_north,    # kwl 20060916
-        g.lon_min AS bound_west,        # kwl 20060916
-        g.lon_max AS bound_east,        # kwl 20060916
+        f.lat_min AS facility_lat,    
+        f.lon_min AS facility_lon, 
+        g.lat_min AS bound_south,  
+        g.lat_max AS bound_north, 
+        g.lon_min AS bound_west,   
+        g.lon_max AS bound_east,   
        r.aggregate
   FROM (((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id = r.notification_request_id)
@@ -1696,45 +1697,27 @@ sub sendnotification {
 	my $smtp;
 	if ($config->{Notification}->{Security} eq 'TLS') {
 		eval {
-			use Net::SMTP::TLS;  
+			use Net::SMTPS;  
 			my $port = ($config->{Notification}->{Port}) ? $config->{Notification}->{Port} : 587;
-			$smtp = Net::SMTP::TLS->new(
+			$smtp = Net::SMTPS->new(
 				$config->{Notification}->{SmtpServer},
-				Port => $port,
-				User    =>   $config->{Notification}->{Username},  
-				Password=>   $config->{Notification}->{Password}
-			) or
+				Hello => $from, Debug=>1, Port => $port, doSSL => 'starttls') or
 			($delivery_comment = "Can't create SMTP object: $!/$^E",
 			 error($delivery_comment),
 			 return -1);
-			 
-
-			$smtp->mail($from);  
-			$smtp->to(@to);  
-			$smtp->data;  
-			$smtp->datasend($msg->as_string);  
-			$smtp->dataend;  
-			$smtp->quit;  
 		};
-		
-		if ($@) {
-			error($@);
-			return 0;
-		}
-
+	} elsif ($config->{Notification}->{Security} eq 'SSL') {
+		eval {
+			use Net::SMTPS;  
+			my $port = ($config->{Notification}->{Port}) ? $config->{Notification}->{Port} : 465;
+			$smtp = Net::SMTPS->new(
+				$config->{Notification}->{SmtpServer},
+				Hello => $from, Debug=>1, Port => $port, doSSL => 'ssl') or
+			($delivery_comment = "Can't create SMTP object: $!/$^E",
+			 error($delivery_comment),
+			 return -1);
+		};
 	} else {
-		if ($config->{Notification}->{Security} eq 'SSL') {
-			eval {
-				use Net::SMTP::SSL;  
-				my $port = ($config->{Notification}->{Port}) ? $config->{Notification}->{Port} : 465;
-				$smtp = Net::SMTP::SSL->new(
-					$config->{Notification}->{SmtpServer},
-					Port => $port) or
-				($delivery_comment = "Can't create SMTP object: $!/$^E",
-				 error($delivery_comment),
-				 return -1);
-			};
-		} else {
 			eval {
 				use Net::SMTP;
 				$smtp = Net::SMTP->new($config->{Notification}->{SmtpServer}) or
@@ -1742,46 +1725,46 @@ sub sendnotification {
 				 error($delivery_comment),
 				 return -1);
 			};
-		}
-		if ($config->{Notification}->{Username} ne '') {
-			my $username = $config->{Notification}->{Username};
-			my $password = $config->{Notification}->{Password};
-			$smtp->auth($username, $password);
-			unless ($smtp->ok) {
-			eprmail($smtp, "authentication");
-			return $smtp->status == 4 ? 0 : -1;
-			}
-		}
-	
-		eval {
-			$smtp->mail($from);
-			unless ($smtp->ok) {
-			eprmail($smtp, "cmd=<mail>, to=<@to>");
-			return $smtp->status == 4 ? 0 : -1;
-			}
-			$smtp->to(@to, { SkipBad => 1 });
-			unless ($smtp->ok) {
-			eprmail($smtp, "cmd=<rcpt>, to=<@to>");
-			return $smtp->status == 4 ? 0 : -1;
-			}
-			$smtp->data;
-			unless ($smtp->ok) {
-			eprmail($smtp, "cmd=<data>, to=<@to>");
-			return $smtp->status == 4 ? 0 : -1;
-			}
-			$smtp->datasend($msg->as_string)     or
-				($delivery_comment = "Can't use smtp->datasend()",
-				 error($delivery_comment),
-				 return -1);
-			$smtp->dataend;
-		};
-		
+	}
+	if ($config->{Notification}->{Username} ne '') {
+		my $username = $config->{Notification}->{Username};
+		my $password = $config->{Notification}->{Password};
+		$smtp->auth($username, $password);
 		unless ($smtp->ok) {
-		eprmail($smtp, "cmd=<dataend>, to=<$to>");
+		eprmail($smtp, "authentication");
 		return $smtp->status == 4 ? 0 : -1;
 		}
-		eprmail($smtp, "sent: to=<$to>");
 	}
+	
+	eval {
+		$smtp->mail($from);
+		unless ($smtp->ok) {
+		eprmail($smtp, "cmd=<mail>, to=<@to>");
+		return $smtp->status == 4 ? 0 : -1;
+		}
+		$smtp->to(@to, { SkipBad => 1 });
+		unless ($smtp->ok) {
+		eprmail($smtp, "cmd=<rcpt>, to=<@to>");
+		return $smtp->status == 4 ? 0 : -1;
+		}
+		$smtp->data;
+		unless ($smtp->ok) {
+		eprmail($smtp, "cmd=<data>, to=<@to>");
+		return $smtp->status == 4 ? 0 : -1;
+		}
+		$smtp->datasend($msg->as_string)     or
+			($delivery_comment = "Can't use smtp->datasend()",
+			 error($delivery_comment),
+			 return -1);
+		$smtp->dataend;
+	};
+	
+	unless ($smtp->ok) {
+	eprmail($smtp, "cmd=<dataend>, to=<$to>");
+	return $smtp->status == 4 ? 0 : -1;
+	}
+	eprmail($smtp, "sent: to=<$to>");
+
     return 1;
 }
 

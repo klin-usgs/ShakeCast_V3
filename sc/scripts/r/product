@@ -9,6 +9,7 @@ use lib "$FindBin::Bin/../../lib";
 use Carp;
 
 use CGI;
+use CGI::Session;
 use JSON::XS;
 use Data::Dumper;
 
@@ -22,12 +23,17 @@ my $hash_file = SC->config->{'RootDir'}.'/db/product.hash';
 store_hash() unless (-e $hash_file);
 
 my $self = new CGI;
+my $session = new CGI::Session(undef, $self);
+$session->expires("+10m");
 my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
 my (@args) = split '/', $arg;
 shift @args;
 my $action = shift @args;
 
 print "Content-Type: application/json\n\n";
+unless ( $session->param("~logged-in")) {
+    exit(0);
+}
 if (not defined *{$action} ) {
 } else {
     SC->log(0, "product: task is $action $args[0]");
@@ -63,6 +69,9 @@ sub product_source_list {
   # / (with authentication)
 sub product_type {
 	my ($type) = @_;
+	unless ( $session->param("admin_user")) {
+		return 0;
+	}
 
 	my $product = new API::Product->product_type_list($type);
 
@@ -70,6 +79,9 @@ sub product_type {
   };
   
 sub toggle {
+	unless ( $session->param("admin_user")) {
+		return 0;
+	}
     # Authenticated
     my $product_id = $self->param('product_id');
     my $save_flag = $self->param('save');
@@ -83,6 +95,9 @@ sub toggle {
   };
   
 sub store_hash {
+	unless ( $session->param("admin_user")) {
+		return 0;
+	}
     # Authenticated
 
 	my %product_list;

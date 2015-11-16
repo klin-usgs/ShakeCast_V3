@@ -1,9 +1,9 @@
 ; Default HTML Email Notification
 ;
-From: ShakeCast Win64 <%HEADER_FROM%>
+From: ShakeCast Linux <%HEADER_FROM%>
 To: %HEADER_TO%
 Subject: Inspection Priority M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
-Attach: C:/ShakeCast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
+Attach: /usr/local/shakecast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
 ; End -- header
 
 Grid generated at %GENERATION_TIMESTAMP% shows that

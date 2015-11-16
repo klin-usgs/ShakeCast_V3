@@ -135,7 +135,7 @@ sub validate {
     $password = sha256_hex($password);
     my @argv;
     my $sql = qq/
-	select shakecast_user
+	select shakecast_user, user_type
 	    FROM 
 		    shakecast_user
 	    where username = ?
@@ -146,12 +146,12 @@ sub validate {
     }
     eval {
 	$sth = SC->dbh->prepare($sql);
-	$p = SC->dbh->selectcol_arrayref($sth, undef,
+	$p = SC->dbh->selectall_arrayref($sth, undef,
 	    $username, $password);
     };
 
     if (scalar @$p > 0) {
-	return 1;
+	return $p->[0];
     } else {
 	return 0;
     }

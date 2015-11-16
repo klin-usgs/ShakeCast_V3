@@ -1,21 +1,43 @@
-; Default HTML Email Notification -- header
+; Default HTML Email Notification
+; Based on Caltrans template
 ;
-From: ShakeCast <%HEADER_FROM%>
+From: ShakeCast V3 <%HEADER_FROM%>
 To: %HEADER_TO%
-Subject: M%MAGNITUDE% - %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%) 
-Attach: C:/ShakeCast/sc/data/eq_product/%EVENT_ID%/gm_epicenter.png
+Subject: %_ITEMNO% New Event(s), Max Magnitude: M%_MAX_MAGNITUDE%
+Attach: /usr/local/shakecast/sc/images/header.jpg
 ; End -- header
 
-The following <font color=red>%_ITEMNO%</font> New Event(s) occurred 
-beginning at <b>%EVENT_TIMESTAMP%</b>:
-<p>
-Reported by: <i>Server ID = %SERVER_ID%, DNS = %DNS_ADDRESS%</i>
-<p>
-<img src="cid:gm_epicenter.png">
+
+
+
+<table width=700 border=1 bordercolor=black cellpadding=15 cellspacing=0 bgcolor=white>
+
+<tr><td>
+<img alt="ShakeCast" height=60 width=700 src="cid:header.jpg">
+</td></tr>
+
+<tr><td height=30 bgcolor=black>
+<font size=3 face="Arial" color="white"><b>Preliminary Earthquake Notification</b></font>
+</td></tr>
+
+<tr><td>
+<font size=2 face="Arial">
+This report supersedes any earlier reports about this event.  This is a computer-generated message and has not yet been reviewed by an Engineer or Seismologist.  Epicenter and magnitude are published by the <a href=http://earthquake.usgs.gov/earthquakes/>USGS</a>.  Reported magnitude may be revised and will not be reported through ShakeCast. The <a href=http://earthquake.usgs.gov/earthquakes/>USGS</a> website should be referenced for the most up-to-date information.  Inspection prioritization emails will be sent shortly if ShakeCast determines significant shaking occurred at user's infrastructure.  An interactive version of this report is accessible on the <a href=https://%DNS_ADDRESS%>ShakeCast internet/intranet website</a>.  
+</font>
+<br>
+</td></tr>
+
+<tr><td height=30 bgcolor=black>
+<font size=3 face="Arial" color="white"><b>Earthquake Details</b></font>
+</td></tr>
+
+<tr><td>
+<br>
+<font size=2 face="Arial">
 <table border=1 bordercolor=black cellpadding=5 cellspacing=0>
 <tr>
+  <th>Map
   <th>ID
-  <th>Ver
   <th>Time
   <th>Mag
   <th>Lat

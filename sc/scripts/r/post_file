@@ -3,6 +3,7 @@
 use warnings;
 use strict;
 use CGI;
+use CGI::Session;
 use JSON::XS;
 
 use FindBin;
@@ -15,15 +16,20 @@ use API::APIUtil;
 SC->initialize;
 
 my $self = new CGI;
+my $session = new CGI::Session(undef, $self);
+$session->expires("+10m");
 print "Content-Type: application/json\n\n";
 
 my $web_home = "$ENV{DOCUMENT_ROOT}";
 my $sc_home = SC->config->{'RootDir'};
 # Authenticated
-my $username = $self->param('username') || '';
-my $password = $self->param('password') || '';
-my $valid = API::User->validate($username, $password, 1);
-exit 1 unless $valid;
+#my $username = $self->param('username') || '';
+#my $password = $self->param('password') || '';
+#my $valid = API::User->validate($username, $password, 1);
+#exit 1 unless $valid;
+unless ( $session->param("~logged-in") && $session->param("admin_user")) {
+    exit(0);
+}
 
 #Getting parametres from form
 my $filename = $self->param("pic");
@@ -65,7 +71,7 @@ if ($ext =~ /zip/i) {
 ##this is the only way to send msg back to the client
 my $json = {'status' => 'File was uploaded successfuly!',
 	    'filename' => "$filename",
-	    'username' => "$username",
+	    #'username' => "$username",
 	    'action'	=> $result,
 	    'ext' => "$ext",
 	    };

@@ -191,7 +191,7 @@ MAPAPP = (function() {
 				//map = MAPAPP.init(latlng, 8);
 
 				loadSM(rectBounds, img);
-				var html_array = ['<a href="/html/event.html?event=' + sm_id + '"><h3>M'+ data.magnitude,
+				var html_array = ['<a href="?dest=event&event=' + sm_id + '"><h3>M'+ data.magnitude,
 						(facility.mag_type) ? ' (' + facility.mag_type + ') ' : ' ',
 						'<small>' + data.event_location_description,
 						', ' + data.event_timestamp,
@@ -218,7 +218,7 @@ MAPAPP = (function() {
 			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
 			var dmg_url = '/scripts/r/damage/from_id/'+sm_id;
 			var all = (allmarker_flag) ? 1 : 0;
-			$.post(dmg_url, {submit_data, action:'summary', all:all}, function(summary) {
+			$.post(dmg_url, $.extend(submit_data, {action:'summary', all:all}), function(summary) {
 				var damage_summary = '<div class="progress">';
 				// Are there even any EQ to display?
 				if (summary.count > 0) {
@@ -515,7 +515,7 @@ MAPAPP = (function() {
 		//var local_url = '/scripts/shaking.pl/shaking_point/' + sm_id +
 		var local_url = '/scripts/r/shaking/shaking_point/' + sm_id +
 			'?longitude=' + event.latLng.lng() + '&latitude=' + event.latLng.lat();
-		$.post(local_url, {submit_data, 'longitude': event.latLng.lng(), 'latitude': event.latLng.lat()}
+		$.post(local_url, $.extend(submit_data, {'longitude': event.latLng.lng(), 'latitude': event.latLng.lat()})
 			, function(data) {
 		var infoContent = '<div  class="panel panel-warning"><div class="panel-heading text-center">' +
 			'<h4>No Information at Location (' + 

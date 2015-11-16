@@ -418,8 +418,8 @@ sub process {
 			unless (ref $colp->{COMPONENT} eq 'HASH');
         my $geom_type   = $colp->{FEATURE}->{GEOM_TYPE}
 			unless (ref $colp->{FEATURE}->{GEOM_TYPE} eq 'HASH');
-        my $geom_description = (ref $colp->{FEATURE}->{DESCRIPTION} eq 'HASH') ?
-			$description : $colp->{FEATURE}->{DESCRIPTION};
+        my $geom_description = $colp->{FEATURE}->{DESCRIPTION}
+			unless (ref $colp->{FEATURE}->{DESCRIPTION} eq 'HASH');
         my $geom   = $colp->{FEATURE}->{GEOM}
 			unless (ref $colp->{FEATURE}->{GEOM} eq 'HASH');
 		my @geom;
@@ -429,6 +429,7 @@ sub process {
 			$geom = $geom[4];
 		}
 		my $fragility = $colp->{FRAGILITY};
+		my $attribute = $colp->{ATTRIBUTE};
 		
         my $fac_type = lookup_facility_type($type);
         if ($fac_type <= 0) {
@@ -617,16 +618,15 @@ sub process {
 			}
         }
 
-       if (%attrs && !$processed_fac{$fac_id}) {
+       if ($attribute && !$processed_fac{$fac_id}) {
             if ($mode == M_UPDATE) {
                 # delete any attributes mentioned in the input file
                 $sth_del_specified_attrs->execute($fac_id);
             }
-            while (my ($attr, $ix) = each %attrs) {
-                my $val = $colp->[$ix];
+            while (my ($attr, $val) = each %$attribute) {
                 # don't insert null attribute values
-                next unless defined $val and $val ne '';
-                $sth_ins_attr->execute($fac_id, $attr, $colp->[$ix]);
+                next if (ref $val eq 'HASH');
+                $sth_ins_attr->execute($fac_id, $attr, $val);
             }
         }
 
