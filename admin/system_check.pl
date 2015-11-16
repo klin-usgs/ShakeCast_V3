@@ -99,6 +99,9 @@ my @packages = ('MinGW64'	=> 'MinGW64',
 				'Crypt::SaltedHash'	=> 'Crypt-SaltedHash', 
 				'Digest::SHA'	=> 'Digest-SHA',
 				'XML::Twig'	=> 'XML-Twig',
+				'CGI::Session'	=> 'CGI-Session',
+				'HTML::Template'	=> 'HTML-Template',
+				'Net::SMTPS'	=> 'Net-SMTPS',
 				);
 				
 my $applications = {'Apache'	=> 'ServerRoot', 
