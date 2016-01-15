@@ -17,11 +17,6 @@ use SC;
 use API::Product;
 use API::APIUtil;
 
-SC->initialize;
-my $default_options = API::APIUtil::config_options();
-my $hash_file = SC->config->{'RootDir'}.'/db/product.hash';
-store_hash() unless (-e $hash_file);
-
 my $self = new CGI;
 my $session = new CGI::Session(undef, $self);
 $session->expires("+10m");
@@ -29,6 +24,11 @@ my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
 my (@args) = split '/', $arg;
 shift @args;
 my $action = shift @args;
+
+SC->initialize;
+my $default_options = API::APIUtil::config_options();
+my $hash_file = SC->config->{'RootDir'}.'/db/product.hash';
+store_hash() unless (-e $hash_file);
 
 print "Content-Type: application/json\n\n";
 unless ( $session->param("~logged-in")) {
