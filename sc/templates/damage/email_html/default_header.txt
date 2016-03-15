@@ -4,8 +4,8 @@
 From: ShakeCast V3 <%HEADER_FROM%>
 To: %HEADER_TO%
 Subject: POTENTIAL IMPACTS: %FACILITY_TYPE%, %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID% Version %SHAKEMAP_VERSION%) 
-Attach: /usr/local/shakecast/sc/images/header.jpg
-Attach: /usr/local/shakecast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
+Attach: C:/shakecast/sc/images/header.jpg
+Attach: c:/shakecast/sc/data/%SHAKEMAP_ID%-%SHAKEMAP_VERSION%/intensity.jpg
 ; End -- header
 
 
