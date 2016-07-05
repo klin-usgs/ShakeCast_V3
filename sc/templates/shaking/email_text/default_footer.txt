@@ -1,4 +1,0 @@
-Number of Facilities: %_ITEMNO%
-Max Magnitude:    %_MAX_MAGNITUDE%
-==========
-;;;;;

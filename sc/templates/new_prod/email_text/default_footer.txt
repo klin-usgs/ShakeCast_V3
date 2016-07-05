@@ -1,4 +1,0 @@
-==========
-
-Number of Products: %_ITEMNO%
-;;;;;

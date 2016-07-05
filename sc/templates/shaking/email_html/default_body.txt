@@ -1,6 +1,0 @@
-<tr>
-<td>%FACILITY_NAME%
-<td>%METRIC%
-<td>%GRID_VALUE%
-</tr>
-

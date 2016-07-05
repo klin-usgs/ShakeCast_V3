@@ -1,6 +1,0 @@
-;
-;;; config for email html
-;
-sort severity_rank/d grid_value/d exceedence_ratio/d facility_name/t
-;
-;;;

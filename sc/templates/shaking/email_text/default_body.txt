@@ -1,3 +1,0 @@
-Facility:  %FACILITY_NAME%
-Metric:    %METRIC%
-Value:     %GRID_VALUE%
