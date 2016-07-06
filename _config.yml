@@ -1,0 +1,12 @@
+# Site settings
+title: ShakeCast Guides
+email: klin@usgs.gov
+description: > # this means to ignore newlines until "baseurl:"
+  ShakeCast is a freely available, open-source, application we developed for automatic ShakeMap use and delivery, that provides users notifications about potential damage at their critical facilities after earthquakes. Rather than simply looking at ShakeMaps, lifeline, transportation and other critical users can automatically evaluate the likelihood of damage at their own facilities, prioritizing post-earthquake inspection and expediting their response.  
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "http://yourdomain.com" # the base hostname & protocol for your site
+#twitter_username: jekyllrb
+github_username:  klin-usgs
+
+# Build settings
+markdown: kramdown
