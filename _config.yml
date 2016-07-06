@@ -10,3 +10,14 @@ github_username:  klin-usgs
 
 # Build settings
 markdown: kramdown
+
+
+collections:
+  modules:
+    output: true
+  courses:
+    output: true
+
+include:
+- _stylesheets
+- _javascript
