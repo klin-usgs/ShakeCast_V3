@@ -1,10 +1,15 @@
-# GitHub Training Kit
+---
+layout: page
+title: README
+permalink: /readme.html
+---
+# GitHub Training Kit {#database-connection}
 
 This is the official courseware for the [GitHub Training Team](http://training.github.com). This repository provides open source materials and slides for teaching GitHub Classes under the [_CC BY 4.0_ license](http://creativecommons.org/licenses/by/4.0/).
 
 We know that part of effectively sharing GitHub and Git with the world goes beyond our team's course offerings. We are pleased to provide you with this training kit that you can use to teach these same concepts at your company, for a user group, or at a conference.
 
-## Download
+## Download {#email-server}
 
 We know that many of the users of this repository are just focused on getting the materials and teaching from them.  We've made that easy.
 
@@ -21,9 +26,9 @@ Sometimes you can't download the repository at work because of firewall rules, b
 4. Switch into the test_site directory, `cd test_site`.
 5. View the site with `python -m SimpleHTTPServer`. _Note: Some servers are obviously more advance than others and can handle redirects, smart recognition of `.html` files, etc_
 
-## Contribute
+## Contribute 
 
-WeÕre eager to have your help in improving this kit. If you have an idea for a change, start by opening a new [Issue](https://github.com/github/training-kit/issues) so we can discuss and help guide your contribution to the right location. If you have corrections or kit contributions, we'd be glad to receive them via a [Pull Request](https://help.github.com/articles/using-pull-requests). For kit contributions, we ask you to share in our mindset of minimalism.
+Weâ€™re eager to have your help in improving this kit. If you have an idea for a change, start by opening a new [Issue](https://github.com/github/training-kit/issues) so we can discuss and help guide your contribution to the right location. If you have corrections or kit contributions, we'd be glad to receive them via a [Pull Request](https://help.github.com/articles/using-pull-requests). For kit contributions, we ask you to share in our mindset of minimalism.
 
 ### Class Material
 
@@ -48,10 +53,11 @@ The class materials are written in [Markdown](http://whatismarkdown.com), a [lig
 The class material content possess two specialized uses of Markdown for slide-like rendering and formatting:
 
 - Full-screen slides are preceded with a `---` and followed by `---`
-- Step-by-step *lab* sections are wrapped with `{% capture lab %}` and `{% endcapture %}{% include lab %}`
+- Step-by-step *lab* sections are wrapped with `{% capture lab %}` and `{% endcapture %}`
 
  This repository is based on [Hydeslides](https://github.com/jordanmccullough/HydeSlides). That project offers additional information on the file and directory structure.
 
 ## Build
 
 The build of this repository is fully automated through several shell scripts. To perform a build of the materials identical to that of our continuous integration server, from the top directory of this project, run `script/cibuild` and then inspect the output in the `_site` directory.
+<d
