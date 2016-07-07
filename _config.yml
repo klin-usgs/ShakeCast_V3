@@ -17,6 +17,8 @@ collections:
     output: true
   courses:
     output: true
+  operator:
+    output: true
 
 include:
 - _stylesheets
