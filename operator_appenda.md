@@ -73,27 +73,28 @@ _Example 1 -- Point Facilities_
 
 Assume we have a file named _ca\_cities.csv_ containing California cities that we want to load into the ShakeCast database.  The file is in CSV format and includes the name of each city and the latitude/longitude of its city center or city hall.  Records in the file are of the form
 
+```
   Rancho Cucamonga,34.1233,-117.5794
-
   Pasadena,34.1561,-118.1318
+```
 
 The file is missing two required fields,external\_facility\_id and facility\_type.  Since the city name is unique we can add a new column that is a copy of the name column and use that as the external\_facility\_id.  Another column containing the value CITY for each row is added for the facility\_type.  You can either make these changes using a spreadsheet program or with a simple script written in a text processing language like Perl.
 
 After making these modifications the records look like
 
+```
   CITY,Rancho Cucamonga,Rancho Cucamonga,34.1233,-117.5794
-
   CITY,Pasadena,Pasadena,34.1561,-118.1318
+```
 
 The input file also needs a header record; after adding one the input file looks like
 
+```
   FACILITY\_TYPE,EXTERNAL\_FACILITY\_ID,FACILITY\_NAME,LAT,LON
-
   CITY,Rancho Cucamonga,Rancho Cucamonga,34.1233,-117.5794
-
   CITY,Pasadena,Pasadena,34.1561,-118.1318
-
    ...
+```
 
 The facilities in this file can now be loaded into ShakeCast using the command
 
@@ -103,27 +104,24 @@ _Example 2 -- Fragility Parameters_
 
 Building on the previous example, assume a simple model where Instrumental Intensity (MMI) above 7 corresponds to a high-level alert (RED), MMI between 5 and 7 corresponds to a medium-level alert (YELLOW), and MMI below 5 corresponds to a low alert level (GREEN).  The lower threshold of each range (1, 5, 7) is appended to every record in the input file and the header record is changed to reflect the added fields:
 
+```
   FACILITY\_TYPE,EXTERNAL\_FACILITY\_ID,FACILITY\_NAME,LAT,LON, \
-
         METRIC:MMI:GREEN,METRIC:MMI:YELLOW,METRIC:MMI:RED
-
   CITY,Rancho Cucamonga,Rancho Cucamonga,34.1233,-117.5794,1,5,7
-
   CITY,Pasadena,Pasadena,34.1561,-118.1318,1,5,7
-
    ...
+```
 
 _Example 3 -- Multiple Attributes and Multiple Metrics_
 
 You can include multiple attributes, multiple metrics, or multiple attributes and multiple metrics for each row of an import file.  For example,
 
+```
   FACILITY\_TYPE,EXTERNAL\_FACILITY\_ID,ATTR:COUNTY, ATTR:SIZE,\
-
         METRIC:MMI:GREEN, METRIC:MMI:YELLOW, METRIC:MMI:RED
-
   CITY,Rancho Cucamonga,San Bernardino,Small,1,2,6
-
   CITY,Pasadena,os Angeles,Medium,1,2,6
+```
 
 This file would be loaded using the command
 
@@ -173,19 +171,15 @@ The metric-name values are defined by the ShakeMap system, and are generally not
 
 Assume a simple probability model where Instrumental Intensity (MMI) with ALPHA of 8 and BETA of 0.6 corresponds to a high-level alert (RED), MMI with ALPHA of 7 and BETA of 0.6 corresponds to a medium-level alert (YELLOW), and MMI with ALPHA of 5 and BETA of 0.6 corresponds to a low-level alert (GREEN).  The input file and the header record is changed to reflect the added fields:
 
+```
   FACILITY\_TYPE,EXTERNAL\_FACILITY\_ID, \
-
        METRIC:MMI:ALPHA:GREEN,METRIC:MMI:BETA:GREEN, \
-
         METRIC:MMI:ALPHA:YELLOW,METRIC:MMI:BETA:YELLOW, \
-
         METRIC:MMI:ALPHA:RED,METRIC:MMI:BETA:RED
-
   CITY,Rancho Cucamonga,Rancho Cucamonga,34.1233,-117.5794,5,0.6,7,0.6,8,0.6
-
   CITY,Pasadena,Pasadena,34.1561,-118.1318,5,0.6,7,0.6,8,0.6
-
    ...
+```
 
 **Facility Feature Data**
 
@@ -224,20 +218,15 @@ You can use this field to include a description of the facility.  The size limit
 
 Assume a simple probability model where Instrumental Intensity (MMI) with ALPHA of 8 and BETA of 0.6 corresponds to a high-level alert (RED), MMI with ALPHA of 7 and BETA of 0.6 corresponds to a medium-level alert (YELLOW), and MMI with ALPHA of 5 and BETA of 0.6 corresponds to low-level alert (GREEN).  The input file and the header record is changed to reflect the added fields:
 
+```
   FACILITY\_TYPE,EXTERNAL\_FACILITY\_ID, \
-
         METRIC:MMI:ALPHA:GREEN,METRIC:MMI:BETA:GREEN, \
-
         METRIC:MMI:ALPHA:YELLOW,METRIC:MMI:BETA:YELLOW, \
-
         METRIC:MMI:ALPHA:RED,METRIC:MMI:BETA:RED
-
   CITY,Rancho Cucamonga,Rancho Cucamonga,34.1233,-117.5794,5,0.6,7,0.6,8,0.6
-
   CITY,Pasadena,Pasadena,34.1561,-118.1318,5,0.6,7,0.6,8,0.6
-
    ...
-
+```
 
 
 **User Group Data**
@@ -248,57 +237,39 @@ In ShakeCast V3, GROUP polygon data is used as a geospatial filter for incoming 
 
 User GROUP data is given in Apache config format.  Lines beginning with '#' and empty lines will be ignored. Spaces at the beginning and the end of a line will also be ignored as well as tabulators.  If you need spaces at the end or the beginning of a value you can use apostrophe **"**. An option line starts with its name followed by a value. An '=' sign is optional.  Some possible examples:
 
+```
         user    max
-
         user  = max
-
         user            max
+```
 
 If there is more than one statement with the same name, it will create an array instead of a scalar.
 
 Each group is defined as a **block** of options.  A **block** looks much like a block in the apache config format. It starts with < **blockname** > and ends with </ **blockname** >. An example:
 
- <CI>
-
+```
+<CI>
         POLY         35.8000 -116.4000        \
-
                 34.0815 -114.4717        \
-
                 32.0000 -114.3333        \
-
                 32.0000 -120.5000        \
-
                 34.5000 -121.2500        \
-
                 37.2167 -118.0167        \
-
                 36.6847 -117.7930        \
-
                 35.8000 -116.4000
-
         <NOTIFICATION>
-
                     NOTIFICATION\_TYPE        NEW\_EVENT
-
                     DELIVERY\_METHOD        EMAIL\_HTML
-
                 EVENT\_TYPE                ALL
-
         </NOTIFICATION>
-
         <NOTIFICATION>
-
                     NOTIFICATION\_TYPE        NEW\_PROD
-
                     DELIVERY\_METHOD        EMAIL\_HTML
-
                     PRODUCT\_TYPE                GRID\_XML
-
                 EVENT\_TYPE                ALL
-
         </NOTIFICATION>
-
  </CI>
+```
 
 Each group is defined as a **block** of options.  A **block** looks much like a block in the well known apache config format. It starts with < **blockname** > and ends with </ **blockname** >. The above example defines the user group **CI**.
 
@@ -416,12 +387,11 @@ where _shakecast-user_ is a valid user id.  In V3, use of this option is discour
 
 Assume we have a file named _test\_user.csv_ containing users that we want to load into the ShakeCast database.  The file is in CSV format and includes the name of each user, user delivery method and group association.  The input file with the header record looks like
 
+```
 USER\_TYPE,USERNAME,PASSWORD,FULL\_NAME,EMAIL\_ADDRESS,PHONE\_NUMBER,DELIVERY:PAGER,DELIVERY:EMAIL\_HTML,GROUP:GLOBAL
-
 USER,test\_user,sc4all,Test User,testuser@usgs.gov,(123)456-7890, testuser@usgs.gov, testuser@usgs.gov,GLOBAL
-
    ...
-
+```
 
 
 **Plain-Text Product Template**
@@ -434,19 +404,15 @@ This section covers a brief summary of the template directives.  ShakeCast speci
 
 Evaluate and print a variable or value.
 
+```
     [%   GET variable %]
-
     [%       variable %]
-
     [%       hash.key %]
-
     [%         list.n %]
-
     [%     code(args) %]
-
     [% obj.meth(args) %]
-
     [%  "value: $var" %]
+```
 
 **CALL**
 
@@ -458,324 +424,270 @@ As per GET but without printing result (e.g. call code)
 
 Assign a values to variables.
 
+```
     [% SET variable = value %]    # 'SET' also optional
-
     [%     variable = other\_variable
-
            variable = 'literal text @ $100'
-
            variable = "interpolated text: $var"
-
            list     = [val, val, val, val, ...]
-
            list     = [val..val]
-
            hash     = { var => val, var => val, ... }
-
     %]
+```
 
 **DEFAULT**
 
+```
 Like SET above, but variables are only set if currently unset (i.e. have no true value).
-
     [% DEFAULT variable = value %]
+```
 
 **INSERT**
 
+```
 Insert a file without any processing performed on the contents.
-
     [% INSERT legalese.txt %]
+```
 
 **INCLUDE**
 
+```
 Process another template file or block and include the output. Variables are localised.
-
     [% INCLUDE template %]
-
     [% INCLUDE template  var = val, ... %]
+```
 
 **PROCESS**
 
 As INCLUDE above, but without localising variables.
 
+```
     [% PROCESS template %]
-
     [% PROCESS template  var = val, ... %]
+```
 
 **WRAPPER**
 
 Process the enclosed block WRAPPER ... END block then INCLUDE the named template, passing the block output in the 'content' variable.
 
+```
     [% WRAPPER template %]
-
        content...
-
     [% END %]
+```
 
 **BLOCK**
 
 Define a named template block for subsequent INCLUDE, PROCESS, etc.,
 
+```
     [% BLOCK template %]
-
        content
-
     [% END %]
+```
 
 **FOREACH**
 
 Repeat the enclosed FOREACH ... END block for each value in the list.
 
+```
     [% FOREACH variable = [val, val, val] %]    # either
-
     [% FOREACH variable = list %]                 # or
-
     [% FOREACH list %]                            # or
-
        content...
-
        [% variable %]
-
     [% END %]
+```
 
 **WHILE**
 
 Enclosed WHILE ... END block is processed while condition is true.
 
+```
     [% WHILE condition %]
-
        content
-
     [% END %]
+```
 
 **IF / UNLESS / ELSIF / ELSE**
 
 Enclosed block is processed if the condition is true / false.
 
+```
     [% IF condition %]
-
        content
-
     [% ELSIF condition %]
-
          content
-
     [% ELSE %]
-
          content
-
     [% END %]
-
     [% UNLESS condition %]
-
        content
-
     [% # ELSIF/ELSE as per IF, above %]
-
        content
-
     [% END %]
+```
 
 **SWITCH / CASE**
 
 Multi-way switch/case statement.
 
+```
     [% SWITCH variable %]
-
     [% CASE val1 %]
-
        content
-
     [% CASE [val2, val3] %]
-
        content
-
     [% CASE %]         # or [% CASE DEFAULT %]
-
        content
-
     [% END %]
+```
 
 **MACRO**
 
 Define a named macro.
 
+```
     [% MACRO name <directive> %]
-
     [% MACRO name(arg1, arg2) <directive> %]
-
     ...
-
     [% name %]
-
     [% name(val1, val2) %]
+```
 
 **FILTER**
 
 Process enclosed FILTER ... END block then pipe through a filter.
 
+```
     [% FILTER name %]                       # either
-
     [% FILTER name( params ) %]             # or
-
     [% FILTER alias = name( params ) %]     # or
-
        content
-
     [% END %]
+```
 
 **USE**
 
 Load a "plugin" module, or any regular Perl module if LOAD\_PERL option is set.
 
+```
     [% USE name %]                          # either
-
     [% USE name( params ) %]                # or
-
     [% USE var = name( params ) %]          # or
-
     ...
-
     [% name.method %]
-
     [% var.method %]
+```
 
 **PERL / RAWPERL**
 
 Evaluate enclosed blocks as Perl code (requires EVAL\_PERL option to be set).
 
+```
     [% PERL %]
-
          # perl code goes here
-
          $stash->set('foo', 10);
-
          print "set 'foo' to ", $stash->get('foo'), "\n";
-
          print $context->include('footer', { var => $val });
-
     [% END %]
-
     [% RAWPERL %]
-
        # raw perl code goes here, no magic but fast.
-
        $output .= 'some output';
-
     [% END %]
+```
 
 **TRY / THROW / CATCH / FINAL**
 
 Exception handling.
 
+```
     [% TRY %]
-
          content
-
        [% THROW type info %]
-
     [% CATCH type %]
-
          catch content
-
        [% error.type %] [% error.info %]
-
     [% CATCH %] # or [% CATCH DEFAULT %]
-
          content
-
     [% FINAL %]
-
        this block is always processed
-
     [% END %]
+```
 
 **NEXT**
 
 Jump straight to the next item in a FOREACH/WHILE loop.
 
-    [% NEXT %]
+    `[% NEXT %]`
 
 **LAST**
 
 Break out of FOREACH/WHILE loop.
 
-    [% LAST %]
+    `[% LAST %]`
 
 **RETURN**
 
 Stop processing current template and return to including templates.
 
-    [% RETURN %]
+    `[% RETURN %]`
 
 **STOP**
 
 Stop processing all templates and return to caller.
 
-    [% STOP %]
+    `[% STOP %]`
 
 **TAGS**
 
 Define new tag style or characters (default: [% %]).
 
+```
     [% TAGS html %]
-
     [% TAGS <!-- --> %]
+```
 
 **COMMENTS**
 
 Ignored and deleted.
 
+```
     [% # this is a comment to the end of line
-
        foo = 'bar'
-
     %]
-
     [%# placing the '#' immediately inside the directive
-
         tag comments out the entire directive
-
 %]
+```
 
 **Example Exposure Template**
 
 Assume we have a file named _exposure\_csv.tt_ containing template directives that we want to generate a local ShakeCast product "_exposure.csv_."  The template file first includes a static header is in CSV format.  The main body of the template file contains a directive that loops through exposure facilities and outputs selected fields, including basic facility information, shaking estimates and damage estimate.  The template file with the header record looks like
 
+```
 FACILITY\_TYPE,FACILITY\_ID,FACILITY\_NAME,DIST,LATITUDE,LONGITUDE,\
-
 DAMAGE\_LEVEL,MMI,PGA,PGV,PSA03,PSA10,PSA30,STDPGA,SVEL
-
 [% FOREACH exposure = shakecast.exposure %]
-
 [%- FOREACH item = exposure.item -%]
-
 [% exposure.type %],"[% item.external\_facility\_id %]",\
-
 "[% item.facility\_name %]",[% item.DIST %],[% item.latitude %],\
-
 [% item.longitude %],[% item.damage\_level %],[% item.MMI %],\
-
 [% item.PGA %],[% item.PGV %],[% item.PSA03 %],[% item.PSA10 %],\
-
 [% item.PSA30 %],[% item.STDPGA %],[% item.SVEL %]
-
 [%- END -%]
-
 [% END %]
+```
 
 and the output exposure.csv looks like
 
+```
 FACILITY\_TYPE,FACILITY\_ID,FACILITY\_NAME,DIST,LATITUDE,LONGITUDE,DAMAGE\_LEVEL,MMI,PGA,PGV,PSA03,PSA10,PSA30,STDPGA,SVEL
-
 CITY,"101614","Warm Springs, NV (pop. 1K)",111.15,38.2,-116.4,GREEN,1,0.02,0.01,0.01,0,0,,784
-
 CITY,"100241","Caliente, NV (pop. 1.1K)",86.76,37.615,-114.511,GREEN,1.08,0.02,0.01,0.02,0,0,,483.25
-
 CITY,"100019","Alamo, NV (pop. < 1K)",32.61,37.365,-115.164,GREEN,3.08,0.15,0.04,0.15,0.02,0,,460.5
-
    ...
-
+```
 
 
 **Portable Document Format (PDF) Product Template**
@@ -786,29 +698,20 @@ PDF directive file must be prepared in XML format.  The PDF template engine runs
 
 Each styled-content is defined as a **block** of options.  A **block** looks much like a block in the well-known XML tag. It starts with < **blockname** > and ends with </ **blockname** >. An example:
 
+```
         <image>
-
                 <path>screenshot.jpg</path>
-
                 <type>jpeg</type>
-
                 <x>0</x>
-
                 <y>0</y>
-
                 <w>8.0</w>
-
                 <h>4.0</h>
-
                 <unit>inch</unit>
-
                 <align>center</align>
-
                 <valign>center</valign>
-
                 <pad>0.1</pad>
-
         </image>
+```
 
 defines the content and layout of an image.
 
@@ -818,146 +721,97 @@ The following PDF tag names are recognized.  These fields correspond to specific
 
 Insert a new page in the PDF document. The example below inserts a new page in the PDF document and imports a DYFI pdf into the page.
 
+```
         <page>
-
                 <pdf>
-
                         <path>eq\_product/[EVID]/\*\_ciim.pdf</path>
-
                 </pdf>
-
         </page>
+```
 
 **block**
 
 Insert a block of content inside a page at the specified location.  The example below paints a gray rectangle with black borders and inserts a paragraph of text inside the block.
 
+```
         <block fillcolor="lightgrey" strokecolor="black" >
-
                 <action>rect</action>
-
                 <style>fillstroke</style>
-
                 <x>0.1</x>
-
                 <y>8.3</y>
-
                 <w>8.3</w>
-
                 <h>0.7</h>
-
                 <unit>inch</unit>
-
                 <text>
-
                         <string size="12" >These results are from an automated system and users should consider the preliminary nature of this information when making decisions relating to public safety. ShakeCast results are often updated as additional or more accurate earthquake information is reported or derived.</string>
-
                         <x>0.15</x>
-
                         <y>8.8</y>
-
                         <w>8.2</w>
-
                         <h>1.0</h>
-
                         <lead>10</lead>
-
                         <align>justify</align>
-
                         <unit>inch</unit>
-
                 </text>
-
         </block>
+```
 
 **text**
 
 Insert a text block at the specified location.
 
+```
         <text>
-
                 <string size="22" type="Times-Bold" >Magnitude [MAG] - [LOCSTRING]</string>
-
                 <x>0.1</x>
-
                 <y>9.9</y>
-
                 <w>7.0</w>
-
                 <h>0.5</h>
-
                 <align>justify</align>
-
                 <unit>inch</unit>
-
         </text>
+```
 
 **image**
 
 Insert an image from an external file at the specified location with respect to the event directory.  If width (w) and height (h) are specified, the image will be resized to the specified dimensions.  Acceptable image types are jpeg, tiff, png, gif, and gd.
 
+```
         <image>
-
                 <path>screenshot.jpg</path>
-
                 <type>jpeg</type>
-
                 <x>0</x>
-
                 <y>0</y>
-
                 <w>8.0</w>
-
                 <h>4.0</h>
-
                 <unit>inch</unit>
-
                 <align>center</align>
-
                 <valign>center</valign>
-
                 <pad>0.1</pad>
-
         </image>
+```
 
 **table**
 
 Insert a table from an external CSV file to the current page. The example below inserts a table to the specified location of the current page.  New pages will be inserted if the length of the table exceeds the page height.
 
+```
         <table>
-
                 <list>exposure.csv</list>
-
                 <type>CITY USGS</type>
-
                 <x>0.1</x>
-
                 <w>8.3</w>
-
                 <start\_y>3.9</start\_y>
-
                 <next\_y>10.75</next\_y>
-
                 <start\_h>3.0</start\_h>
-
                 <next\_h>10.0</next\_h>
-
                 <font\_size>8</font\_size>
-
                 <padding>2</padding>
-
                 <padding\_right>2</padding\_right>
-
                 <background\_color\_even>snow</background\_color\_even>
-
                 <background\_color\_odd>wheat</background\_color\_odd>
-
                 <unit>inch</unit>
-
                 <border>0.25</border>
-
                 <border\_color>snow</border\_color>
-
         <field>FACILITY\_TYPE,FACILITY\_ID,FACILITY\_NAME,DIST,DAMAGE\_LEVEL,MMI,PGA,PGV,PSA03,PSA10,PSA30,SDPGA,SVEL</field>
-
         </table>
+```
