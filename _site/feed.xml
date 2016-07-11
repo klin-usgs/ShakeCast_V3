@@ -3,10 +3,10 @@
     <channel>
         <title></title>
         <description>Documenting ShakeCast software and related products.</description>
-        <link>/</link>
-        <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 11 Jul 2016 14:15:03 -0600</pubDate>
-        <lastBuildDate>Mon, 11 Jul 2016 14:15:03 -0600</lastBuildDate>
+        <link>/ShakeCast/</link>
+        <atom:link href="/ShakeCast/feed.xml" rel="self" type="application/rss+xml"/>
+        <pubDate>Mon, 11 Jul 2016 15:14:31 -0600</pubDate>
+        <lastBuildDate>Mon, 11 Jul 2016 15:14:31 -0600</lastBuildDate>
         <generator>Jekyll v3.1.6</generator>
         
         <item>
@@ -59,8 +59,8 @@
 
 </description>
             <pubDate>Sat, 07 May 2016 00:00:00 -0600</pubDate>
-            <link>/2016_polb_shakecast_meeting.html</link>
-            <guid isPermaLink="true">/2016_polb_shakecast_meeting.html</guid>
+            <link>/ShakeCast/2016_polb_shakecast_meeting.html</link>
+            <guid isPermaLink="true">/ShakeCast/2016_polb_shakecast_meeting.html</guid>
             
             <category>news</category>
             
@@ -93,8 +93,8 @@
 
 </description>
             <pubDate>Wed, 04 May 2016 00:00:00 -0600</pubDate>
-            <link>/2016_nec.html</link>
-            <guid isPermaLink="true">/2016_nec.html</guid>
+            <link>/ShakeCast/2016_nec.html</link>
+            <guid isPermaLink="true">/ShakeCast/2016_nec.html</guid>
             
             <category>news</category>
             
