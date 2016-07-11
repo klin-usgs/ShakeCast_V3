@@ -1,27 +1,82 @@
----
-layout: bare
----
+<!DOCTYPE html>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>{% if page.html_title %}{{ page.html_title }} • {% endif %}ShakeCast Guides</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <!-- Bootstrap core CSS -->
-  <link rel="stylesheet" href="{{ page.leadingpath }}bootstrap3/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{ page.leadingpath }}css/main.css">
+    {% include head.html %}
+    <script>
+        $(document).ready(function() {
+            // Initialize navgoco with default options
+            $("#mysidebar").navgoco({
+                caretHtml: '',
+                accordion: true,
+                openClass: 'active', // open
+                save: false, // leave false or nav highlighting doesn't work right
+                cookie: {
+                    name: 'navgoco',
+                    expires: false,
+                    path: '/'
+                },
+                slide: {
+                    duration: 400,
+                    easing: 'swing'
+                }
+            });
 
-  <link rel="shortcut icon" href="{{ page.leadingpath }}images/sc_logo.png">
-  <link rel="alternate" type="application/atom+xml" title="Upcoming Events" href="/atom.xml">
-  <script type="text/javascript" src="{{ page.leadingpath }}js/jquery.min.js"></script>
-  <script type="text/javascript" src="{{ page.leadingpath }}bootstrap3/js/bootstrap.min.js"></script>
+            $("#collapseAll").click(function(e) {
+                e.preventDefault();
+                $("#mysidebar").navgoco('toggle', false);
+            });
 
-<body {% if page.body_class %}class="{{ page.body_class }}"{% endif %} data-spy="scroll" data-target="#toc">
-  {% include top.html %}
+            $("#expandAll").click(function(e) {
+                e.preventDefault();
+                $("#mysidebar").navgoco('toggle', true);
+            });
 
-  {% include attention.html %}
+        });
 
-  {{ content }}
+    </script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+    {% if page.datatable == true %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.5/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function(){
 
-  {% include footer.html %}
+            $('table.datatable').DataTable( {
+                        paging: false,
+                        stateSave: true
+                    }
+            );
+    </script>
+    {% endif %}
+
+</head>
+<body>
+{% include topnav.html %}
+<!-- Page Content -->
+<div class="container">
+    <div class="col-lg-12">&nbsp;</div>
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Sidebar Column -->
+        <div class="col-md-3">
+
+          {% include sidebar.html %}
+    <!-- Content Column -->
+    <div class="col-md-9">
+        {{content}}
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.container -->
+    </div>
+    <script>
+    jQuery(function ($) {
+        $('.post-content').annotator()
+                .annotator('setupPlugins', {tokenUrl: 'http://example.com/api/token'})
+    });
+    </script>
 </body>
 </html>
