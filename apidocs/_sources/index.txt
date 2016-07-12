@@ -16,7 +16,7 @@ pyCast Developer Manual
    db.rst
    server.rst
    cli.rst
-   User and Admin Docs <http://klin-usgs.github.io/ShakeCast>
+   User and Admin Docs </ShakeCast_V3/#http://>
 
 .. Indices and tables
 .. ==================
