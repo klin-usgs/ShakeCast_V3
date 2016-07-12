@@ -30,7 +30,7 @@ exclude:
   - .gitignore
   
 include:
-- _static
+  - _static
 # these are the files and directories that jekyll will exclude from the build
 
 feedback_email: klin@usgs.gov
