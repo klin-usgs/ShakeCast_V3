@@ -28,6 +28,9 @@ baseurl: "/ShakeCast" # the subpath of your site, e.g. /blog
 exclude:
   - .idea/
   - .gitignore
+  
+include:
+  - _static
 # these are the files and directories that jekyll will exclude from the build
 
 feedback_email: klin@usgs.gov
