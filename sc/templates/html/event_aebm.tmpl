@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
 	<link rel="stylesheet" href="./css/jquery-ui-1.8.16.custom.css">
+	<link rel="stylesheet" href="./css/demo_table.css">
 	  
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -69,7 +70,7 @@
   <div class="container">
     <h2>Inventory Details <small>Exposed facility list and detailed information on assessed fragility</small></h2>
     <ol class="breadcrumb">
-      <li class="pull-right"><a href="#" id="tab_link">Table View</a></li>
+      <li class="pull-right"><a href="#" id="tab_link">Map View</a></li>
       <li><a href="?dest=index">Home</a></li>
       <li><a href="?dest=list">Earthquakes</a></li>
       <li id="evid"><a href="#">Event</a></li>
@@ -83,6 +84,17 @@
 
       <div class="row">
         <div class="col-md-3">
+          <div class="panel panel-default">
+	    <div class="panel-heading">Inventory Type</div>
+	    <div class="list-group" id="sidebar">
+	    </div>
+          </div><!--/.well -->
+	  
+            <div class="panel panel-default" id="main_pane">
+	    <div class="panel-heading">Mapped Facility</div>
+				<div id="map_canvas" style="width:100px; height:200px;"></div>
+           </div>
+
 	  <!-- Single button
 	  <div class="btn-group">
 	    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
@@ -91,48 +103,28 @@
 	    <ul class="dropdown-menu" role="menu" id="sidebar_prod">
 	    </ul>
 	  </div>
-	   -->
+           -->
 	   
-          <div class="panel panel-default">
-	    <div class="panel-heading">Inventory Type</div>
-	    <div class="list-group" id="sidebar">
-	    </div>
-          </div><!--/.well -->
-	  
-          <div class="panel panel-default">
-	    <div class="panel-heading">High Priority Facilities</div>
-	    <div class="list-group" id="sidebar_fac">
-	    </div>
-          </div><!--/.well -->
-	  
           <div class="panel panel-default">
 	    <div class="panel-heading">Earthquake Product</div>
 	    <div id="sidebar_prod">
 	    </div>
           </div><!--/.well -->
 	  
-	  <!--<button type="button" id="load_more" class="btn btn-primary"></button> -->
         </div><!--/span-->
 	
         <div class="col-md-9">
             <!-- Main hero unit for a primary marketing message or call to action -->
             <div class="panel panel-default" id="main_pane">
 				<div class="panel-heading" id="map_title"></div>
-				<div id="map_canvas" style="width:800px; height:400px;"></div>
  				<div id="caption"></div>
+	    <table cellpadding="0" cellspacing="0" border="0" class="display" id="eq_content_table"></table>
            </div>
-
           <div class="panel panel-default" id="fac_shaking">
 	    <div class="panel-heading"></div>
 	    <div class="panel-body">
 	    </div>
           </div><!--/.well -->
-            <!-- Example row of columns
-            <div class="row">
-		<div class="accordion"></div>
-            </div>
- -->
-
 
 			<div id="spinner" class="spinner ui-widget ui-widget-content ui-corner-all" style="width:50px;background:#fff;height:50px;">
 				<img id="img-spinner" src="/images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
@@ -179,6 +171,8 @@
     <script type="text/javascript" src="./js/sc_constant.js"></script>
     <script type="text/javascript" src="./js/storage.js"></script>
     <script type="text/javascript" src="./js/sc_markerclusterer.js"></script>
+    <script type="text/javascript" src="./js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.flot.min.js"></script>
  
     <script>
       var latlng = new google.maps.LatLng(35,-120);
@@ -188,14 +182,13 @@
       var age = gup('age') ? gup('age') : 'week';
       var fac_des = [];
       var fac_info = [];
-	  var fac_type;
       var start=0, length=0, total;
       //var sm_url = '/scripts/damage.pl/datatables';
       var sm_url = '/scripts/r/damage/datatables';
       var marker_icon = [];
-		var markers = [];
-		    var markers_index = [];
-		var markerCluster;	
+      var markers = [];
+		var anOpen = [];
+		var oTable;
 
 	    SC_DEF.init();
         //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
@@ -204,8 +197,10 @@
         var sm_url = '/scripts/r/user/from_id/'+username;
         var submit_data = {
         };
+			
 
       $(window).load(function() {
+	SC_DEF.tab = 1;
 	map = MAPAPP.init(SC_DEF);
 	//menu_update();
 	$("#fac_shaking").hide();
@@ -222,8 +217,9 @@
 
 	if (sc_id)  {
 	  $(".breadcrumb #evid").html('<a href="#">'+sc_id+'</a>');
-	  $(".breadcrumb #tab_link").html('<a href="?dest=event_tab&event='+sc_id+'">Table View</a>');
+	  $(".breadcrumb #tab_link").html('<a href="?dest=event&event='+sc_id+'">Map View</a>');
 	}
+	
 	
 	load_sm();
 	load_fac();
@@ -231,26 +227,38 @@
 	//load_marker();
       });
 			
+		$("<div id='tooltip'></div>").css({
+			position: "absolute",
+			display: "none",
+			border: "1px solid #fdd",
+			padding: "2px",
+			"background-color": "#fee",
+			opacity: 0.80
+		}).appendTo("body");
+
 	$(window).resize(function() {
 		//oTable.fnAdjustColumnSizing();
 		//$("#eq_content_table").width($(".row").width());
 		$("#map_canvas").width($("#main_pane").width());
-		$("#map_canvas").height(($("#map_canvas").width())/2);
+		$("#map_canvas").height($("#map_canvas").width());
+		$("#sidebar_prod").height($("#map_canvas").height());
 		//console.log($("#map_canvas").width());
 		google.maps.event.trigger(map, 'resize');
-		$("#sidebar_fac").height($("#map_canvas").height()/2);
-		$("#sidebar_prod").height($("#map_canvas").height()/2);
 		var cont_height = $("#map_canvas").height() + $(".accordion").height();
+		if ($("#sidebar").length) {
+			cont_height = ($("#sidebar").height() > cont_height) ? $("#sidebar").height() : cont_height;
+		}
 		$('html').css('height', cont_height);
 	});
 
       $('#load_more').on('click', fnAccordion);
 
-      function fnAccordion(facility_id){
+      function load_fac_table(){
 		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		var local_url = '/scripts/r/damage/from_id/' + sc_id;
-		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(local_url, {facility : facility_id, all : all}
+		var local_url = '/scripts/r/damage/datatables/' + sc_id;
+			  MAPAPP.addCaption(sc_id, type);
+	  $(".breadcrumb li").last().html(type + ' List');
+		$.post(local_url, {type:type, start:start, length:length}
 			, function(data) {
 
 			// Are there even any EQ to display?
@@ -258,153 +266,227 @@
 				return;
 			}
 
+			var eqTable = [];
+			var facility_damage = data.facility_damage;
+			var index = 1;
+			for ( var ind in facility_damage) {
+			var facility = facility_damage[ind];
 
-			var facility_probability = data.facility_probability;
-			var html_array = [];
-			var severity_index = [];
-			if (data.severity_index) {
-				severity_index = data.severity_index.slice(0);
-			} else {
-			for ( var key in data.facility_damage) severity_index.push(key);
+			eqTable.push(
+				{
+				"index":index++,
+				"id":facility.facility_id,  
+				"facility_id":facility.external_facility_id,  
+				"facility_type":facility.facility_type, 
+				"latitude":facility.lat_min, "longitude":facility.lon_min, 
+				"facility_name":facility.facility_name, 
+				"damage_level":'<span class="label '+label[facility.damage_level]+
+				  '">'+facility.damage_level+'</span>', 
+				"shakemap_version":facility.mmi, 
+				"dist":facility.dist,
+				'severity_rank':facility.severity_rank,
+				'pga':facility.pga,
+				'pgv':facility.pgv,
+				'mmi':facility.mmi,
+				'psa10':facility.psa10,
+				}
+				);
+				
 			}
-			for ( var sev_ind =0; sev_ind< severity_index.length; sev_ind++) {
-			var fac_index = severity_index[sev_ind];
-			//MAPAPP.addMarker(data.facility_damage[fac_index]);
+var eqDiv = {
+	"bJQueryUI": true,
+	"iDisplayLength": 10,
+	"sScrollY": "100%",
+	"sScrollX": "100%",
+	"aaSorting": [[ 7, "desc" ],[ 3, "desc" ]],
+	"bUseRendered": false,
+	aaData: eqTable, 
+	aoColumns: 
+		[
+		{'sTitle': 'Facility Type',"mDataProp": "facility_type"},
+		{'sTitle': 'Facility Name',"mDataProp": "facility_name"},
+		{'sTitle': 'Epi. Dist.',"mDataProp": "dist"},
+		{'sTitle': 'Priority',"mDataProp": "damage_level"},
+		{'sTitle': 'PGA',"mDataProp": "pga"},
+		{'sTitle': 'PGV',"mDataProp": "pgv"},
+		{'sTitle': 'PSA 1.0s',"mDataProp": "psa10"},
+		{"bVisible": false, 'sTitle': 'Priority',"mDataProp": "severity_rank"},
+	]
+		};
+		if (oTable) oTable.fnDestroy();
+		
+		oTable = $('#eq_content_table').dataTable(eqDiv);
+		
+		oTable.$('tr').click( function () {
+		  var data = oTable.fnGetData( this );
+		  /*if ( $(this).hasClass('row_selected') ) {
+		    $(this).removeClass('row_selected');
+		  } else {
+		    $(this).addClass('row_selected');
+		  }*/
+		  fnAccordion(data.id);
+		  load_marker(data.id);
+		});
+		}, 'json');
+      }
 
-			var facility = data.facility_damage[fac_index];
-			$(".breadcrumb li").last().html(facility.facility_type + ' : ' + facility.facility_name);
-			html_array = html_array.concat([
-			  '<span class="label '+label[facility.damage_level]+'">',
-			  concern_level[facility.damage_level] + '</span> ',
-			  ' <strong>' + facility.facility_type + '</strong> ',
-			  ''+facility.facility_name + ' / <strong>ID</strong> ' + facility.external_facility_id,
-			  ' / <strong>Dist</strong> '+facility.dist + 'km',
-			  ]);
+      function fnAccordion(facility_id){
+		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
+		var local_url = '/scripts/r/aebm/from_id/' + sc_id;
+		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
+		$.post(local_url, {facility:facility_id, all:all}
+			, function(data) {
 
-			fac_info[facility.facility_id] = 
-				{"facility_type":facility.facility_type,  "facility_id":facility.facility_id,
-				"facility_name":facility.facility_name, "dist":facility.dist,
-				"lat_min":facility.lat_min, "lon_min":facility.lon_min,
-				//"damage_level":concern_level[facility.damage_level],  "metric":facility.metric}
-				"damage_level":facility.damage_level,  "metric":facility.metric};
+			// Are there even any EQ to display?
+			if (typeof data.aebm === "undefined") {
+				return;
+			}
+			var aebm = data.aebm;
+
+			var facility_spectrum = aebm[facility_id]['response_spectrum'];
+			var facility_demand = aebm[facility_id]['demand_spectrum'];
+			var facility_capacity = aebm[facility_id]['capacity'];
+			var response = [],
+			    demand = [],
+			    performance = [],
+			    capacity = [];
+			for (var j = 0;j<facility_spectrum['sa'].length;j++) {
+				response.push([parseFloat(facility_spectrum['sd'][j]),
+					       parseFloat(facility_spectrum['sa'][j])
+					       ]);
+				demand.push([parseFloat(facility_demand['sd'][j]),
+					       parseFloat(facility_demand['sa'][j])
+					       ]);
+				capacity.push([parseFloat(facility_capacity['sd'][j]),
+					       parseFloat(facility_capacity['sa'][j])
+					       ]);
+			}
+			performance.push([parseFloat(aebm[facility_id]['performance']['median']['sd']),
+					  parseFloat(aebm[facility_id]['performance']['median']['sa'])]);
+
+			var facility_probability = aebm[facility_id]['damage_state']['pdf']['median'];
+			var html_array = [];
+
+			var facility = aebm[facility_id]['sm_input'];
+			$(".breadcrumb li").last().html(facility_id);
 
 			var fac_damage= [];
 			fac_damage[facility.metric] = facility.damage_level;
 			var fac_mmi = mmi[parseInt(parseFloat(facility.mmi)+0.5)-1];
 			var cell_tabs = [
 				'<ul class="nav nav-tabs">',
-				'<li><a href="#' + facility.facility_id,
+				'<li><a href="#' + facility_id,
 				'_shaking" data-toggle="tab">Shaking Estimates</a></li>',
 				];
 			var cell_array = [
 				'<div class="tab-content">',
-				'<div class="tab-pane" id="' + facility.facility_id,
+				'<div class="tab-pane" id="' + facility_id,
 				'_shaking">',
 				'<table><tr style="background-color:#eee;"><td class="metric '+((facility.metric == 'MMI') ? facility.damage_level:'')+'"><b>MMI</b><br>' + fac_mmi + '</td>',
-				'<td class="metric '+((facility.metric == 'PGA') ? facility.damage_level:'')+'"><b>PGA</b><br>' + facility.pga + '  (%g)</td>',
+				'<td class="metric '+((facility.metric == 'PGA') ? facility.damage_level:'')+'"><b>PGA</b><br>' + facility.pga + '  (g)</td>',
 				'<td class="metric '+((facility.metric == 'PGV') ? facility.damage_level:'')+'"><b>PGV</b><br>' + facility.pgv + ' (cm/s)</td>',
-				(facility.psa03) ? '<td class="metric '+((facility.metric == 'PSA03') ? facility.damage_level:'')+'"><b>PSA03</b><br>' + facility.psa03 + ' (%g)</td>' : '',
-				(facility.psa10) ? '<td class="metric '+((facility.metric == 'PSA10') ? facility.damage_level:'')+'"><b>PSA10</b><br>' + facility.psa10 + ' (%g)</td>' : '',
-				(facility.psa30) ? '<td class="metric '+((facility.metric == 'PSA30') ? facility.damage_level:'')+'"><b>PSA30</b><br>' + facility.psa30 + ' (%g)</td>' : '',
-				'<td class="metric"><b>STDPGA</b><br>' + facility.stdpga + ' ln(%g)</td>',
+				(facility.psa03) ? '<td class="metric '+((facility.metric == 'PSA03') ? facility.damage_level:'')+'"><b>PSA03</b><br>' + facility.psa03 + ' (g)</td>' : '',
+				(facility.psa10) ? '<td class="metric '+((facility.metric == 'PSA10') ? facility.damage_level:'')+'"><b>PSA10</b><br>' + facility.psa10 + ' (g)</td>' : '',
+				(facility.psa30) ? '<td class="metric '+((facility.metric == 'PSA30') ? facility.damage_level:'')+'"><b>PSA30</b><br>' + facility.psa30 + ' (g)</td>' : '',
+				'<td class="metric"><b>STDPGA</b><br>' + facility.stdpga + ' ln(g)</td>',
 				'<td class="metric"><b>SVEL</b><br>' + facility.svel + ' (m/s)</td>',
 				'</tr></table></div>',
 				];
-			if (facility_probability[facility.facility_id]) {
+			if (facility_probability.length) {
 				cell_tabs = cell_tabs.concat([
-				'<li><a href="#' + facility.facility_id,
+				'<li><a href="#' + facility_id,
 				'probability" data-toggle="tab">Fragility Probability</a></li>',
 				]);
 				cell_array = cell_array.concat([
-				'<div class="tab-pane" id="' + facility.facility_id,
+				'<div class="tab-pane" id="' + facility_id,
 				'probability"><table>']);
-			var fac_class = [];
-			for (var i=0;i < facility_probability[facility.facility_id].length;i++) {
-			  var fac_prob = facility_probability[facility.facility_id][i];
-			  if (fac_class[fac_prob.class]) {
-			  fac_class[fac_prob.class].push(i);
-			  } else {
-			  fac_class[fac_prob.class] = [i];
-			  }
-			}
-			for (var class_type in fac_class) {
+
 				cell_array = cell_array.concat(['<tr><td><span class="label label-primary">',
-								class_type,
+								'Median',
 								'</span></td></tr>']);
-			for (var i=0;i < fac_class[class_type].length;i++) {
-				if (i==0) {
 				cell_array = cell_array.concat(['<tr>']);
-				} else if (i % 4) {
-				cell_array = cell_array.concat(['</td>']);
-				} else {
-				cell_array = cell_array.concat(['</td></tr><tr>']);
-				}
-				var component = facility_probability[facility.facility_id][fac_class[class_type][i]];
-				var damage_level = ['GREY'];
+				var damage_level = ['GREY', 'GREEN', 'YELLOW', 'ORANGE', 'RED'];
 				//var damage_level = [];
-				damage_level = damage_level.concat((component.damage_level).split(","));
-				//var prob_distribution = (component.prob_distribution).split(",");
-				var prob_distribution = [0];
-				prob_distribution = prob_distribution.concat((component.cdf).split(","));
 				cell_array = cell_array.concat([
 				'<td><div class="histogram_wrap">',
 				'<ul class="histogram">']);
 				for (var j = 0;j<damage_level.length;j++) {
 					cell_array = cell_array.concat([
-					'<li>' + parseInt(parseFloat(prob_distribution[j])*100),
+					'<li>' + parseInt(parseFloat(facility_probability[j])*100),
 					':' + damage_level[j],
 					':' + damage_level[j],
 					'</li>']);
 				}
 				cell_array = cell_array.concat([
 				//component.class + ' - ' + component.component,
-				component.component,
 				'</ul>',
 				'</div>']);
-			}
-			}
 				cell_array = cell_array.concat([
 				'</tr></table></div>']);
 			}
 
-			var facility_attribute = data.facility_attribute;
-			for (var key in facility_attribute) {
-				var attribute = facility_attribute[key];
-				if (attribute[facility.facility_id]) {
-				var att_fac = attribute[facility.facility_id];
 				cell_tabs = cell_tabs.concat([
-				'<li><a href="#fea"'+facility.facility_id+'" data-toggle="tab">Facility Specific Information</a></li>',
+				'<li><a href="#resp"'+facility_id+'" data-toggle="tab">Facility Response</a></li>',
 				]);
 				cell_array = cell_array.concat([
-				'<div id="fea"'+facility.facility_id+'" class="tab-pane">',
-				'<div class="ui-block-b fac_sum">',
-				'<ul>',
+				'<div id="resp"'+facility_id+'" class="tab-pane">',
+				'<div class="ui-block-b fac_sum resp">',
 				]);
 
-				for (var att_key in att_fac) {
 				cell_array = cell_array.concat([
-				'<li class="fac_summary"><b>' + att_key + '</b> : ' + att_fac[att_key] + '</li>',
-				]);
-				}
-				cell_array = cell_array.concat([
-				'</ul></div>',
+				'</div>',
 				'</div>']);
-				}
-				}
 				cell_tabs = cell_tabs.concat(['</ul>']);
 				cell_array = cell_array.concat(['</div>']);
-			fac_des[facility.facility_id] = cell_tabs.join('') + cell_array.join('');
+			fac_des[facility_id] = cell_tabs.join('') + cell_array.join('');
 
-			};
 			
 	  $("#fac_shaking .panel-heading").html(html_array.join(''));
 
-	      	    $("#fac_shaking .panel-body").html(fac_des[facility.facility_id]);
+	      	    $("#fac_shaking .panel-body").html(fac_des[facility_id]);
 	      	    $("#fac_shaking .panel-body").tab();
 		    $("#fac_shaking .panel-body a:first").tab('show')
 		    $("#fac_shaking").show();
 
+		    
 				makeGraph("graph", "labels");
+				var plot = $.plot($(".resp"), [
+				  { data: capacity, label: "Capacity"},
+				  { data: response, label: "Response Spectrum"},
+				  { data: demand, label: "Demand Spectrum"},
+				  { data: performance, points: {show: true}, label: "Performance Point"},
+				], {
+				  series: {
+				    lines: {
+				      show: true
+				    },
+				    points: {
+				      show: true
+				    }
+				  },
+				  grid: {
+				    hoverable: true,
+				  },
+				  yaxis: {
+				    min: 0,
+				  },
+				  xaxis: {
+				    max: 10,
+				  }
+				});
+
+
+		$(".resp").bind("plothover", function (event, pos, item) {
+			if (item) {
+					var x = item.datapoint[0].toFixed(2),
+						y = item.datapoint[1].toFixed(2);
+
+					$("#tooltip").html(item.series.label + " Sa: " + y + " g, Sd: " + x + " in.")
+						.css({top: item.pageY+5, left: item.pageX+5})
+						.fadeIn(200);
+				plot.highlight(item.series, item.datapoint);
+			}
+		});
 	  $(window).trigger('resize');
 
 
@@ -496,6 +578,7 @@
 	      ]);
 
 	    $("#sidebar_prod").append(html_array.join(''));
+	    $("#sidebar_prod").show();
 	  }, 'json');
 	}
 
@@ -532,71 +615,24 @@
 				  };
 
 			}
-			$("#sidebar").show();
 
- 			$('#sidebar a').on('click', function() {
+			$('#sidebar a').on('click', function() {
 			  $('.facility_type').removeClass("active");
 			  if (this.id != type) {
 			    //MAPAPP.removeMarkers();
 			    start = 0;
-/*
 			    if ($( ".accordion" ).accordion()) {
 	    $( ".accordion" ).accordion('destroy');
 	    $(".accordion h3").unbind('click');
 	    $( ".accordion" ).html('');
 			    }
-*/
 			  }
 			  type = this.id;
 			  $('#'+ type).addClass("active");
-			  if (type != fac_type) {
-				  fac_type = type;
-				  load_sibar_fac();
-				  load_marker();
-			  }
+			  load_fac_table();
 			  });
+	$('#sidebar').show();
 	$('#sidebar a:first').trigger('click');
-
-		}, 'json');
-		}
-
-      function load_sibar_fac(){
-		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		var local_url = '/scripts/r/damage/from_id/' + sc_id;
-		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(local_url,  {type:type, start:start, length:length, all:all}
-			, function(data) {
-
-			// Are there even any EQ to display?
-			if (typeof data.grid.shakemap_id === "undefined") {
-				return;
-			}
-
-			$("#sidebar_fac").html('');
-			var facility_probability = data.facility_probability;
-			var html_array = [];
-			var severity_index = [];
-			if (data.severity_index) {
-				severity_index = data.severity_index.slice(0);
-			} else {
-			for ( var key in data.facility_damage) severity_index.push(key);
-			}
-			for ( var sev_ind =0; sev_ind< severity_index.length; sev_ind++) {
-			var fac_index = severity_index[sev_ind];
-			//MAPAPP.addMarker(data.facility_damage[fac_index]);
-
-			var facility = data.facility_damage[fac_index];
-			$(".breadcrumb li").last().html(facility.facility_type + ' : ' + facility.facility_name);
-			var icon_type =  facility.facility_type + facility.damage_level;
-			icon_type = icon_type.toLowerCase();
-			$("#sidebar_fac").append('<a class="facility_type list-group-item" id="' + facility.facility_id +
-				'" href="#"><img src="/images/' + icon_type + '.png"> ' + facility.facility_name + '</a>');
- 			$('#sidebar_fac #'+facility.facility_id).on('click', function() {
-			  google.maps.event.trigger(markers[markers_index[this.id]], 'click');
-			});
-			}
-			$("#sidebar_fac").show();
-
 
 		}, 'json');
 		}
@@ -633,29 +669,31 @@
 		}, 'json');
       }
 
-      function load_marker(){
-		MAPAPP.addCaption(sc_id, fac_type);
+      function load_marker(facility_id){
+	
+		if (markers[facility_id]) {
+		  		google.maps.event.trigger(markers[facility_id], 'click');
+				MAPAPP.infowindow.close(map);
+		  return;
+		}
 		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-		var sm_url = '/scripts/r/damage/marker/' + sc_id;
+		var local_url = '/scripts/r/damage/from_id/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(sm_url, {type:fac_type, all:all}, function(data) {
+		$.post(local_url, {facility:facility_id, all:all}, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {
 			return;
 		}
-		
-		var count = 0;
 
 		for (var icon_type in marker_icon) {
 		    marker_icon[icon_type].facility_count = 0;
 		} // for
-		if (markerCluster) markerCluster.clearMarkers();
-		markers = [];
-		for (var fac in data) {
-		  var facility = data[fac];
-		  var latLng = new google.maps.LatLng(facility.latitude,
-		      facility.longitude);
+		var fac_damage = data.facility_damage;
+		for (var fac in fac_damage) {
+		  var facility = fac_damage[fac];
+		  var latLng = new google.maps.LatLng(facility.lat_min,
+		      facility.lon_min);
 		  var icon_type =  facility.facility_type + facility.damage_level;
 		  icon_type = icon_type.toLowerCase();
 		  if (typeof marker_icon[icon_type] === "undefined") {
@@ -670,8 +708,6 @@
 			  anchor: new google.maps.Point(12, 12),
 			  facility_type: facility.facility_type,
 			  facility_count: 1,
-			  damage_level: facility.damage_level,
-			  severity_rank: parseInt(facility.severity_rank),
 			};
 		  } else {
 		    marker_icon[icon_type].facility_count += 1;
@@ -683,87 +719,18 @@
 		    facility_id: fac,
 		    facility_type: facility.facility_type,
 		    severity_rank: facility.severity_rank,
-		    facility_name: facility.facility_name,
 		  });
+		  marker.setMap(map);
+				  map.setCenter(marker.getPosition());
+				  markers[facility.facility_id] = marker;
+		  
 		  google.maps.event.addListener(marker, 'click', function() {
 				  //console.log(marker.facility_id);
 				  map.setCenter(marker.getPosition());
 				  MAPAPP.loadInfo(this.facility_id, this.getPosition());
-				  fnAccordion(this.facility_id);
 				  });
 		  
-		  markers.push(marker);
-		  markers_index[fac] = count++;
 		}
-		
-		var disp_icon = [];
-		for (var key in marker_icon) disp_icon.push(marker_icon[key]);
-		disp_icon.sort(function(a, b){
-		    var a1= a.severity_rank, b1= b.severity_rank;
-		    if(a1== b1) return 0;
-		    return a1> b1? 1: -1;
-		});
-		
-		/*var dmg_url = '/scripts/r/damage/from_id/'+sc_id+'?action=summary';
-		if (fac_type != "ALL") {
-		  dmg_url += '&type=' + fac_type;
-		}
-		$.getJSON(dmg_url, function(summary) {
-			var damage_summary = '<div class="progress">';
-			// Are there even any EQ to display?
-			//if (summary.count > 0) {
-				jQuery.each(summary.damage_summary, function(i, val) {
-					damage_summary += '<div class="progress-bar ' + bar[i] + '" style="width:20%;">' + val + '</div>';
-				});
-			//}
-			damage_summary += '</div>';
-			$("#caption").html(damage_summary);
-		});*/
-		markerCluster = new MarkerClusterer(map, markers,{'zoomOnClick':0});
-		
-		MAPAPP.addLegend(disp_icon);
-		
-		  google.maps.event.addListener(markerCluster, 'clusterclick', function(cluster) {
-		    var marker_index = [];
-		    var this_cluster = cluster;
-		    var cluster_markers = cluster.getMarkers();
-		    var cluster_length = cluster_markers.length;
-		    var cluster_info = SC_DEF.cluster_info ? parseInt(SC_DEF.cluster_info) : 10;
-		    if (cluster_length > cluster_info) {
-		      cluster.getMap().fitBounds(cluster.getBounds());
-		    } else {
-		      var html_array = ['<div class="panel panel-default">',
-					'<div class="panel panel-heading"><b>Clustered Facilities</b></div>',
-					'<div class="list-group" id="info_popup">',
-					];
-		      for (var ii=0; ii < cluster_markers.length; ii++) {
-			html_array.push('<a class="list-group-item" href="#" id="' +
-					cluster_markers[ii].facility_id +
-					'"><b>' + cluster_markers[ii].facility_type + '</b> : ' +
-					cluster_markers[ii].facility_name + '</a>'
-					);
-			marker_index[cluster_markers[ii].facility_id] = ii;
-		      }
-		      html_array.push('<a class="list-group-item" id="all" href="#">' +
-				      '<b>Show All Facilities</b></a></div></div>');
-		      var infocontent = html_array.join('');
-		      MAPAPP.infowindow.setContent(infocontent);
-		      MAPAPP.infowindow.setPosition(cluster.getCenter());
-		      MAPAPP.infowindow.open(map);
-
-		      $("#info_popup>a").on('click', function () {
-			  var id = (this.id);
-			  if (id == 'all') {
-			    for (var mar_ind=0; mar_ind < cluster_length; mar_ind++)
-			      cluster_markers[mar_ind].setMap(map);
-			    MAPAPP.infowindow.close();
-			  } else {
-			  cluster_markers[marker_index[id]].setMap(map);
-			  google.maps.event.trigger(cluster_markers[marker_index[id]], 'click');
-			  }
-		      });
-		    }
-				  });
 		}, 'json');
       }
 
