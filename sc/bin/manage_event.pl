@@ -347,7 +347,7 @@ if ($options{'maintain'}) {
 	opendir(DIR, $dir) or die $!;
 	while (my $eqdir = readdir(DIR)) {
 		next unless (-d "$dir/$eqdir");
-		next if lookup_shakemap($eqdir);
+		next if ($eqdir =~ /^\./ || lookup_shakemap($eqdir));
 		my $mtime = (stat("$dir/$eqdir"))[9];
 		my $timestamp = (time - $mtime)/86400;
 		if ($timestamp>$time_window) {

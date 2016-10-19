@@ -206,7 +206,7 @@ border-radius:25px;
         </ul>
       </div>
       <footer data-role="footer">
-        <h1 class="map"><img src="/images/sc_logo.png" width="26" height="26">
+        <h1 class="map"><img src="images/sc_logo.png" width="26" height="26">
           ShakeCast <i>Mobile</i></h1>
       </footer>
     </section>
@@ -229,7 +229,7 @@ border-radius:25px;
         </ul>
       </div>
       <footer data-role="footer">
-        <h1 class="map"><img src="/images/sc_logo.png" width="26" height="26">
+        <h1 class="map"><img src="images/sc_logo.png" width="26" height="26">
           ShakeCast <i>Mobile</i></h1>
       </footer>
     </section>
@@ -252,7 +252,7 @@ border-radius:25px;
         </ul>
       </div>
       <footer data-role="footer">
-        <h1 class="map"><img src="/images/sc_logo.png" width="26" height="26">
+        <h1 class="map"><img src="images/sc_logo.png" width="26" height="26">
           ShakeCast <i>Mobile</i></h1>
       </footer>
     </section>
@@ -275,7 +275,7 @@ border-radius:25px;
         </ul>
       </div>
       <footer data-role="footer">
-        <h1 class="map"><img src="/images/sc_logo.png" width="26" height="26">
+        <h1 class="map"><img src="images/sc_logo.png" width="26" height="26">
           ShakeCast <i>Mobile</i></h1>
       </footer>
     </section>
@@ -299,7 +299,7 @@ border-radius:25px;
             min="1" max="20" value="" type="range"> </div>
       </div>
       <footer data-role="footer">
-        <h1 class="map"><img src="/images/sc_logo.png" width="26" height="26">
+        <h1 class="map"><img src="images/sc_logo.png" width="26" height="26">
           ShakeCast <i>Mobile</i></h1>
       </footer>
     </section>
@@ -314,17 +314,17 @@ border-radius:25px;
       </header>
       <div class="content" data-role="content"> </div>
       <footer data-role="footer">
-        <h1 class="map"><img src="/images/sc_logo.png" width="26" height="26">
+        <h1 class="map"><img src="images/sc_logo.png" width="26" height="26">
           ShakeCast <i>Mobile</i></h1>
       </footer>
     </section>
     <!-- End: Error page -->
     <script>
 	    SC_DEF.init();
-        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+        //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
         var username = SC_DEF.user ? SC_DEF.user : 'guest';
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var sm_url = '/scripts/r/user/from_id/'+username;
+        var sm_url = 'scripts/r/user/from_id/'+username;
         var submit_data = {
         };
 
@@ -538,15 +538,15 @@ var updateEQDetail = function() {
   var $page = $("#pageEQDetail");
 	
 	  	var objTweet = JSON.parse($page.data("EQJSON"));
-		var epi_png = '/images/epicenter/' + parseInt(objTweet.lon/5+0.5)*5 +'_'+ 
+		var epi_png = 'images/epicenter/' + parseInt(objTweet.lon/5+0.5)*5 +'_'+ 
 			parseInt(objTweet.lat/5+0.5)*5 + '.png';
         var strHtml = '<p>';
 		$page.find("header h1").html('M' + objTweet.magnitude + ' - ' + 
 			objTweet.event_location_description + ' (<i>' + objTweet.event_id + '</i>)');
         //strHtml += '<img src="http://maps.google.com/maps/api/staticmap?center='+epicenter+
 		//		'&zoom=4&size=72x72&maptype=terrain&sensor=false' + 
-		//		'&markers=icon:http://shakecast.awardspace.com/images/epicenter.png|'+mrkcenter+'">';
-  var strUrl = '/data/eq_product/' + objTweet.event_id + '/event.json';
+		//		'&markers=icon:http://shakecast.awardspace.comimages/epicenter.png|'+mrkcenter+'">';
+  var strUrl = 'data/eq_product/' + objTweet.event_id + '/event.json';
 
   // Get the EQ and append them to the list
   $.ajax({
@@ -582,34 +582,34 @@ var updateEQDetail = function() {
 	  $list = $page.find(".content ul");
       $.each(data.properties.products, function(key, obj) {
         // Build HTML that contains the desired information
-		//var epi_png = '/images/epicenter/' + parseInt(data.products[i].geometry.coordinates[1]/5+0.5)*5 +'_'+ 
+		//var epi_png = 'images/epicenter/' + parseInt(data.products[i].geometry.coordinates[1]/5+0.5)*5 +'_'+ 
 		//	parseInt(data.products[i].geometry.coordinates[0]/5+0.5)*5 + '.png';
         var strHtml;
 		switch (key) {
 			case 'dyfi':
 				strHtml += '<li>Did You Feel It!</li>';
-				strHtml += '<div id="'+key+'" class="div-detail"><img src="/data/eq_product/' + objTweet.event_id + '/' +
+				strHtml += '<div id="'+key+'" class="div-detail"><img src="data/eq_product/' + objTweet.event_id + '/' +
 					objTweet.event_id + '_ciim.jpg" class="image_fit"></div>\n';
 				break;
 			case 'losspager':
 				strHtml += '<li>Loss PAGER</li>';
 				strHtml += '<div id="'+key+'" class="ui-grid-a div-detail">';
-				strHtml += '<div class="ui-block-a"><b>Fatality</b><img src="/data/eq_product/' + objTweet.event_id + 
+				strHtml += '<div class="ui-block-a"><b>Fatality</b><img src="data/eq_product/' + objTweet.event_id + 
 					'/alertfatal_small.png" class="image_fit"></div>\n';
-				strHtml += '<div class="ui-block-b"><b>Economic Loss</b><img src="/data/eq_product/' + objTweet.event_id + 
+				strHtml += '<div class="ui-block-b"><b>Economic Loss</b><img src="data/eq_product/' + objTweet.event_id + 
 					'/alertecon_small.png" class="image_fit"></div>\n';
-				strHtml += '<div ><img src="/data/eq_product/' + objTweet.event_id + 
+				strHtml += '<div ><img src="data/eq_product/' + objTweet.event_id + 
 					'/exposure.png" class="image_fit"></div>\n';
 				strHtml += '</div>';
 				break;
 			case 'historical-moment-tensor-map':
 				strHtml += '<li>Historical Moment Tensor Map</li>';
-				strHtml += '<div id="'+key+'" class="div-detail"><img src="/data/eq_product/' + objTweet.event_id + 
+				strHtml += '<div id="'+key+'" class="div-detail"><img src="data/eq_product/' + objTweet.event_id + 
 					'/historicMoments.jpg" class="image_fit"></div>\n';
 				break;
 			case 'historical-seismicity-map':
 				strHtml += '<li>Historical Seismicity Map</li>';
-				strHtml += '<div id="'+key+'" class="div-detail"><img src="/data/eq_product/' + objTweet.event_id + 
+				strHtml += '<div id="'+key+'" class="div-detail"><img src="data/eq_product/' + objTweet.event_id + 
 					'/historicSeismicityFrom1990.jpg" class="image_fit"></div>\n';
 				break;
 			case 'tectonic-summary':
@@ -634,7 +634,7 @@ var updateEQDetail = function() {
 		}
 		
 		if (key == 'tectonic-summary') {
-			$("#"+key).load('/data/eq_product/' + objTweet.event_id + '/tectonic_summary.html');
+			$("#"+key).load('data/eq_product/' + objTweet.event_id + '/tectonic_summary.html');
 		}
       });
 	  
@@ -664,10 +664,10 @@ var updateEQFeed = function() {
 	
   // Build the URL we need
   //var strUrl = "http://search.twitter.com/search.json?callback=?&rpp=";
-  //var strUrl = "/data/eq_product/earthquake.usgs.gov.json";
+  //var strUrl = "data/eq_product/earthquake.usgs.gov.json";
   //var strUrl = "/shakemap_json.php";
-  //var strUrl = "/scripts/event.pl/event_list";
-  var strUrl = "/scripts/r/event/event_list";
+  //var strUrl = "scripts/event.pl/event_list";
+  var strUrl = "scripts/r/event/event_list";
   //var strUrl = "http://earthquake.usgs.gov/earthquakes/feed/geojson/1.0/day";
   //strUrl += $page.data("rpp");
   //strUrl += "&q=from:" + $page.data("twitterUser");
@@ -706,13 +706,13 @@ var updateEQFeed = function() {
       for (var i = 0; i < data.length && i < $page.data("rpp"); i++) {
 	  	
         // Build HTML that contains the desired information
-		//var epi_png = '/images/epicenter/' + parseInt(data.features[i].geometry.coordinates[1]/5+0.5)*5 +'_'+ 
+		//var epi_png = 'images/epicenter/' + parseInt(data.features[i].geometry.coordinates[1]/5+0.5)*5 +'_'+ 
 		//	parseInt(data.features[i].geometry.coordinates[0]/5+0.5)*5 + '.png';
-		var epi_png = '/data/eq_product/' + data[i].event_id +'/gm_epicenter.png'; 
+		var epi_png = 'data/eq_product/' + data[i].event_id +'/gm_epicenter.png'; 
         var strHtml = '<li><a href="#pageSCDetail" class="map">';
         //strHtml += '<img src="http://maps.google.com/maps/api/staticmap?center='+epicenter+
 		//		'&zoom=4&size=72x72&maptype=terrain&sensor=false' + 
-		//		'&markers=icon:http://shakecast.awardspace.com/images/epicenter.png|'+mrkcenter+'">';
+		//		'&markers=icon:http://shakecast.awardspace.comimages/epicenter.png|'+mrkcenter+'">';
 		strHtml += '<img src="'+ epi_png +'"><h2>';
         strHtml += 'M' + data[i].magnitude;
 		strHtml += ' - ' + data[i].event_location_description + '</h2>';
@@ -728,8 +728,8 @@ var updateEQFeed = function() {
         // Store the JSON data for this tweet
         $list.find("a:last").data("EQJSON", JSON.stringify(data[i]));
 		$list.find("span:last").each(function() {
-			//var event_sum_url = '/scripts/shaking.pl/shaking_summary/'+data[i].shakemap_id + '-' + data[i].shakemap_version;
-			var event_sum_url = '/scripts/r/shaking/shaking_summary/'+data[i].shakemap_id + '-' + data[i].shakemap_version;
+			//var event_sum_url = 'scripts/shaking.pl/shaking_summary/'+data[i].shakemap_id + '-' + data[i].shakemap_version;
+			var event_sum_url = 'scripts/r/shaking/shaking_summary/'+data[i].shakemap_id + '-' + data[i].shakemap_version;
 			//var event_sum_url = '/server_event_summary.php?feed=json&event='+data[i].event_id
 			var evt_row = $(this);
 			$.ajax({
@@ -795,15 +795,15 @@ var updateSMDetail = function() {
   var $page = $("#pageSMDetail");
 	
 	  	var objTweet = JSON.parse($page.data("EQJSON"));
-		var epi_png = '/images/epicenter/' + parseInt(objTweet.lon/5+0.5)*5 +'_'+ 
+		var epi_png = 'images/epicenter/' + parseInt(objTweet.lon/5+0.5)*5 +'_'+ 
 			parseInt(objTweet.lat/5+0.5)*5 + '.png';
         var strHtml = '<p>';
 		$page.find("header h1").html('M' + objTweet.magnitude + ' - ' + 
 			objTweet.event_location_description + ' (<i>' + objTweet.event_id + '</i>)');
         //strHtml += '<img src="http://maps.google.com/maps/api/staticmap?center='+epicenter+
 		//		'&zoom=4&size=72x72&maptype=terrain&sensor=false' + 
-		//		'&markers=icon:http://shakecast.awardspace.com/images/epicenter.png|'+mrkcenter+'">';
-  var strUrl = '/data/' + objTweet.shakemap_id + '-' + objTweet.shakemap_version + '/info.xml';
+		//		'&markers=icon:http://shakecast.awardspace.comimages/epicenter.png|'+mrkcenter+'">';
+  var strUrl = 'data/' + objTweet.shakemap_id + '-' + objTweet.shakemap_version + '/info.xml';
 
       $page.find(".content").empty();
 	  $page.find(".content").html('<ul data-role="listview"></ul>');
@@ -842,7 +842,7 @@ var updateSMDetail = function() {
       $.each($(xml).find('tag'), function() {
 		var key = $(this).attr('name');
         // Build HTML that contains the desired information
-		//var epi_png = '/images/epicenter/' + parseInt(data.products[i].geometry.coordinates[1]/5+0.5)*5 +'_'+ 
+		//var epi_png = 'images/epicenter/' + parseInt(data.products[i].geometry.coordinates[1]/5+0.5)*5 +'_'+ 
 		//	parseInt(data.products[i].geometry.coordinates[0]/5+0.5)*5 + '.png';
 		switch (key) {
 			case 'site_correction':
@@ -956,8 +956,8 @@ var updateSMDetail = function() {
 
         if (strHtml) {// Make it into a jQuery object...
 			strHtml += '<div id="'+key+'" class="div-detail">';
-			strHtml += '<a href="/data/' + objTweet.shakemap_id + '-' + objTweet.shakemap_version + '/' + key + '.jpg" target="_blank">';
-			strHtml += '<img src="/data/' + objTweet.shakemap_id + '-' + objTweet.shakemap_version + '/' + key + '.jpg" class="image_fit">';
+			strHtml += '<a href="data/' + objTweet.shakemap_id + '-' + objTweet.shakemap_version + '/' + key + '.jpg" target="_blank">';
+			strHtml += '<img src="data/' + objTweet.shakemap_id + '-' + objTweet.shakemap_version + '/' + key + '.jpg" class="image_fit">';
 			strHtml += '</a></div>\n';
 			var tweet = $(strHtml);
 			
@@ -968,7 +968,7 @@ var updateSMDetail = function() {
 				$("#"+key).toggle("reverse out in");
 			});
 
-			//$("#"+key).load('/data/' + objTweet.id + '-' + objTweet.version + '/' + key + '.jpg');
+			//$("#"+key).load('data/' + objTweet.id + '-' + objTweet.version + '/' + key + '.jpg');
 			
 		}
   });
@@ -993,17 +993,17 @@ var updateSCDetail = function() {
   var $page = $("#pageSCDetail");
 	
 	  	var objTweet = JSON.parse($page.data("EQJSON"));
-		var epi_png = '/images/epicenter/' + parseInt(objTweet.lon/5+0.5)*5 +'_'+ 
+		var epi_png = 'images/epicenter/' + parseInt(objTweet.lon/5+0.5)*5 +'_'+ 
 			parseInt(objTweet.lat/5+0.5)*5 + '.png';
         var strHtml = '<p>';
 		$page.find("header h1").html('M' + objTweet.magnitude + ' - ' + 
 			objTweet.event_location_description + ' (<i>' + objTweet.event_id + '</i>)');
         //strHtml += '<img src="http://maps.google.com/maps/api/staticmap?center='+epicenter+
 		//		'&zoom=4&size=72x72&maptype=terrain&sensor=false' + 
-		//		'&markers=icon:http://shakecast.awardspace.com/images/epicenter.png|'+mrkcenter+'">';
+		//		'&markers=icon:http://shakecast.awardspace.comimages/epicenter.png|'+mrkcenter+'">';
   //var strUrl = '/server_event_summary.php?feed=json&event=';
-  //var strUrl = '/scripts/shakemap.pl/from_id/' + objTweet.shakemap_id + 
-  var strUrl = '/scripts/r/shakemap/from_id/' + objTweet.shakemap_id + 
+  //var strUrl = 'scripts/shakemap.pl/from_id/' + objTweet.shakemap_id + 
+  var strUrl = 'scripts/r/shakemap/from_id/' + objTweet.shakemap_id + 
 			'-' + objTweet.shakemap_version;
 	//strUrl += objTweet.event_id;
 
@@ -1143,8 +1143,8 @@ var updateSCDetail = function() {
 			strHtml = '<li id="fac-summary">Facility Summary</li>';
 			strHtml += '<div id="fac-summary" class="ui-grid-b damage-summary"></div>';
 			$list.append($(strHtml));
-			//$.getJSON("/scripts/damage.pl/from_id/"+objTweet.shakemap_id+"-"+objTweet.shakemap_version,
-			$.getJSON("/scripts/r/damage/from_id/"+objTweet.shakemap_id+"-"+objTweet.shakemap_version,
+			//$.getJSON("scripts/damage.pl/from_id/"+objTweet.shakemap_id+"-"+objTweet.shakemap_version,
+			$.getJSON("scripts/r/damage/from_id/"+objTweet.shakemap_id+"-"+objTweet.shakemap_version,
 				function(result) {
 					strHtml = '';
 					//strHtml = '<div class="ui-block-a" style:"width:95%">';
@@ -1156,7 +1156,7 @@ var updateSCDetail = function() {
 						} else {
 						strHtml += '<div class="ui-block-a NA" style="text-align:left; width:40%""><p>';
 						}
-						strHtml += '<img src="/images/'+ damage[i].facility_type.toLowerCase() + '.png">';
+						strHtml += '<img src="images/'+ damage[i].facility_type.toLowerCase() + '.png">';
 						strHtml += damage[i].facility_name + '</p><span>Epicentral Distance: '+damage[i].dist+' km</span></div>';
 						strHtml += '<div class="ui-block-b fac_sum">';
 						strHtml += '<ul><li class="fac_summary"><b>MMI</b> : ' + damage[i].mmi + '</li>';

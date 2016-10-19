@@ -2,7 +2,8 @@
 ;
 From: ShakeCast <%HEADER_FROM%>
 To: %HEADER_TO%
-Subject: New Event: %EVENT_ID%
+Subject: NEW EVENT: M%MAGNITUDE%, %EVENT_LOCATION_DESCRIPTION% (%EVENT_ID%)
+Attach: /usr/local/shakecast/sc/data/eq_product/%EVENT_ID%/gm_epicenter.png
 
 %EVENT_TIMESTAMP% 
 Mag: %MAGNITUDE%

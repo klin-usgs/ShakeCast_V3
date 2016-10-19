@@ -808,7 +808,7 @@ select 'PENDING',
        straight_join user_delivery_method udm
  where (n.shakecast_user not in (select shakecast_user from geometry_user_profile)
    and n.shakecast_user = udm.shakecast_user and n.delivery_method = udm.delivery_method)
-   and sh.value_%VALNO% between ff.low_limit and ff.high_limit
+   and sh.value_%VALNO% > ff.low_limit and sh.value_%VALNO% <= ff.high_limit
    and (n.disabled = 0 or n.disabled is null)
    and n.notification_type = 'damage'
    and ff.metric = ?
@@ -857,7 +857,7 @@ select 'PENDING',
        straight_join (geometry_profile gp 
 	inner join profile_notification_request n on gp.profile_id = n.profile_id )
  where n.profile_id = ?
-   and sh.value_%VALNO% between ff.low_limit and ff.high_limit
+   and sh.value_%VALNO% > ff.low_limit and sh.value_%VALNO% <= ff.high_limit
    and (n.disabled = 0 or n.disabled is null)
    and n.notification_type = 'damage'
    and ff.metric = ?
@@ -1069,6 +1069,8 @@ finish;
 END {
     GKS::Service::stop_service() if $run_as_service;
 }
+
+print "process notifyqueue STATUS=SUCCESS\n";
 
 
 ##### Daemon Body #####
@@ -1412,6 +1414,8 @@ sub scan_for_work {
     $n += scan_for_grids();
     #$n += scan_for_stations();
     $n += scan_for_systems();
+	SC::Server->this_server->queue_request(
+		'notify') if ($n);
     vvpr "$n total request(s) queued";
 }
 
@@ -1513,7 +1517,7 @@ sub local_product {
 		and g.shakemap_version = s.shakemap_version)
 	  inner join facility_fragility ff on fs.facility_id = ff.facility_id and 
 			ff.metric = '".$metric_unit."' and
-			fs.value_".$metrics{$metric_unit}." between ff.low_limit and ff.high_limit)
+			fs.value_".$metrics{$metric_unit}." > ff.low_limit and fs.value_".$metrics{$metric_unit}." <= ff.high_limit)
      where s.event_id = '$shakemap_id' and g.shakemap_version = $shakemap_version";
 	my $sth = SC->dbh->prepare($sql);
 	 

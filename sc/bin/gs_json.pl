@@ -152,6 +152,7 @@ if (@ARGV) {
 	SC->error($SC::errstr);
 }
 
+print "process product STATUS=SUCCESS\n";
 exit $rc;
 
 sub fetch_evt_json

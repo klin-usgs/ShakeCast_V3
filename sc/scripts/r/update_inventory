@@ -185,6 +185,7 @@ sub manage_user_xml {
 	$json->{prog} = $cmd;
 	$json->{result} = `$cmd -verbose`;
 
+	unlink($file_path);
 	return $json;
 }
 
@@ -220,6 +221,8 @@ sub manage_inventory_xml {
 	$json->{prog} .= $cmd;
 	$json->{result} .= `$cmd -verbose`;
 
+	unlink($file_path);
+
 	return $json;
 }
 
@@ -250,6 +253,7 @@ sub manage_user {
 	$json->{prog} = $cmd;
 	$json->{result} = `$cmd -verbose`;
 
+	unlink($file_path);
 	return $json;
 }
 
