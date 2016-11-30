@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/images/sc_logo.png">
+    <link rel="shortcut icon" href="images/sc_logo.png">
 
     <title>File Upload</title>
 
@@ -16,7 +16,7 @@
     <!-- Custom styles for this template -->
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
-	<link rel="stylesheet" href="./css/application.css"> 
+	<!-- <link rel="stylesheet" href="./css/application.css"> -->
 	<link rel="stylesheet" href="./css/post_file.css"> 
 	<link rel="stylesheet" href="./css/docs.css"> 
 
@@ -42,7 +42,7 @@
 	  <span class="icon-bar"></span>
 	  <span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="?dest=index"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
       </div>
       <div class="navbar-collapse collapse">
 	<ul id="nav_menu" class="nav navbar-nav">
@@ -92,7 +92,7 @@
 	  </div>
 		
 			<div id="spinner" class="spinner ui-widget ui-widget-content ui-corner-all" style="width:50px;background:#fff;height:50px;visibility: hidden;">
-				<img id="img-spinner" src="/images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
+				<img id="img-spinner" src="images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
 			</div>
     <!-- Footer
     ================================================== -->
@@ -102,18 +102,18 @@
           <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
           <li class="muted">&middot;</li>
           <li><a href="?dest=index">Desktop</a></li>
-          <li class="muted">&middot;</li>
-          <li><a href="?dest=mobile">Mobile</a></li>
+          <!-- <li class="muted">&middot;</li>
+          <li><a href="?dest=mobile">Mobile</a></li> -->
         </ul>
      </div>
     </footer>
 
 
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="./js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
     <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui.js"></script>
-    <script type="text/javascript" src="./js/application.js"></script>
+    <!-- <script type="text/javascript" src="./js/application.js"></script> -->
     <script type="text/javascript" src="./js/main.js"></script>
     <script type="text/javascript" src="./js/sc_constant.js"></script>
     <script type="text/javascript" src="./js/storage.js"></script>
@@ -125,7 +125,7 @@
     
   <script>
   SC_DEF.init();
-  //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+  //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
   var username = SC_DEF.user ? SC_DEF.user : 'guest';
   var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
   var submit_data = {

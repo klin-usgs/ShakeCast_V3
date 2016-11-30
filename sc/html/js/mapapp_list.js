@@ -62,20 +62,9 @@ MAPAPP = (function() {
 		//var local_url = '/scripts/facility.pl/from_id/'+facility_id;
 		var local_url = '/scripts/r/facility/from_id/'+facility_id;
 		$.post(local_url, submit_data, function(data) {
-			var html_array = [
-				'<div  class="panel panel-success"><div class="panel-heading text-center"><h4>Facility Information</h4></div>',
-				'<table class="table table-striped table-responsive">',
-				'<tr><td><b>Facility ID</b></td><td>' + data.external_facility_id + ' (' + data.facility_type + ')</td></tr>',
-				'<tr><td><b>Description</b></td><td>' + data.facility_name + '</td></tr>',
-				(data.description) ? '<tr><td><b>Description</b></td><td>' + data.description + '</td></tr>' : '',
-				'<tr><td><b>Latitude</b></td><td>' + data.lat_min + ' / ' + data.lat_max + '</td></tr>',
-				'<tr><td><b>Logitude</b></td><td>' + data.lon_min + ' / ' + data.lon_max + '</td></tr>',
-				'<tr><td><b>Last Updated</b></td><td>' + data.update_timestamp + '</td></t>',
-				'</table></div>',
-			];
-			var infocontent = html_array.join('');
+			var infocontent = '';
 			if (data.feature.length) {
-				if (data.feature[0].description) infocontent = data.feature[0].description;
+				infocontent = data.feature[0].description;
 				//console.log(data.feature[0].description);
 				if (data.feature[0].geom) {
 				  var feature_coords = [];
@@ -125,6 +114,19 @@ MAPAPP = (function() {
 				  }
 				  fac_feature.setMap(map);
 				}
+			} else {
+				var html_array = [
+					'<div  class="panel panel-success"><div class="panel-heading text-center"><h4>Facility Information</h4></div>',
+					'<table class="table table-striped table-responsive">',
+					'<tr><td><b>Facility ID</b></td><td>' + data.external_facility_id + ' (' + data.facility_type + ')</td></tr>',
+					'<tr><td><b>Description</b></td><td>' + data.facility_name + '</td></tr>',
+					(data.description) ? '<tr><td><b>Description</b></td><td>' + data.description + '</td></tr>' : '',
+					'<tr><td><b>Latitude</b></td><td>' + data.lat_min + ' / ' + data.lat_max + '</td></tr>',
+					'<tr><td><b>Logitude</b></td><td>' + data.lon_min + ' / ' + data.lon_max + '</td></tr>',
+					'<tr><td><b>Last Updated</b></td><td>' + data.update_timestamp + '</td></t>',
+					'</table></div>',
+				];
+				infocontent = html_array.join('');
 			}
 			infowindow.setContent(infocontent);
 			infowindow.setPosition(point);

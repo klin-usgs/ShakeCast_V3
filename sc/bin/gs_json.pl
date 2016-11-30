@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: gs_json.pl 478 2008-09-24 18:47:04Z klin $
 
@@ -152,6 +152,7 @@ if (@ARGV) {
 	SC->error($SC::errstr);
 }
 
+print "process product STATUS=SUCCESS\n";
 exit $rc;
 
 sub fetch_evt_json
@@ -561,6 +562,7 @@ sub fetch_json_page
 	store $eq_hash, $eq_hash_file;
 
   };
+
   # catch crashes:
   if($@){
 	$SC::errstr = $@;
@@ -596,7 +598,6 @@ sub event_filter {
 	while (@$idp) {
 		my $profile_name = shift @$idp;
 		my $geom = shift @$idp;
-
 		my $polygon = load_geometry($profile_name,$geom);
 		#print "$facility::$lon::$lat\n";
 		if ($polygon->{POLY}->crossingstest([$xml->{'lon'}, $xml->{'lat'}])) {

@@ -1,4 +1,4 @@
-#!C:/Perl64/bin/perl
+#!/usr/local/bin/perl
 
 use strict;
 #use warnings;
@@ -147,12 +147,14 @@ sub config_update {
     my $param_redundant_check = $self->param('param_redundant_check');
     my $param_perlbin = $self->param('param_perlbin');
     my $param_userid = $self->param('param_userid');
+    my $param_guest_account_flag = ($self->param('param_guest_account_flag') eq 'true') ? 1 : 0;
 	$config->{'GroupID'} = $param_groupid;
 	$config->{'UserID'} = $param_userid;
 	$config->{'gnuplot'} = $param_gnuplot;
 	$config->{'wkhtmltopdf'} = $param_wkhtmltopdf;
 	$config->{'REDUNDANT_CHECK'} = $param_redundant_check;
 	$config->{'perlbin'} = $param_perlbin;
+	$config->{'GUEST_ACCOUNT'} = $param_guest_account_flag;
 
     my $param_dataroot = $self->param('param_dataroot');
     my $param_logfile = $self->param('param_logfile');

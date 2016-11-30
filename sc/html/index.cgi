@@ -1,4 +1,4 @@
-#!c:/perl64/bin/perl
+#!/usr/local/bin/perl
 ########################################################################
 #
 # perl-md5-login: a Perl/CGI + JavaScript password protection scheme

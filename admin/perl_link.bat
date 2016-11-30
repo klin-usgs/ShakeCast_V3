@@ -1,1 +1,0 @@
-mklink /J "C:/Perl" "C:/Perl64/"

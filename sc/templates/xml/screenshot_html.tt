@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+    <link href="../../html/bootstrap3/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+	<link rel="stylesheet" href="../../html/css/main.css">
+	<link rel="stylesheet" href="../../html/css/jquery-ui.css">
+
+	<link rel="stylesheet" href="../../html/leaflet/leaflet.css" />
+	<link rel="stylesheet" href="../../html/leaflet/MarkerCluster-sc.css" />
+	<script src="../../html/leaflet/leaflet.js"></script>
+	<script src="../../html/leaflet/leaflet.markercluster-sc.js"></script>
+    <script type="text/javascript" src="../../html/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../html/bootstrap3/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../html/js/sc_constant.js"></script>
+
+</head>
+<body>
+<div id="map_pane" style="width:1024px; height:512px">
+<div id="map_canvas" style="width:1024px; height:512px"></div>
+<div id="caption"></div>
+</div>
+
+<script type="text/javascript">
+var evid;
+var type
+//var mmi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X+"];
+//var zoom = [8, 8, 8, 7, 7, 7, 6, 6, 6, 6, 6, 5, 5, 5, 5];
+var facMarkers = [];
+//var bar = {'GREY':'bar-grey', 'GREEN':'bar-success', 'YELLOW':'bar-yellow', 'ORANGE':'bar-warning', 'RED':'bar-danger'};
+
+   function addMarker(map, facility) {
+		var lat, lon;
+		var icon_type;
+		var facility_severity;
+		
+		if (facility.facility_type == "epicenter") {
+			lat = parseFloat(facility.origin_lat);
+			lon = parseFloat(facility.origin_lon);
+			icon_type =  facility.facility_type;
+			icon_type = icon_type.toLowerCase();
+		} else {
+			lat = parseFloat(facility.lat_min);
+			lon = parseFloat(facility.lon_min);
+			icon_type =  facility.facility_type + facility.damage_level;
+			icon_type = icon_type.toLowerCase();
+			facility_severity = parseInt(facility.severity_rank);
+		}
+
+		var myIcon = L.icon({
+			iconUrl: "../../images/" + icon_type + ".png",
+			iconSize: [25, 24],
+			iconAnchor: [12, 12],
+			shadowUrl: "../../images/shadow.png",
+			shadowSize: [21, 14],
+			//shadowAnchor: [12, 12]
+		});
+
+		L.marker([lat, lon], {icon: myIcon, severity_rank: facility_severity}).addTo(map);
+        
+    } // addMarker
+
+	var local_url = 'fac_damage.json';
+	$.getJSON(local_url, function(data) {
+
+	  	var grid = data.grid;
+		  console.log(grid);
+	  // Are there even any EQ to display?
+	  if (typeof grid.shakemap_id === "undefined") {
+		return;
+	  }
+		var lat_min = parseFloat(grid.lat_min);
+		var lat_max = parseFloat(grid.lat_max);
+		var lon_min = parseFloat(grid.lon_min);
+		var lon_max = parseFloat(grid.lon_max);
+
+		var map = L.map('map_canvas').setView([(lat_min+lat_max)/2, (lon_min+lon_max)/2], zoom[parseInt(lat_max-lat_min+0.5)]);
+
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Vvd2FubGluIiwiYSI6ImNpdWhhd2FuYzAxMnUyb2wzYTU4NzNycGkifQ.9BJUDR37C1r6QgprU0pQrA', {
+			maxZoom: 18,
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery � <a href="http://mapbox.com">Mapbox</a>',
+			id: 'mapbox.streets'
+		}).addTo(map);
+
+		var img = 'ii_overlay.png';
+		var imageBounds = [[lat_min, lon_min], [lat_max, lon_max]];
+		L.imageOverlay(img, imageBounds, {'opacity': 0.6}).addTo(map);
+
+		L.tileLayer('../../html/tiles/event/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+			id: 'event'
+		}).addTo(map);
+
+		//console.log(zoom[parseInt(lat_max-lat_min+0.5)]+' '+parseInt(lat_max-lat_min+0.5));
+
+		var event = grid;
+		event.facility_type = "epicenter";
+		addMarker(map, event);
+		
+		//Custom radius and icon create function
+		var markers = L.markerClusterGroup({
+			maxClusterRadius: 38,
+			iconCreateFunction: function (cluster) {
+				//var sizes = [26, 28, 33, 40, 50];
+				var markers = cluster.getAllChildMarkers();
+				var maxSeverity = 1;
+				var c = 'marker-cluster-grey';
+				for (var i=0; i < markers.length; i++) {
+					if (markers[i].severity_rank > maxSeverity) {maxSeverity = markers[i].severity_rank;}
+				}
+				if (maxSeverity === 100) {
+					c = 'marker-cluster-green';
+				} else if (maxSeverity === 200) {
+					c = 'marker-cluster-yellow';
+				} else if (maxSeverity === 300) {
+					c = 'marker-cluster-orange';
+				} else if (maxSeverity === 400) {
+					c = 'marker-cluster-red';
+				}	
+				return L.divIcon({ html: '<div><span>' + markers.length + '</span></div>', className: 'marker-cluster '+c, iconSize: new L.point(33,33) });
+			},
+			//Disable all of the defaults:
+			spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false
+		});
+
+		var index = 0;
+		  for ( var key in data.facility_damage)
+			{
+			var facility = data.facility_damage[key];
+			lat = parseFloat(facility.lat_min);
+			lon = parseFloat(facility.lon_min);
+			icon_type =  facility.facility_type + facility.damage_level;
+			icon_type = icon_type.toLowerCase();
+			var facility_severity = parseInt(facility.severity_rank);
+
+			var myIcon = L.icon({
+				iconUrl: "../../images/" + icon_type + ".png",
+				iconSize: [25, 24],
+				iconAnchor: [12, 12],
+				shadowUrl: "../../images/shadow.png",
+				shadowSize: [21, 14],
+				//shadowAnchor: [12, 12]
+			});
+
+			var marker = L.marker([lat, lon], {icon: myIcon});
+			marker.severity_rank = facility_severity;
+
+			markers.addLayer(marker);
+			};
+		map.addLayer(markers);
+
+		var damage_summary = '<div class="progress">';
+    var summary = data.damage_summary;
+		// Are there even any EQ to display?
+		if (data.count > 0) {
+			//jQuery.each(data.damage_summary, function(i, val) {
+			jQuery.each(bar, function(i, val) {
+				damage_summary += '<div class="progress-bar ' + val + '" style="width:20%;">' + ((summary[i]) ? summary[i] : 0) + '</div>';
+			});
+		}
+		damage_summary += '</div>';
+		$("#caption").html(damage_summary);
+	});
+
+
+		$('html').width($("map_pane").width());
+		$('html').height($("map_pane").height());
+
+
+
+</script>
+</body></html>

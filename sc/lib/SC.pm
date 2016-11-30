@@ -94,7 +94,7 @@ $VERSION   = '0.02';
 @EXPORT    = qw(SC_OK SC_FAIL SC_UNKNOWN SC_BAD_XML SC_HTTP_FAIL);
 @EXPORT_OK = qw();
 
-my $W32_CONF_FILE = 'C:/ShakeCast/sc/conf/sc.conf';
+my $W32_CONF_FILE = '/shakecast/sc/conf/sc.conf';
 my $UNIX_CONF_FILE = '/usr/local/sc/conf/sc.conf';
 
 my $SLEEP = 20;			# default 20 seconds between connection tries

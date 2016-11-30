@@ -1,4 +1,4 @@
-#!/usr/local/sc/sc.bin/perl
+#!/usr/local/bin/perl
 
 # $Id: template.pl 476 2008-09-05 20:42:47Z klin $
 

@@ -1,7 +1,0 @@
-FACILITY_TYPE,FACILITY_ID,FACILITY_NAME,LATITUDE,LONGITUDE,DIST,DAMAGE_LEVEL,MMI,PGA,PGV,PSA03,PSA10,PSA30,SDPGA,SVEL
-[% FOREACH exposure = shakecast.exposure %]
-[%- FOREACH item = exposure.item -%]
-[% exposure.type %],"[% item.external_facility_id %]","[% item.facility_name %]",[% item.latitude %],[% item.longitude %],[% item.dist %],[% item.damage_level %],[% item.MMI %],[% item.PGA %],[% item.PGV %],[% item.PSA03 %],[% item.PSA10 %],[% item.PSA30 %],[% item.SDPGA %],[% item.SVEL %]
-
-[%- END -%]
-[% END %]

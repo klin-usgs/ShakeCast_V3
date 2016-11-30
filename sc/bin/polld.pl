@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: polld.pl 426 2008-08-14 16:35:33Z klin $
 

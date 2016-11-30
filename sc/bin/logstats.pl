@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: logstats.pl 156 2007-10-10 16:27:10Z klin $
 
@@ -91,7 +91,7 @@ GetOptions(\%options,
 );
 
 my $config_file = (exists $options{'conf'} ? 
-	$options{'conf'} : 'C:/ShakeCast/sc/conf/sc.conf');
+	$options{'conf'} : '/ShakeCast/sc/conf/sc.conf');
 
 my $conf = new Config::General($config_file);
 my %chash = $conf->getall;

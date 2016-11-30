@@ -4,7 +4,7 @@
 From: ShakeCast V3 <%HEADER_FROM%>
 To: %HEADER_TO%
 Subject: %_ITEMNO% New Event(s), Max Magnitude: M%_MAX_MAGNITUDE%
-Attach: C:/shakecast/sc/images/header.jpg
+Attach: /usr/local/shakecast/sc/images/header.jpg
 ; End -- header
 
 

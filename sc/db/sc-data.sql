@@ -774,11 +774,7 @@ INSERT INTO `facility_type_fragility` (`FACILITY_TYPE_FRAGILITY_ID`, `FACILITY_T
 (573, 'MHP', 'GREEN', 0, 13, 'kwl', '2007-09-25 13:48:36', 'PGA'),
 (574, 'MHP', 'YELLOW', 13, 21, 'kwl', '2007-09-25 13:48:36', 'PGA'),
 (575, 'MHP', 'ORANGE', 21, 39, 'kwl', '2007-09-25 13:48:36', 'PGA'),
-(576, 'MHP', 'RED', 39, 99999, 'kwl', '2007-09-25 13:48:36', 'PGA'),
-(577, 'GENERIC', 'GREEN', 3, 5, 'kwl', '2007-09-25 13:48:36', 'MMI'),
-(578, 'GENERIC', 'YELLOW', 5, 7, 'kwl', '2007-09-25 13:48:36', 'MMI'),
-(579, 'GENERIC', 'ORANGE', 7, 8, 'kwl', '2007-09-25 13:48:36', 'MMI'),
-(580, 'GENERIC', 'RED', 8, 99999, 'kwl', '2007-09-25 13:48:36', 'MMI');
+(576, 'MHP', 'RED', 39, 99999, 'kwl', '2007-09-25 13:48:36', 'PGA');
 
 -- 
 -- Dumping data for table `lognorm_probability`

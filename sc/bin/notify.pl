@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 #
 ### notify: Scan the Notification Queue and Deliver Messages
@@ -931,6 +931,7 @@ END {
     GKS::Service::stop_service() if $run_as_service;
 }
 
+print "process notify STATUS=SUCCESS\n";
 
 ##### Daemon Body #####
 
@@ -1644,6 +1645,7 @@ sub sendnotification {
 		my ($field, $content) = split /:/, $temp_header, 2;
 		$content =~ s/^\s*//;
 		$content =~ s/\s*$//;
+		$content =~ s/'/\\'/g;
 		if ($field =~ /^From|To|Subject/i) {
 			eval '$'.lc($field)."='".$content."'";
 		} elsif ($field =~ /^Attach/i) {

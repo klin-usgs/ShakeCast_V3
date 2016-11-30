@@ -2,7 +2,7 @@
 
 echo Creating ShakeCast Tables...
 
-set MYSQL="c:\shakecast\mysql\mysql server 5.6\bin\mysql"
+set MYSQL="c:\program files\mysql\mysql server 5.0\bin\mysql"
 
 %MYSQL% -u sc -psc sc <..\sc\db\sc-create.sql
 

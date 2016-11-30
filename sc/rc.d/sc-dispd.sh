@@ -1,12 +1,12 @@
 #!/bin/sh
 
-SC_DIR=/usr/local/sc
+SC_DIR=/usr/local/shakecast/sc
 PIDFILE=${SC_DIR}/pids/dispd.pid
-PERL=/usr/local/sc/sc.bin/perl
+PERL=/usr/local/bin/perl
 
 case "$1" in
 	start)
-		$PERL ${SC_DIR}/bin/dispd.pl --pid-file=${PIDFILE} --daemon
+		nohup $PERL ${SC_DIR}/bin/dispd.pl --pid-file=${PIDFILE} &
 		echo -n ' dispd'
 		;;
 	stop)

@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: facimport.pl 126 2007-08-13 14:52:42Z klin $
 
