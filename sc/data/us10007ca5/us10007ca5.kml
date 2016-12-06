@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document>
+    <open>1</open>
+    <NetworkLink>
+      <name>ShakeMap us10007ca5</name>
+      <open>1</open>
+      <Link>
+        <href>http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/10007ca5/download/us10007ca5.kmz</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInterval>300</refreshInterval>
+      </Link>
+    </NetworkLink>
+    <ScreenOverlay>
+      <name>Organization Logo</name>
+      <Icon>
+        <href>http://earthquake.usgs.gov/earthquakes/feed/v1.0/images/kml_usgs_logo.png</href>
+      </Icon>
+      <overlayXY x="1" y="0" xunits="fraction" yunits="pixels" />
+      <screenXY x=".82" y="30" xunits="fraction" yunits="pixels" />
+      <size x="0" y="0" xunits="pixels" yunits="pixels" />
+    </ScreenOverlay>
+  </Document>
+</kml>
+

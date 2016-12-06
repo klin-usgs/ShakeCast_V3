@@ -1,0 +1,31 @@
+# ShakeCast Docker App Example
+FROM perl:latest
+
+MAINTAINER Kuo-Wan Lin
+
+RUN apt-get update
+
+RUN cpanm -f strict FindBin File::Basename File::Path \
+    IO::File Getopt::Long Carp LWP::UserAgent JSON \
+    Time::Local Config::General \
+    XML::Twig Text::CSV_XS JSON JSON::XS XML::LibXML::Simple \
+    XML::LibXML XML::Simple \
+    DBI DBD::mysql Storable Data::Dumper LWP::Protocol::https
+
+RUN bash -c 'rm -rf ~/.cpanm'
+
+RUN apt-get clean
+
+VOLUME /usr/local/shakecast
+
+COPY ["sc/bin/gs_json.pl", "/usr/local/shakecast/sc/bin/gs_json.pl"]
+COPY ["sc/conf/sc.conf", "/usr/local/shakecast/sc/conf/sc.conf"]
+COPY ["sc/lib/", "/usr/local/shakecast/sc/lib/"]
+COPY ["sc/logs/", "/usr/local/shakecast/sc/logs/"]
+
+WORKDIR /usr/local/shakecast
+
+#ENTRYPOINT ["/usr/local/bin/perl", "/usr/local/shakecast/sc/bin/gs_json.pl"]
+
+CMD ["/usr/local/bin/perl", "/usr/local/shakecast/sc/bin/gs_json.pl"]
+

@@ -1,0 +1,18 @@
+2016-11-30 17:38:28 [1737]: 
+2016-11-30 17:38:28 [1737]: 
+2016-11-30 17:38:28 [1737]: ERROR:  Can't call method "prepare" on an undefined value at /usr/local/shakecast/sc/bin/../lib/SC/Server.pm line 625.
+2016-11-30 18:11:56 [6]: 
+2016-11-30 18:11:56 [6]: 
+2016-11-30 18:13:40 [5]: 
+2016-11-30 18:13:40 [5]: 
+2016-11-30 18:14:12 [5]: 
+2016-11-30 18:14:12 [5]: 
+2016-11-30 18:14:12 [5]: ERROR:  Can't call method "prepare" on an undefined value at sc/bin/gs_json.pl line 551.
+2016-11-30 18:22:37 [1]: 
+2016-11-30 18:22:37 [1]: 
+2016-11-30 18:22:38 [1]: ERROR:  Can't call method "prepare" on an undefined value at /usr/local/shakecast/sc/bin/gs_json.pl line 551.
+2016-11-30 18:23:50 [1]: 
+2016-11-30 18:23:50 [1]: 
+2016-11-30 18:26:25 [1]: 
+2016-11-30 18:26:25 [1]: 
+2016-11-30 18:26:26 [1]: ERROR:  Can't call method "prepare" on an undefined value at /usr/local/shakecast/sc/bin/gs_json.pl line 551.

@@ -1,0 +1,17 @@
+<event
+	event_id="us10007ca5"
+	event_version="1"
+	event_status="NORMAL"
+	event_type="ACTUAL"
+	event_name=""
+	event_location_description=""
+	event_timestamp="2016-11-25 14:24:29"
+	event_region="us"
+	event_source_type=""
+	external_event_id=""
+	magnitude="6.6"
+	mag_type="mww"
+	lat="39.2378"
+	lon="74.0472"
+	depth="12.57"
+/>

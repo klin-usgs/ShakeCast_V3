@@ -1,0 +1,713 @@
+Metadata:
+  Identification_Information: 
+
+    Citation: 
+      Citation_Information: 
+        Originator: US Geological Survey and the U.S. Geological Survey
+        Publication_Date: 2016-11-25
+        Publication_Time: 14:24:29 UTC
+        Title: 
+          Advanced National Seismic System (ANSS), ShakeMap, 
+          Global Region, Maps of ground shaking 
+          and intensity for event us10007ca5, 
+          SOUTHERN XINJIANG, CHINA
+        Edition: Map Version 3; Code Version 3.5
+        Geospatial_Data_Presentation_Form: Map
+        Online_Linkage: http://earthquake.usgs.gov/eqcenter/shakemap 
+
+    Description:
+      Abstract:
+        ShakeMap is designed as a rapid response tool to portray the 
+        extent and variation of ground shaking throughout the affected 
+        region immediately following significant earthquakes. Ground 
+        motion and intensity maps are derived from peak ground motion
+        amplitudes recorded on seismic sensors (accelerometers), with 
+        interpolation based on both estimated amplitudes where data are 
+        lacking, and site amplification corrections.  Color-coded 
+        instrumental intensity maps are derived from empirical relations 
+        between peak ground motions and Modified Mercalli intensity. 
+        This ShakeMap describes the event: us10007ca5, 
+        SOUTHERN XINJIANG, CHINA
+      Purpose:
+        As a rapid response tool, the ShakeMap ground motion values are 
+        used for emergency response, loss estimation, assessment of damage 
+        to the lifeline and utility networks, and for providing information 
+        to the general public.
+
+    Time_Period_of_Content:
+      Currentness_Reference: ground condition
+      Time_Period_Information:
+        Single_Date/Time:
+          Calendar_Date: 2016-11-25
+          Time_of_Day:  14:24:29 UTC
+
+    Status:
+      Progress: Complete
+      Maintenance_and_Update_Frequency: As needed
+
+    Spatial_Domain: 
+      Bounding_Coordinates:
+        West_Bounding_Coordinate: 71.04720000000000
+        East_Bounding_Coordinate: 77.04720000000000
+        North_Bounding_Coordinate: 41.56280000000000
+        South_Bounding_Coordinate: 36.91280000000000
+
+    Keywords:
+      Theme:
+        Theme_Keyword_Thesaurus: None
+        Theme_Keyword: ShakeMap
+        Theme_Keyword: peak ground motions
+        Theme_Keyword: shaking intensity
+        Theme_Keyword: instrumental intensity
+        Theme_Keyword: earthquake damage
+        Theme_Keyword: Advanced National Seismic Systems (ANSS)
+        Theme_Keyword: US Geological Survey
+      Place:
+        Place_Keyword_Thesaurus: None
+        Place_Keyword: Global
+        
+
+    Access_Constraints: none
+    Use_Constraints: none
+
+    Point_of_Contact:
+      Contact_Information:
+        Contact_Organization_Primary: 
+          Contact_Organization: ShakeMap Working Group
+          Contact_Person: David J. Wald
+        Contact_Position: Geophysicist
+        Contact_Address:
+          Address_Type: mailing
+          Address: 
+            N/A
+          City: N/A
+          State_or_Province: N/A
+          Postal_Code: N/A
+          Country: USA
+        Contact_Voice_Telephone: N/A
+        Contact_Facsimile_Telephone: N/A
+        Contact_Electronic_Mail_Address: N/A
+
+    Browse_Graphic:
+      Browse_Graphic_File_Name: 
+         http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/us10007ca5/intensity.html
+      Browse_Graphic_File_Description:
+         Instrumental Intensity ShakeMap within a web page; all other ShakeMap 
+         maps and products can be accessed from this site. Typically
+         the image itself is 600x400 pixels and about 100k bytes in size.
+      Browse_Graphic_File_Type: JPEG
+
+    Cross_Reference: 
+      Citation_Information: 
+        Originator: Wald, D.J.
+        Originator: Quitoriano, V.
+        Originator: Heaton, T.H.
+        Originator: Kanamori, H.
+        Originator: Scrivner, C.W.
+        Originator: Worden, C.B.
+        Title:
+          TriNet "ShakeMaps": rapid generation of instrumental
+          ground motion and intensity maps for earthquakes in
+          Southern California
+        Publication_Date: 1999
+        Series_Information:
+          Series_Name: Earthquake Spectra
+          Issue_Identification: Vol. 15, No. 3
+        Other_Citation_Details: pp 537-556
+        Online_Linkage: http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/about.html#references
+
+    Cross_Reference: 
+      Citation_Information: 
+        Originator: Wald, D.J.
+        Originator: Quitoriano, V.
+        Originator: Heaton, T.H.
+        Originator: Kanamori, H.
+        Title:
+          Relationship between Peak Ground Acceleration, Peak Ground Velocity, and Modified Mercalli Intensity for Earthquakes in California
+        Publication_Date: 1999
+        Series_Information:
+          Series_Name: Earthquake Spectra
+          Issue_Identification: Vol. 15, No. 3
+        Other_Citation_Details: pp 557-564
+        Online_Linkage: http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/about.html#references
+
+    Cross_Reference: 
+      Citation_Information:
+        Originator: Wald, D.J.
+        Originator: Worden, C.B.
+        Originator: Quitoriano, V.
+        Originator: Pankow, K.
+        Title: ShakeMap Manual: Users Guide, Technical Manual, and Software Guide, USGS Techniques and Methods 12-A1
+        Publication_Date: 2005
+        Series_Information:
+          Series_Name: U.S. Geological Survey [Open File Report]
+          Issue_Identification: [ZZZ-03]
+        Other_Citation_Details: [128 pp]
+        Online_Linkage: http://pubs.usgs.gov/tm/2005/12A01/
+
+  Data_Quality_Information:
+    Attribute_Accuracy:
+      Attribute_Accuracy_Report:
+        Slight variations in peak ground motions and spectral values 
+        may depend on processing. Corrections or changes in station 
+        and amplitude information are reflected by the authoritative 
+        seismic network. In addition, changes in magnitude may result 
+        in changes to estimated ground motions in areas with sparse 
+        seismic station coverage.
+
+    Completeness_Report:
+      Included in this version are data available up to the time processed.
+      Additional data (seismic stations) may be added at a later time.
+    Logical_Consistency_Report:
+      Ground motion data are direct measurements only at the location
+      of seismic stations; all other data are interpolated (as
+      described in the citations).  Seismic station coverage varies 
+      in density as well as instrumentation across the region in 
+      question.  Uncertainty in the reported ground motions generally
+      increases with distance from seismic stations, and in areas of 
+      very low station density may be largely the product of empirical 
+      relationships.  Uncertainties in ground motions may also arise
+      from inaccurate ground motion amplitudes from seismic stations, 
+      or inaccurate information regarding earthquake epicenter or 
+      magnitude, as reported by the generating network.
+ 
+    Lineage:
+      Process_Step: 
+        Process_Description:
+          Shaking maps are prepared by contouring shaking information 
+          interpolated onto a square grid uniformly sampled at a 
+          spacing of 1 minute (about 1.6 km) throughout California. If 
+          there were stations at each of the tens of thousands of grid 
+          points, then the creation of shaking maps would be relatively 
+          simple. Of course stations are not available for all of these 
+          grid points, and in many cases grid points may be tens of 
+          kilometers from the nearest reporting station. The overall 
+          mapping philosophy is to combine information from individual 
+          stations, geology (representing site amplification), and the 
+          distance to the epicenter or causative fault to create the 
+          best composite map. The procedure produces reasonable estimates 
+          at grid points located far from available data, while 
+          preserving the detailed shaking information available for 
+          regions where there are stations nearby.
+
+          Estimation of shaking over the regional extent for an earthquake 
+          in California is obtained by the spatial interpolation of the 
+          measured ground motions with geologically based frequency and 
+          amplitude-dependent site corrections. We use the California 
+          Site Condition Map (California Geological Survey, CGS) maps 
+          of National Earthquake Hazard Reduction Program (NEHRP) 
+          classification site conditions as the basis for our site 
+          corrections. These site condition maps have coverage throughout 
+          the state at 1:250,000 scale (Wills et al., 2000). We use the 
+          amplification factors of Borcherdt et al. (1994). In addition, 
+          ShakeMap ground motions in regions of sparse station spacing 
+          are estimated using ground motion regression, initially from 
+          a point location at the epicenter. Later, as information about 
+          fault dimensions became available (in the form of aftershocks, 
+          source rupture models, and observed surface slip), the fault 
+          location and rupture dimensions are used as the basis for 
+          ground motion estimation.
+
+          First, peak ground motion parameters are recovered for each 
+          station and associated with a particular earthquake origin time 
+          and epicenter. We then create a coarse, uniformly spaced grid 
+          of 30-km spaced "phantom" stations. Peak ground motions and 
+          spectral acceleration values are assigned to each coarse grid 
+          point using a ground motion attenuation relationship for 
+          rock sites given the magnitude of the earthquake and distance 
+          to each grid point.  In practice, we apply a static correction 
+          to the amplitudes of the regression by using the network-determined 
+          magnitude, predicting the observed amplitudes, and correcting for 
+          an amplitude bias term between the predictions and the data. 
+          
+           
+          Site corrections are then used to interpolate from ground 
+          motions recorded on a fairly sparse, non-uniformly spaced 
+          network of stations to maps showing spatially continuous 
+          functions (i.e., contours).  Prior to interpolation, we reduce 
+          the ground motion amplitudes to a common reference, in this 
+          case bedrock motions. Peak ground motion amplitudes from the 
+          seismic stations are corrected to rock site conditions; and 
+          the observations (corrected to rock) and the coarse phantom 
+          stations (computed for rock) are then interpolated to a fine 
+          rock site grid (roughly 1.6-km spacing). We scale the peak 
+          acceleration (PGA) amplitude with the Borcherdt et al. (1994) 
+          short-period amplification factors while the peak ground 
+          velocity (PGV) values are corrected with the mid-period 
+          factors. Response spectral values are scaled by the short-period 
+          factors at 0.3 sec, and by the mid-period response at 1.0 and 
+          3.0 seconds. The site correction procedure is applied so that 
+          the original data values are returned at each station; hence, 
+          the actual recorded motions are preserved in the process and 
+          the final contours reflect the observations wherever they exist.
+
+          Next, the interpolated rock grid is corrected at each point
+          for local site amplification and instrumental intensity map is 
+          generated by relating the peak ground acceleration or velocity 
+          at each grid point to intensity as described by Wald et al. (1999). 
+          This fine grid is saved and exported to the file "grid.xyz". A 
+          continuous surface is also fit to the fine grid to produce 
+          the contour maps and GIS formatted maps.
+
+        Process_Date: 2016-11-25
+        Process_Time: 14:24:29 UTC
+
+  Spatial_Reference_Information:
+    Horizontal_Coordinate_System_Definition:
+      Geographic:
+        Latitude_Resolution: 0.01666666666667
+        Longitude_Resolution: 0.01666666666667
+        Geographic_Coordinate_Units: Decimal degrees
+      Geodetic_Model:
+        Horizontal_Datum_Name: World Geodetic System 1984
+        Ellipsoid_Name: WGS 84
+        Semi-major_Axis: 6378137
+        Denominator_of_Flattening_Ratio: 298.257
+
+  Entity_and_Attribute_Information:
+    Overview_Description:
+      Entity_and_Attribute_Overview:
+        File grid.xyz
+  
+        Values of the peak amplitudes at the ShakeMap map grid nodes.
+        File is ASCII text in the following format:
+  
+        First line is a header, space-delimited, with all of the following:
+        ><name/CUSPID of event> <mag> <epicentral lat> <epicentral lon>
+        ><MMM DD YYYY> <HH:MM:SS timezone>
+        ><W bound> <S bound> <E bound> <N bound>
+        >(Process time: <time>) <Location String>
+  
+        The first 'time' field is the time of the event.
+        'Process time' is the time this file was last updated.
+  
+        For large or historic earthquakes the "Location String" will
+        usually be the name of the earthquake, otherwise it will be
+        something of the form "12.1 mi. SSW of Carpinteria, CA"
+  
+        The remaining lines are of the form:
+        ><lon> <lat> <pga> <pgv> <mmi> <psa03> <psa10> <psa30>
+  
+        >pga   = peak ground motion (acceleration, as percent of g)
+        >pgv   = peak ground motion (velocity in cm/s)
+        >mmi   = estimated instrumental intensity
+        >psa03 = spectral acceleration at 0.3 s period, 5% damping (percent of g)
+        >psa10 = spectral acceleration at 1.0 s period, 5% damping (percent of g)
+        >psa30 = spectral acceleration at 3.0 s period, 5% damping (percent of g)
+      Entity_and_Attribute_Detail_Citation: 
+        http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/us10007ca5/about_formats.html#xyz
+
+    Overview_Description:
+      Entity_and_Attribute_Overview:
+        File grid.xml
+  
+        Specifies the earthquake and ShakeMap parameters, and values 
+        of the peak amplitudes at the ShakeMap map grid nodes.  File is XML 
+        text.
+  
+      Entity_and_Attribute_Detail_Citation: 
+        http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/us10007ca5/about_formats.html#xml
+
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: mi.dbf (shapefile from "shape.zip" download file)
+        Entity_Type_Definition: Polygons of estimated instrumental intensity
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: Estimated instrumental intensity (double)
+        Attribute_Definition_Source: 
+          Wald, et al., Relationship between Peak Ground Acceleration, Peak
+          Ground Velocity, and Modified Mercalli Intensity for Earthquakes
+          in California, Earthquake Spectra, Vol. 15, No. 3, 1999, pp 557-564.
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: 0.0
+            Range_Domain_Maximum: 10.0
+            Attribute_Units_of_Measure: Intensity
+            Attribute_Measurement_Resolution: 0.1
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Estimated instrumental intensity (double)
+        Attribute_Definition_Source: 
+          Wald, et al., Relationship between Peak Ground Acceleration, Peak
+          Ground Velocity, and Modified Mercalli Intensity for Earthquakes
+          in California, Earthquake Spectra, Vol. 15, No. 3, 1999, pp 557-564.
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: 0.0
+            Range_Domain_Maximum: 10.0
+            Attribute_Units_of_Measure: Intensity
+            Attribute_Measurement_Resolution: 0.1
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: pga.dbf (shapefile from "shape.zip" download file)
+        Entity_Type_Definition: Polygons of peak ground motion (acceleration)
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: Peak ground motion (acceleration, as integer percent of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -200.0
+            Range_Domain_Maximum: 200.0
+            Attribute_Units_of_Measure: percent of g
+            Attribute_Measurement_Resolution: 4
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Peak ground motion (acceleration, as fraction of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -200.0
+            Range_Domain_Maximum: 200.0
+            Attribute_Units_of_Measure: fraction of g
+            Attribute_Measurement_Resolution: 0.04
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: pgv.dbf (shapefile from "shape.zip" download file)
+        Entity_Type_Definition: Polygons of peak ground motion (velocity)
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: Peak ground motion (velocity in cm/s, integer)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -500.0
+            Range_Domain_Maximum: 500.0
+            Attribute_Units_of_Measure: cm/s
+            Attribute_Measurement_Resolution: 4
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Peak ground motion (velocity in cm/s, double)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -500.0
+            Range_Domain_Maximum: 500.0
+            Attribute_Units_of_Measure: cm/s
+            Attribute_Measurement_Resolution: 4
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: psa03.dbf (shapefile (from "shape.zip" download file)
+        Entity_Type_Definition: Polygons of spectral acceleration at 0.3 s period, 5% damping
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: 
+          Spectral acceleration at 0.3 s period, 5% damping (integer percent of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: percent of g
+            Attribute_Measurement_Resolution: 4
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Spectral acceleration at 0.3 s period, 5% damping (fraction of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: fraction of g
+            Attribute_Measurement_Resolution: 0.04
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: psa10.dbf (shapefile from "shape.zip" download file)
+        Entity_Type_Definition: Polygons of spectral acceleration at 1.0 s period, 5% damping
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: 
+          Spectral acceleration at 1.0 s period, 5% damping (integer percent of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: percent of g
+            Attribute_Measurement_Resolution: 4
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Spectral acceleration at 1.0 s period, 5% damping (fraction of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: fraction of g
+            Attribute_Measurement_Resolution: 0.04
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: psa30.dbf (shapefile from "shape.zip" download file)
+        Entity_Type_Definition: Polygons of spectral acceleration at 3.0 s period, 5% damping
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: 
+          Spectral acceleration at 3.0 s period, 5% damping (integer percent of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: 2
+            Range_Domain_Maximum: 34
+            Attribute_Units_of_Measure: percent of g
+            Attribute_Measurement_Resolution: 4
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Spectral acceleration at 3.0 s period, 5% damping (fraction of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: fraction of g
+            Attribute_Measurement_Resolution: 0.04
+
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: pga.dbf (shapefile from "hazus.zip" download file)
+        Entity_Type_Definition: Polygons of "mean" ground motion (acceleration), scaled from recorded peak
+          values by 15% (empirical correction from peak to mean) to conform to HAZUS input requirements.
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: Mean ground motion (acceleration, as integer percent of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -200.0
+            Range_Domain_Maximum: 200.0
+            Attribute_Units_of_Measure: percent of g
+            Attribute_Measurement_Resolution: 4
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Mean ground motion (acceleration, as fraction of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -200.0
+            Range_Domain_Maximum: 200.0
+            Attribute_Units_of_Measure: fraction of g
+            Attribute_Measurement_Resolution: 0.04
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: pgv.dbf (shapefile (from "hazus.zip" download file)
+        Entity_Type_Definition: Polygons of "mean" ground motion (velocity), scaled from recorded peak
+          values by 15% (empirical correction from peak to mean) to conform to HAZUS input requirements.
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: Mean ground motion (velocity in inches/sec, integer)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -200.0
+            Range_Domain_Maximum: 200.0
+            Attribute_Units_of_Measure: cm/s
+            Attribute_Measurement_Resolution: 2
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Mean ground motion (velocity in inches/s, double)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -500.0
+            Range_Domain_Maximum: 500.0
+            Attribute_Units_of_Measure: cm/s
+            Attribute_Measurement_Resolution: 2.0
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: psa03.dbf (shapefile from "hazus.zip" download file)
+        Entity_Type_Definition: Polygons of "mean" spectral acceleration at 0.3 s period, 5% damping, scaled from 
+          recorded peak values by 15% (empirical correction from peak to mean) to conform to HAZUS input 
+          requirements.
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: 
+          Mean Spectral acceleration at 0.3 s period, 5% damping (integer percent of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: percent of g
+            Attribute_Measurement_Resolution: 4
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Mean spectral acceleration at 0.3 s period, 5% damping (fraction of g), scaled 
+          from recorded peak values by 15% (empirical correction from peak to mean) to conform to HAZUS input 
+          requirements.
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: fraction of g
+            Attribute_Measurement_Resolution: 0.04
+    Detailed_Description:
+      Entity_Type: 
+        Entity_Type_Label: psa10.dbf (shapefile from "hazus.zip" download file)
+        Entity_Type_Definition: Polygons of mean spectral acceleration at 1.0 s period, 5% damping, scaled from 
+          recorded peak values by 15% (empirical correction from peak to mean) to conform to HAZUS input 
+          requirements.
+        Entity_Type_Definition_Source: ESRI Shapefile Technical Description
+      Attribute:
+        Attribute_Label: GRID_CODE
+        Attribute_Definition: 
+          Mean spectral acceleration at 1.0 s period, 5% damping (integer percent of g)
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: percent of g
+            Attribute_Measurement_Resolution: 4
+      Attribute:
+        Attribute_Label: VALUE
+        Attribute_Definition: Mean spectral acceleration at 1.0 s period, 5% damping (fraction of g), scaled from 
+          recorded peak values by 15% (empirical correction from peak to mean) to conform to HAZUS input
+          requirements.
+        Attribute_Definition_Source: self-evident
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -400.0
+            Range_Domain_Maximum: 400.0
+            Attribute_Units_of_Measure: fraction of g
+            Attribute_Measurement_Resolution: 0.04
+
+  Distribution_Information:
+    Distributor:
+      Contact_Information:
+        Contact_Organization_Primary:
+          Contact_Organization: United States Geological Survey, Advanced National Seismic System (ANSS)
+          Contact_Person: David J Wald
+        Contact_Position: Geophysicist
+        Contact_Address:
+          Address_Type: mailing address
+          Address: P.O. Box 25046
+          City: Lakewood
+          State_or_Province: CO
+          Postal_Code: 80225
+          Country: USA
+        Contact_Voice_Telephone: 303-273-8441
+        Contact_Facsimile_Telephone: (303) 273-8600
+        Contact_Electronic_Mail_Address: wald@usgs.gov
+    Resource_Description: Shakemap data for us10007ca5
+    Distribution_Liability:
+      Some USGS information accessed through this page may be preliminary in
+      nature and presented prior to final review and approval by the
+      Director of the USGS. This information is provided with the
+      understanding that it is not guaranteed to be correct or complete, and
+      conclusions drawn from such information are the sole responsibility of
+      the user. 
+  
+      These are automatic computer generated maps and have not necessarily
+      been checked by human oversight, so they may contain errors. Further,
+      the input data is raw and unchecked, and may contain errors.
+  
+      Contours can be misleading since data gaps may exist. Caution should
+      be used in deciding which features in the contour patterns are
+      required by the data. Ground motions and intensities can vary greatly
+      over small distances, so these maps are only approximate; when maps
+      are enlarged beyond the limits of the original data in an effort to
+      show small areas, the maps are unreliable.
+  
+      These maps are preliminary in nature and will be updated as data
+      arrives from distributed sources. 
+  
+      The estimated intensity map is derived from ground motions recorded by
+      seismographs and represents Modified Mercalli Intensities (MMI's) that
+      are likely to have been associated with the ground motions. Unlike
+      conventional Modified Mercalli Intensities, the estimated intensities
+      are not based on observations of the earthquake effects on people or
+      structures.
+  
+      Locations within the same intensity area will not necessarily
+      experience the same level of damage since damage depends heavily on
+      the type of structure, the nature of the construction, and the details
+      of the ground motion at that site. For this reason more or less damage
+      than described in the MMI scale may occur.
+  
+      Large earthquakes can generate very long-period ground motions that
+      can cause damage at great distances from the epicenter; although the
+      intensity estimated from the ground motions may be small, significant
+      effects to large structures (bridges, tall buildings, storage tanks)
+      may be notable.
+  
+      The ground motion levels and descriptions associated with each
+      intensity value are based on recent damaging earthquakes. There may be
+      revisions in these parameters as more data become available or from
+      further improvements in methodology. 
+  
+    Standard_Order_Process:
+      Digital_Form:
+        Digital_Transfer_Information:
+          Format_Name: ESRI shapefile
+          Format_Information_Content: 
+            Ground shaking intensity, acceleration, and velocity contours
+          File_Decompression_Technique: unzip
+          Transfer_Size: 2 megabytes
+        Digital_Transfer_Option:
+          Online_Option:
+            Computer_Contact_Information:
+              Network_Address:
+                Network_Resource_Name: 
+                  http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/us10007ca5/download/shape.zip
+                Network_Resource_Name: 
+                  http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/us10007ca5/download/hazus.zip
+      Digital_Form:
+        Digital_Transfer_Information:
+          Format_Name: Text
+          Format_Version_Number: 1.0
+          Format_Specification:
+            Within lines, values are delimited by spaces.
+  
+            First line is a header containing <name/CUSPID of event> <mag>
+            <epicentral lat> <epicentral lon> <MMM DD YYYY> <HH:MM:SS
+            timezone> <W bound> <S bound> <E bound> <N bound> (Process time:
+            <time>) <Location String>
+  
+            The remaining lines contain <lon> <lat> <pga> <pgv> <mmi>
+            <psa03> <psa10> <psa30>
+  
+          Format_Information_Content: Ground-shaking intensity and acceleration data
+          File_Decompression_Technique: unzip
+          Transfer_Size: 0.5 megabytes
+        Digital_Transfer_Option:
+          Online_Option:
+            Computer_Contact_Information:
+              Network_Address:
+                Network_Resource_Name: 
+                  http://earthquake.usgs.gov/earthquakes/shakemap/global/shake/us10007ca5/download/grid.xyz.zip
+      Fees: none
+
+  Metadata_Reference_Information:
+    Metadata_Date: 2016-11-25
+
+    Metadata_Contact:
+      Contact_Information:
+        Contact_Organization_Primary: 
+          Contact_Organization: U.S. Geological Survey, GEO-CR-GHT
+          Contact_Person: David J. Wald
+        Contact_Position: Geophysicist
+        Contact_Address:
+          Address_Type: mailing
+          Address: 
+            U.S. Geological Survey
+            P.O. Box 25046, Mail Stop 966
+          City: Denver
+          State_or_Province: CO
+          Postal_Code: 80225-0046
+          Country: USA
+        Contact_Voice_Telephone: (303) 273-8441
+        Contact_Facsimile_Telephone: (303) 273-8600
+        Contact_Electronic_Mail_Address: wald@usgs.gov
+
+    Metadata_Standard_Name: Content Standards for Digital Geospatial Metadata
+    Metadata_Standard_Version: FGDC-STD-001-1998

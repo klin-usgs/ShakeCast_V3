@@ -1,0 +1,5 @@
+
+A ShakeMap is now available for event ID us10007ca5, M6.6
+Event Time: 14:24:29 UTC Nov 25, 2016
+Location: 39.24 74.05
+

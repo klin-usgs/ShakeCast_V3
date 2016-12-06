@@ -1,0 +1,5 @@
+# Earthquake us10007ca5: 2016-11-25 14:24:29 UTC, M=6.6, Lat: 39.23780, Lon: 74.04720, Depth: 12.57km, Bias: mmi=0.00 pga=0.00 pgv=0.00 
+# Columns: Station Code, latitude, longitude, regression dist (km), intensity, network code, Channel 1 Code, PGV (cm/sec), PGA (%g), PSA 0.3 sec (%g), PSA 1.0 sec (%g), PSA 3.0 sec (%g), Channel 2 Code, PGV (cm/sec), PGA (%g), PSA 0.3 sec (%g), PSA 1.0 sec (%g), PSA 3.0 sec (%g), Channel 3 Code, PGV (cm/sec), PGA (%g), PSA 0.3 sec (%g), PSA 1.0 sec (%g), PSA 3.0 sec (%g)
+ 
+1, 41.32610, 69.29870, 458.20, 3.0, DYFI, DERIVED, nan, nan, nan, nan, nan
+
