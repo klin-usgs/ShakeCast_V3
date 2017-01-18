@@ -125,7 +125,7 @@ SC->log(scalar @servers);
 SC->log($servers[0]);
 my $rc = 0;
 if (@ARGV) {
-	my $url = 'http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventid=';
+	my $url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventid=';
 	foreach my $evid (@ARGV) {
 		my $event = {};
 		$event->{net} = substr($evid, 0, 2);
@@ -137,7 +137,7 @@ if (@ARGV) {
 		# http://earthquake.usgs.gov/eqcenter/catalogs/7day-M2.5.xml
 		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/week";
 		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/day";
-		my $url = "http://" . $server->dns_address . "/earthquakes/feed/v1.0/summary/1.0_day.geojson";
+		my $url = "https://" . $server->dns_address . "/earthquakes/feed/v1.0/summary/1.0_day.geojson";
 		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/hour";
 		my $event_list = fetch_json_page($server->dns_address, $url);
 		next if (ref $event_list ne 'ARRAY');
