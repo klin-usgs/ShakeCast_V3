@@ -1,8 +1,8 @@
-#!/usr/local/bin/perl 
+#!/usr/local/bin/perl -w
 
 BEGIN{
-	push(@INC,"C:\Perl\lib");
-	push(@INC,"C:\Perl\site\lib");
+	#push(@INC,"C:\Perl\lib");
+	#push(@INC,"C:\Perl\site\lib");
 }
 
 

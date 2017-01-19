@@ -6,6 +6,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use File::Path;
 use SC;
+use SC::AEBM;
 use Shake::Distance;
 use Data::Dumper;
 use JSON::XS;
@@ -63,36 +64,75 @@ foreach my $facility (@$fac_list) {
 	my $gnuplot_data;
 	my $cmd;
 	my $max_value;
-	my ($fac_id, $ext_fac_id, $fac_name, $class, $component) = @$facility;
+	my ($fac_id, $ext_fac_id, $fac_name, $attr_name, $attr_value) = @$facility;
 	#next unless ($class =~ /AEBM/i);
 	
-	my %reg_rv;
-	my $mbt = mbt($fac_id);
-	my $mbt_fragility = mbt_fragility($fac_id, $mbt);
-	my $capacity = capacity($mbt);
-	my ($sm_input, $domain_periods, $smooth_sa, $smooth_sd, $smooth_factor) = response_spectra($fac_id);
-	my $damped_scaling = damped_scaling($fac_id, $mbt, $capacity);
-	my $demand_sa = demand($smooth_sa, $damped_scaling);
-	my $demand_sd = demand($smooth_sd, $damped_scaling);
-	my $performance = performance_point($capacity, $demand_sa, $demand_sd, $mbt_fragility);
-	my ($ds, $beta) = compute_ds($performance, $mbt_fragility);
-	my $loss = compute_loss($ds);
+	my (%reg_rv, %mbt);
+	my @attr_names = split /,/, $attr_name;
+	my @attr_values = split /,/, $attr_value;
+	@mbt{@attr_names} = @attr_values;
+	next unless ($mbt{'aebm'} || $mbt{'MBT_V2'});
+	
+	my $sm_input = lookup_sm_param($fac_id);
+	next unless ($sm_input);
+	
+	my ($capacity, $domain_periods, $smooth_sa, $smooth_sd, $smooth_factor);
+	my ($damped_scaling, $demand_sa, $demand_sd, $performance, $ds, $beta, $loss);
+	
+	my $aebm = SC::AEBM->new(%mbt) or print "$SC::errstr\n";
+	
+	if ($mbt{'MBT_V2'}) {
+		$reg_rv{'mbt'} = $aebm->set_mbt_v2($mbt{'MBT_V2'});
+		$aebm->capacity_curve();
+		$aebm->compute_kappa($sm_input);
+		$aebm->response_spectra($sm_input);
+		$aebm->compute_Be();
+		$aebm->compute_dsf($sm_input);
+		$reg_rv{'demand_spectrum'}->{'sa'} = $aebm->demand('demand_sa');
+		$reg_rv{'demand_spectrum'}->{'sd'} = $aebm->demand('demand_sd');
+		$reg_rv{'performance'} = $aebm->performance_point();
+		$aebm->compute_ds();
+		$reg_rv{'capacity'} = $aebm->{'capacity'};
+		$reg_rv{'sm_input'} = $sm_input;
+		$reg_rv{'response_spectrum'}->{'domain_periods'} = $aebm->{'domain_periods'};
+		$reg_rv{'response_spectrum'}->{'smooth_factor'} = $aebm->{'smooth_factor'};
+		$reg_rv{'response_spectrum'}->{'sa'} = $aebm->{'sa_smooth'};
+		$reg_rv{'response_spectrum'}->{'sd'} = $aebm->{'sd_smooth'};
+		$reg_rv{'demand_spectrum'}->{'scaling'} = $aebm->{'dsf'};
+		$reg_rv{'damage_state'} = $aebm->{'DS'};
+	} else {
+		$mbt{'kappa'} = kappa($fac_id);
+		#print "$fac_id\n";
+		#print Dumper(%mbt);
+		#my $mbt = mbt($fac_id);
+		#my $mbt_fragility = mbt_fragility($fac_id, $mbt);
+		my $capacity = capacity(\%mbt);
+		#print Dumper($capacity);
+		my ($sm_input, $domain_periods, $smooth_sa, $smooth_sd, $smooth_factor) = response_spectra($fac_id);
+		my $damped_scaling = damped_scaling($fac_id, \%mbt, $capacity);
+		#print Dumper($damped_scaling);
+		my $demand_sa = demand($smooth_sa, $damped_scaling);
+		my $demand_sd = demand($smooth_sd, $damped_scaling);
+		my $performance = performance_point($capacity, $demand_sa, $demand_sd, \%mbt);
+		my ($ds, $beta) = compute_ds($performance, \%mbt);
+		my $loss = compute_loss($ds);
+		$reg_rv{'mbt'} = \%mbt;
+		$reg_rv{'capacity'} = $capacity;
+		$reg_rv{'sm_input'} = $sm_input;
+		$reg_rv{'response_spectrum'}->{'domain_periods'} = $domain_periods;
+		$reg_rv{'response_spectrum'}->{'smooth_factor'} = $smooth_factor;
+		$reg_rv{'response_spectrum'}->{'sa'} = $smooth_sa;
+		$reg_rv{'response_spectrum'}->{'sd'} = $smooth_sd;
+		$reg_rv{'demand_spectrum'}->{'scaling'} = $damped_scaling;
+		$reg_rv{'demand_spectrum'}->{'sa'} = $demand_sa;
+		$reg_rv{'demand_spectrum'}->{'sd'} = $demand_sd;
+		$reg_rv{'performance'} = $performance;
+		$reg_rv{'damage_state'} = $ds;
+		$reg_rv{'mbt_fragility'}{'beta'} = $beta;
+		$reg_rv{'loss'} = $loss;
 
-	$reg_rv{'mbt'} = $mbt;
-	$reg_rv{'mbt_fragility'} = $mbt_fragility;
-	$reg_rv{'capacity'} = $capacity;
-	$reg_rv{'sm_input'} = $sm_input;
-	$reg_rv{'response_spectrum'}->{'domain_periods'} = $domain_periods;
-	$reg_rv{'response_spectrum'}->{'smooth_factor'} = $smooth_factor;
-	$reg_rv{'response_spectrum'}->{'sa'} = $smooth_sa;
-	$reg_rv{'response_spectrum'}->{'sd'} = $smooth_sd;
-	$reg_rv{'demand_spectrum'}->{'scaling'} = $damped_scaling;
-	$reg_rv{'demand_spectrum'}->{'sa'} = $demand_sa;
-	$reg_rv{'demand_spectrum'}->{'sd'} = $demand_sd;
-	$reg_rv{'performance'} = $performance;
-	$reg_rv{'damage_state'} = $ds;
-	$reg_rv{'mbt_fragility'}{'beta'} = $beta;
-	$reg_rv{'loss'} = $loss;
+	}
+	
 
 	$json->{'aebm'}->{$fac_id} = \%reg_rv;	
 	
@@ -106,7 +146,34 @@ my $end = time;
 
 print "The total time is ", $end-$start, "\n";
 print "process product STATUS=SUCCESS\n";
+exec "$FindBin::Bin/facility_aebm_plot.pl $evid $version";
 exit;
+
+# send product to a remote server
+sub lookup_sm_param {
+    my ($fac_id) = @_;
+	
+	my $col = 'dist, value_'.$metric_column_map{'PGA'}.', value_'.$metric_column_map{'PSA03'}.', value_'.$metric_column_map{'PSA10'}.', value_'.$metric_column_map{'PSA30'};
+	my $idp = SC->dbh->selectall_arrayref(qq{
+		SELECT $col
+		FROM facility_shaking
+		WHERE facility_id = ?
+		AND grid_id = ?}, undef, $fac_id, $grid_id);
+		
+	return join -1 unless (scalar @$idp >= 1);
+	my ($dist, $pga, $psa03, $psa10, $psa30) = map { $_ / 100} @{$idp->[0]};
+	my $sm_input = {
+		'magnitude' => $event->{'magnitude'},
+		'dist' => $dist*100,
+		'pga' => $pga,
+		'psa03' => $psa03,
+		'psa10' => $psa10,
+		'psa30' => $psa30,
+	};
+	return 0 if ($psa03 <=0 || $psa10 <=0);
+
+	return $sm_input;	
+}
 
 # returns a list of all metrics that should be polled for new events, etc.
 sub metric_list {
@@ -225,20 +292,23 @@ sub capacity {
 	
 	my $capacity = {};
 	my (@sa, @sd);
+	my $tu = 0.32*sqrt($mbt->{'Du'}/$mbt->{'Au'});
 	for (my $ind=0; $ind <= $#output_periods; $ind++) {
 		my ($sa, $sd);
-		if ($output_periods[$ind] >= 0.32*sqrt($mbt->{'Du'} / $mbt->{'Au'})) {
+		if ($output_periods[$ind] >= $tu) {
 			$sa = $mbt->{'Au'};
 		} elsif ($output_periods[$ind] > $mbt->{'Te'}) {
-			$sa = sqrt($mbt->{'Ay'} / $mbt->{'Au'});
+			#$sa = sqrt($mbt->{'Ay'} / $mbt->{'Au'});
+			$sa = $mbt->{'Ay'} + ($mbt->{'Au'} - $mbt->{'Ay'}) *
+			  sqrt((($output_periods[$ind] - $mbt->{'Te'}) / $tu));
 		} elsif ($output_periods[$ind] <= 0) {
 			$sa = 0;
 		} else {
 			$sa = $mbt->{'Ay'};
 		}
-		$sa = 0.474 if ($ind == 11);
-		$sa = 0.598 if ($ind == 12);
-		$sa = 0.647 if ($ind == 13);
+		#$sa = 0.474 if ($ind == 11);
+		#$sa = 0.598 if ($ind == 12);
+		#$sa = 0.647 if ($ind == 13);
 		
 		$sd = 9.8 * $sa * $output_periods[$ind]**2;
 		push @sa, $sa;
@@ -307,10 +377,10 @@ sub mbt_fragility {
 		   'betaTC' => 0.4,
 		  };
 
-	$mbt_fragility->{'SS'} = 12 * $mbt_fragility->{'Height'} * $mbt_fragility->{'deltaS'} * ($mbt->{'alpha2'}/$mbt->{'alpha3'});
-	$mbt_fragility->{'SM'} = 12 * $mbt_fragility->{'Height'} * $mbt_fragility->{'deltaM'} * ($mbt->{'alpha2'}/$mbt->{'alpha3'});
-	$mbt_fragility->{'SE'} = 12 * $mbt_fragility->{'Height'} * $mbt_fragility->{'deltaE'} * ($mbt->{'alpha2'}/$mbt->{'alpha3'});
-	$mbt_fragility->{'SC'} = 12 * $mbt_fragility->{'Height'} * $mbt_fragility->{'deltaC'} * ($mbt->{'alpha2'}/$mbt->{'alpha3'});
+	$mbt_fragility->{'SdS'} = 12 * $mbt_fragility->{'Height'} * $mbt_fragility->{'deltaS'} * ($mbt->{'alpha2'}/$mbt->{'alpha3'});
+	$mbt_fragility->{'SdM'} = 12 * $mbt_fragility->{'Height'} * $mbt_fragility->{'deltaM'} * ($mbt->{'alpha2'}/$mbt->{'alpha3'});
+	$mbt_fragility->{'SdE'} = 12 * $mbt_fragility->{'Height'} * $mbt_fragility->{'deltaE'} * ($mbt->{'alpha2'}/$mbt->{'alpha3'});
+	$mbt_fragility->{'SdC'} = 12 * $mbt_fragility->{'Height'} * $mbt_fragility->{'deltaC'} * ($mbt->{'alpha2'}/$mbt->{'alpha3'});
 	
 	return $mbt_fragility;
 }
@@ -439,6 +509,7 @@ sub damped_scaling {
 	my @periods = @{$capacity->{'periods'}};
 	my @sa = @{$capacity->{'sa'}};
 	my @sd = @{$capacity->{'sd'}};
+	#print Dumper($mbt);
 	my $kappa = $mbt->{'kappa'};
 	my $Dy = $mbt->{'Dy'};
 	my $Ay = $mbt->{'Ay'};
@@ -453,16 +524,17 @@ sub damped_scaling {
 		if ($T <= 0) {
 			$Bh[$ind] = 0;
 		} else {
-			$bh[$ind] = 100*($kappa*(2*($sa+$sa_1)*($sd-($sd_1+($Dy/$Ay)*($sa-$sa_1)))+((($Bh[$ind-1]/100)/$kappa))*2*$pi*$sd_1*$sa_1)/(2*$pi*$sd*$sa));
+			#print " 100*($kappa*(2*($sa+$sa_1)*($sd-($sd_1+($Dy/$Ay)*($sa-$sa_1)))+((($Bh[$ind-1]/100)/$kappa))*2*$pi*$sd_1*$sa_1)/(2*$pi*$sd*$sa))\n";
+			$Bh[$ind] = 100*($kappa*(2*($sa+$sa_1)*($sd-($sd_1+($Dy/$Ay)*($sa-$sa_1)))+((($Bh[$ind-1]/100)/$kappa))*2*$pi*$sd_1*$sa_1)/(2*$pi*$sd*$sa));
 		}
 		
-		if ($Bh[$ind] > $Be[$ind]) {
+		if ($Bh[$ind] > $Be[0]) {
 			$Be[$ind] = $Bh[$ind];
 		} else {
 			$Be[$ind] = $Be[0];
 		}
 	}
-	
+	#print Dumper(@Be);
 	my $dsf = dsf($fac_id, \@Be);
 	return $dsf;
 }
@@ -561,6 +633,7 @@ sub performance_point {
 	$performance->{'capacity_lower'} = intersection(\@sa_lower, \@sd_lower, $demand_sa, $demand_sd);	
 	$performance->{'demand_lower'} = intersection($capacity->{'sa'}, $capacity->{'sd'}, \@dem_sa_lower, \@dem_sd_lower);	
 	$performance->{'demand_upper'} = intersection($capacity->{'sa'}, $capacity->{'sd'}, \@dem_sa_upper, \@dem_sd_upper);	
+print Dumper($performance);
 	return $performance;
 }
 
@@ -577,38 +650,25 @@ sub intersection {
 		my ($cap_sa2, $cap_sd2) =  ($capacity_sa->[$ind], $capacity_sd->[$ind]);
 		my ($dem_sa1, $dem_sa2, $dem_sd1, $dem_sd2) = ($demand_sa->[$ind-1], $demand_sa->[$ind],
 							       $demand_sd->[$ind-1], $demand_sd->[$ind]);
-		#my $intersect = new Math::Matrix ([$cap_sd2 - $cap_sd1, 0, -1, 0, -$cap_sd1],
-		#				  [0, $dem_sd2 - $dem_sd1, -1, 0, -$dem_sd1],
-		#				  [$cap_sa2 - $cap_sa1, 0, 0, -1, -$cap_sa1],
-		#				  [0, $dem_sa2 - $dem_sa1, 0, -1, -$dem_sa1]) ->solve;
-		#my ($t1, $t2, $sa, $sd) = ($intersect->[0]->[0], $intersect->[1]->[0],
-		#			   $intersect->[2]->[0], $intersect->[3]->[0]);
-		my $div = ($cap_sd1 - $cap_sd2) * ($dem_sa1 - $dem_sa2) - ($cap_sa1 - $cap_sa2) * ($dem_sd1 - $dem_sd2);
+
+		my ($a1, $b1, $c1, $a2, $b2, $c2) = (
+			$cap_sd2-$cap_sd1, $dem_sd1-$dem_sd2, $dem_sd1-$cap_sd1,
+			$cap_sa2-$cap_sa1, $dem_sa1-$dem_sa2, $dem_sa1-$cap_sa1,
+		);
+		my $div = $a1*$b2 - $b1*$a2;
+print "Div $div ";
 		next if ($div == 0);
-		my $px = (($cap_sd1*$cap_sa2 - $cap_sa1*$cap_sd2) * ($dem_sd1 - $dem_sd2) - ($cap_sd1 - $cap_sd2)*($dem_sd1*$dem_sa2 - $dem_sa1*$dem_sd2))
-				/ $div;
-		my $py = (($cap_sd1*$cap_sa2 - $cap_sa1*$cap_sd2) * ($dem_sa1 - $dem_sa2) - ($cap_sa1 - $cap_sa2)*($dem_sd1*$dem_sa2 - $dem_sa1*$dem_sd2))
-				/ $div;
+		my $px = ($c1*$b2 - $b1*$c2) / $div;
+		my $py = ($a1*$c2 - $c1*$a2) / $div;
 		
-		#push @intersect_test, {
-		#	't1' => $t1,
-		#	't2' => $t2,
-		#	'sa' => $sa,
-		#	'sd' => $sd,
-		#	'demand_sa' => $dem_sa1,
-		#	'demand_sd' => $dem_sd1,
-		#	'p_sd' => $px,
-		#	'p_sa' => $py,
-		#};
-		#	$performance->{$cap_sd1} = {'sa' => $py, 'sd' => $px};
-		if (($px - $cap_sd1)*($px - $cap_sd2) <= 0 && ($py - $cap_sa1)*($py - $cap_sa2) <= 0 ) {
+		if ($px>=0 && $px<=1 && $py<=1 && $py>=0) {
 			$performance->{'sa'} = $py;
 			$performance->{'sd'} = $px;
 			last;
 		}
-		
+
 	}
-	
+print "\n";
 	return $performance;
 }
 
@@ -616,8 +676,10 @@ sub intersection {
 sub compute_ds {
     my ($performance, $mbt_fragility, $fragility_beta) = @_;
 	
-	my @alpha = ($mbt_fragility->{'SS'}, $mbt_fragility->{'SM'}, $mbt_fragility->{'SE'}, $mbt_fragility->{'SC'});
+	#print Dumper($performance);
+	my @alpha = ($mbt_fragility->{'SdS'}, $mbt_fragility->{'SdM'}, $mbt_fragility->{'SdE'}, $mbt_fragility->{'SdC'});
 	my $beta = fragility_beta($performance, $mbt_fragility);
+	#print Dumper($beta);
 	my @beta = ($beta->{'BdS'}, $beta->{'BdM'}, $beta->{'BdE'}, $beta->{'BdC'});
 	
 	use Math::CDF qw(pnorm);
@@ -627,7 +689,8 @@ sub compute_ds {
 	foreach my $frag ('median', 'capacity_upper', 'capacity_lower', 'demand_upper', 'demand_lower') {
 		my (@cdf, @pdf, @err_max, @err_min);
 		for (my $ind=0; $ind <= $#alpha; $ind++) {
-			next unless ($performance->{$frag}->{'sd'} > 0);
+			next unless ($performance->{$frag}->{'sd'} > 0 && $beta[$ind] > 0);
+			#print "(log($performance->{$frag}->{'sd'} / $alpha[$ind])) / $beta[$ind])\n";
 			push @cdf, pnorm((log($performance->{$frag}->{'sd'} / $alpha[$ind])) / $beta[$ind]);
 		}
 		$cdf->{$frag} = \@cdf;
@@ -659,7 +722,7 @@ sub fragility_beta {
 	my $dem_lower_d = $performance->{'demand_lower'}->{'sd'};
 	my $cap_upper_d = $performance->{'capacity_upper'}->{'sd'};
 	my $cap_lower_d = $performance->{'capacity_lower'}->{'sd'};
-	my $sc = $mbt_fragility->{'SC'};
+	my $sc = $mbt_fragility->{'SdC'};
 	return 0 unless ($dem_lower_d && $dem_upper_d && $cap_upper_d && $cap_lower_d);
 	my ($Du, $Dl, $Bd, $Bc, $Bcd);
 	

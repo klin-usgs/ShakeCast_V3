@@ -15,7 +15,7 @@ $(function(){
 		
 		maxfiles: 5,
     	maxfilesize: 500,
-		url: '/scripts/r/post_file',
+		url: 'scripts/r/post_file',
 		
 		uploadFinished:function(i,file,response){
 			$.data(file).addClass('done');
@@ -77,7 +77,7 @@ $(function(){
 			}
 			$("#update_inventory").submit(function() {
 
-			var url = "/scripts/r/update_inventory"; // the script where you handle the form input.
+			var url = "scripts/r/update_inventory"; // the script where you handle the form input.
 			$.ajax({
 			       type: "POST",
 			       url: url,
@@ -154,7 +154,7 @@ $(function(){
 			var get_ext = filename.split('.');
 			// reverse name to check extension
 			get_ext = get_ext.reverse();
-			var img_path = '/images/' + get_ext[0].toLowerCase() + '.png';
+			var img_path = 'images/' + get_ext[0].toLowerCase() + '.png';
 			image.attr('src',img_path);
 		} else {
 			var reader = new FileReader();

@@ -1414,8 +1414,8 @@ sub scan_for_work {
     $n += scan_for_grids();
     #$n += scan_for_stations();
     $n += scan_for_systems();
-	SC::Server->this_server->queue_request(
-		'notify') if ($n);
+	#SC::Server->this_server->queue_request(
+	#	'notify') if ($n);
     vvpr "$n total request(s) queued";
 }
 

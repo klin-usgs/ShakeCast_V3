@@ -1369,8 +1369,8 @@ sub process_new_product {
     } elsif ($self->product_type eq 'GRID_XML') {
 		if ($self->process_grid_xml_file) {
 			SC->log(2, "xml grid file processed");
-			SC::Server->this_server->queue_request(
-				'notifyqueue', $self->shakemap_id, $self->shakemap_version);
+			#SC::Server->this_server->queue_request(
+			#	'notifyqueue', $self->shakemap_id, $self->shakemap_version);
     		} else {
 			SC->error($SC::errstr);
 			# XXX might not be correct.  Even though we got an error while

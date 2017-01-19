@@ -825,7 +825,7 @@ sub notify {
 	
     my $perl = SC->config->{perlbin};
     my $root = SC->config->{RootDir};
-    
+   
     my $rv = `$perl $root/bin/notify.pl --onceonly`;
 
     return 1;

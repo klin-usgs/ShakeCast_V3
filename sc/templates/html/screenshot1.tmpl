@@ -29,7 +29,6 @@
     <script type="text/javascript" src="./js/mapapp_capture.js"></script>
     <script type="text/javascript" src="./js/sc_constant.js"></script>
     <script type="text/javascript" src="./js/storage.js"></script>
-    <script type="text/javascript" src="./js/sc_markerclusterer.js"></script>
 <script type="text/javascript">
 var evid;
 var type
@@ -37,10 +36,6 @@ var type
 //var zoom = [8, 8, 8, 7, 7, 7, 6, 6, 6, 6, 6, 5, 5, 5, 5];
 var facMarkers = [];
 //var bar = {'GREY':'bar-grey', 'GREEN':'bar-success', 'YELLOW':'bar-yellow', 'ORANGE':'bar-warning', 'RED':'bar-danger'};
-		var map;
-		var markers = [];
-		var markerCluster;
-	        var marker_icon = [];
 
 function initialize() {
 	sc_id = evid ? evid : gup('event');

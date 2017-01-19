@@ -185,7 +185,6 @@
 	        var marker_icon = [];
 		var latlng = new google.maps.LatLng(35,-120);
 	    SC_DEF.init();
-	    //var csrf = '<TMPL_VAR NAME=CSRF>';
         var submit_data = {
         };
 
@@ -235,8 +234,8 @@
 	function switch_sm(){
 		var event = event_array[display_ind];
 		var shakemap = event.shakemap_id + '-' + event.shakemap_version;
-		//var dmg_url = '/scripts/damage.pl/from_id/'+shakemap+'?action=summary';
-		var dmg_url = '/scripts/r/damage/from_id/'+shakemap+'?action=summary';
+		//var dmg_url = 'scripts/damage.pl/from_id/'+shakemap+'?action=summary';
+		var dmg_url = 'scripts/r/damage/from_id/'+shakemap+'?action=summary';
 		if (SC_DEF.allmarker_flag) dmg_url += '&all=1';
 		    $("#map_title").html('<p class="text-info">Loading Event ' + shakemap +
 					' (' + (display_ind+1) + '/' + event_ind + ' for the last ' +
