@@ -8,28 +8,8 @@ SC_DEF = (function() {
 	lon = -120,
 	recent_events = 7,
 	event_type = 'ACTUAL',
-	user = 'guest',
-	pass = 'guest',
 	slideshow_flag,
 	index = localStorage.getItem("index");
-
-    function username(new_user) {
-	    if (new_user) {
-		    localStorage.setItem("user", new_user);
-		    module['user'] = new_user;
-	    } else {
-		    return module['user'];
-	    }
-    }
-
-    function password(new_pass) {
-	    if (new_pass) {
-		    localStorage.setItem("pass", new_pass);
-		    module['pass'] = new_pass;
-	    } else {
-		    return module['pass'];
-	    }
-    }
 
     function listAllItems(){  
         for (i=0; i<=localStorage.length-1; i++)  
@@ -59,8 +39,6 @@ SC_DEF = (function() {
     }  
 
     var module = {
-	    'user': user,
-	    'pass': pass,
 	    'lat': lat,
 	    'lon': lon,
 	    'recent_events': recent_events,
@@ -70,8 +48,6 @@ SC_DEF = (function() {
 	    'refresh_int': refresh_int,
 	    'event_int': event_int,
 	    'slideshow_flag': slideshow_flag,
-	    username: username,
-	    password: password,
 	    listAllItems: listAllItems,
 	    updateAllItems: updateAllItems,
 

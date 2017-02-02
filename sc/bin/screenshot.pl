@@ -104,7 +104,7 @@ sub screen_capture {
     my $wkhtmltopdf = SC->config->{wkhtmltopdf};
     #my $url = 'http://guest:guest@localhost/html/screenshot.html?event='."$event_id-$event_version";
     #my $url = 'http://localhost/index.cgi?dest=screenshot&event='."$event_id-$event_version";
-    my $url = "file:///usr/local/shakecast/sc/data/$event_id-$event_version/screenshot.html";
+    my $url = "file://$DataRoot/$event_id-$event_version/screenshot.html";
     my $filesize = 20*1024;	#20k
     my $proxy = (SC->config->{ProxyServer}) ? ' -p '.SC->config->{ProxyServer} : '';
     
@@ -145,3 +145,4 @@ sub check_grey {
     }
     return $grey_cell;
 }
+

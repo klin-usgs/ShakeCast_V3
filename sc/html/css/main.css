@@ -159,3 +159,10 @@
 .label-yellow {
   background-color: #ffef00;
 }
+
+.resp {
+  background-color: #efefef;
+  height: 360px;
+  width: 360px;
+}
+

@@ -11,6 +11,7 @@ MAPAPP = (function() {
 	smOverlay = null,
 	smImg = null,
 	epimarker = null;
+	sc_id = null;
         
     function loadSM(bounds, img) {
         // create a new marker to and display it on the map
@@ -43,7 +44,7 @@ MAPAPP = (function() {
 			icon_type = icon_type.toLowerCase();
 		}
 		//MAPAPP.addMarker(new google.maps.LatLng(lat, lon), domdata);
-		var markerimage  = new google.maps.MarkerImage("/images/" + icon_type + ".png",
+		var markerimage  = new google.maps.MarkerImage("images/" + icon_type + ".png",
 			new google.maps.Size(25,25),
 			new google.maps.Point(0,0),
 			new google.maps.Point(12,12));				
@@ -63,7 +64,7 @@ MAPAPP = (function() {
 	    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].removeAt(0);
 	}
 
-	var typeText = '<img src="/images/epicenter.png" /> Earthquake Epicenter<br />';
+	var typeText = '<img src="images/epicenter.png" /> Earthquake Epicenter<br />';
         for (var ii in facTypes) {
 	    var factype = facTypes[ii];
 	    if (factype.facility_count > 0) 
@@ -83,8 +84,8 @@ MAPAPP = (function() {
 		loadSM: loadSM,
         addLegend: addLegend,
         
-        init: function(position, zoomLevel, no_facility) {
-
+        init: function(position, zoomLevel, no_facility, evid) {
+	
             // define the required options
             var myOptions = {
                 zoom: zoomLevel ? zoomLevel : DEFAULT_ZOOM,
@@ -95,7 +96,7 @@ MAPAPP = (function() {
 				disableDefaultUI: true,
 				mapTypeId: google.maps.MapTypeId.TERRAIN,
             };
-
+	
             // initialise the map
             map = new google.maps.Map(
                 document.getElementById("map_canvas"),
@@ -109,7 +110,7 @@ MAPAPP = (function() {
 		    var tilex = tile.x % tilesAtThisZoom;
 		    if (tilex < 0) {tilex = tilex + tilesAtThisZoom;}
 		    //if (zoom > TILE_ZOOM) {
-			    //return "/scripts/gmap.pl/event/"+tile.x+","+tile.y+","+zoom;
+			    //return "scripts/gmap.pl/event/"+tile.x+","+tile.y+","+zoom;
 		    //} else {
 			    return "./tiles/map_quest/"+zoom+"/"+tilex+"/"+tile.y+".png";
 		    //}
@@ -127,7 +128,7 @@ MAPAPP = (function() {
 				var tilesAtThisZoom = 1 << zoom;
 				var tilex = tile.x % tilesAtThisZoom;
 				//if (zoom > TILE_ZOOM) {
-					//return "/scripts/gmap.pl/event/"+tile.x+","+tile.y+","+zoom;
+					//return "scripts/gmap.pl/event/"+tile.x+","+tile.y+","+zoom;
 				//} else {
 					return "./tiles/event/"+zoom+"/"+tilex+"/"+tile.y+".png";
 				//}
@@ -143,13 +144,13 @@ MAPAPP = (function() {
 			getTileUrl: function(tile, zoom) {
 				//console.debug(X);
 				//return "/server_event.php?x="+tile.x+"&y="+tile.y+"&zoom="+zoom; },
-				//return "/scripts/gmap.pl/facility/"+tile.x+","+tile.y+","+zoom; },
+				//return "scripts/gmap.pl/facility/"+tile.x+","+tile.y+","+zoom; },
 				var tilesAtThisZoom = 1 << zoom;
 				var tilex = tile.x % tilesAtThisZoom;
 				//if (zoom > TILE_ZOOM) {
-				//	return "/scripts/gmap.pl/facility/"+tile.x+","+tile.y+","+zoom;
+				//	return "scripts/gmap.pl/facility/"+tile.x+","+tile.y+","+zoom;
 				//} else {
-					return "/html/tiles/facility/"+zoom+"/"+tilex+"/"+tile.y+".png";
+					return "data/"+evid+"/tiles/"+zoom+"/"+tilex+"/"+tile.y+".png";
 				//}
 				},
 			tileSize: new google.maps.Size(256, 256),
@@ -212,7 +213,7 @@ function LegendControl(controlDiv, map, facTypes) {
   goHomeText.style.fontSize = '12px';
   goHomeText.style.paddingLeft = '4px';
   goHomeText.style.paddingRight = '4px';
-  goHomeText.innerHTML = 'Facility Cluster<br/><img src="/images/cluster/m1_1.png" /><img src="/images/cluster/m1_100.png" /><img src="/images/cluster/m1_200.png" /><img src="/images/cluster/m1_300.png" /><img src="/images/cluster/m1_400.png" />';
+  goHomeText.innerHTML = 'Facility Cluster<br/><img src="images/cluster/m1_1.png" /><img src="images/cluster/m1_100.png" /><img src="images/cluster/m1_200.png" /><img src="images/cluster/m1_300.png" /><img src="images/cluster/m1_400.png" />';
   goHomeUI.appendChild(goHomeText);
   
   // Set CSS for the setHome control border

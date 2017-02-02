@@ -51,12 +51,23 @@ MAPAPP = (function() {
 			return;
 		}
 		
-		//var local_url = '/scripts/facility.pl/from_id/'+facility_id;
-		var local_url = '/scripts/r/facility/from_id/'+facility_id;
+		//var local_url = 'scripts/facility.pl/from_id/'+facility_id;
+		var local_url = 'scripts/r/facility/from_id/'+facility_id;
 		$.post(local_url, submit_data, function(data) {
-			var infocontent = '';
+			var html_array = [
+				'<div  class="panel panel-success"><div class="panel-heading text-center"><h4>Facility Information</h4></div>',
+				'<table class="table table-striped table-responsive">',
+				'<tr><td><b>Facility ID</b></td><td>' + data.external_facility_id + ' (' + data.facility_type + ')</td></tr>',
+				'<tr><td><b>Description</b></td><td>' + data.facility_name + '</td></tr>',
+				(data.description) ? '<tr><td><b>Description</b></td><td>' + data.description + '</td></tr>' : '',
+				'<tr><td><b>Latitude</b></td><td>' + data.lat_min + ' / ' + data.lat_max + '</td></tr>',
+				'<tr><td><b>Logitude</b></td><td>' + data.lon_min + ' / ' + data.lon_max + '</td></tr>',
+				'<tr><td><b>Last Updated</b></td><td>' + data.update_timestamp + '</td></t>',
+				'</table></div>',
+			];
+			var infocontent = html_array.join('');
 			if (data.feature.length) {
-				infocontent = data.feature[0].description;
+				if (data.feature[0].description) infocontent = data.feature[0].description;
 				//console.log(data.feature[0].description);
 				if (data.feature[0].geom) {
 				  var feature_coords = [];
@@ -106,19 +117,6 @@ MAPAPP = (function() {
 				  }
 				  fac_feature.setMap(map);
 				}
-			} else {
-				var html_array = [
-					'<div  class="panel panel-success"><div class="panel-heading text-center"><h4>Facility Information</h4></div>',
-					'<table class="table table-striped table-responsive">',
-					'<tr><td><b>Facility ID</b></td><td>' + data.external_facility_id + ' (' + data.facility_type + ')</td></tr>',
-					'<tr><td><b>Description</b></td><td>' + data.facility_name + '</td></tr>',
-					(data.description) ? '<tr><td><b>Description</b></td><td>' + data.description + '</td></tr>' : '',
-					'<tr><td><b>Latitude</b></td><td>' + data.lat_min + ' / ' + data.lat_max + '</td></tr>',
-					'<tr><td><b>Logitude</b></td><td>' + data.lon_min + ' / ' + data.lon_max + '</td></tr>',
-					'<tr><td><b>Last Updated</b></td><td>' + data.update_timestamp + '</td></t>',
-					'</table></div>',
-				];
-				infocontent = html_array.join('');
 			}
 			infowindow.setContent(infocontent);
 			infowindow.setPosition(point);
@@ -134,7 +132,7 @@ MAPAPP = (function() {
 			lat = parseFloat(facility.lat);
 			lon = parseFloat(facility.lon);
 			//MAPAPP.addMarker(new google.maps.LatLng(lat, lon), domdata);
-			 markerimage  = new google.maps.MarkerImage("/images/epicenter.gif",
+			 markerimage  = new google.maps.MarkerImage("images/epicenter.gif",
 				new google.maps.Size(25,25),
 				new google.maps.Point(0,0),
 				new google.maps.Point(12,12));				
@@ -152,8 +150,8 @@ MAPAPP = (function() {
 				$("#map_title").html(strHtml).fadeIn("slow");
 			
 			sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
-			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
-			/*var dmg_url = '/scripts/r/damage/from_id/'+sm_id+'?action=summary';
+			//var dmg_url = 'scripts/damage.pl/from_id/'+sm_id+'?action=summary';
+			/*var dmg_url = 'scripts/r/damage/from_id/'+sm_id+'?action=summary';
 			if (allmarker_flag) dmg_url += '&all=1';
 			$.getJSON(dmg_url, function(summary) {
 				var damage_summary = '<div class="progress">';
@@ -190,11 +188,11 @@ MAPAPP = (function() {
 			lat = (parseFloat(facility.lat_min) + parseFloat(facility.lat_max))/2;
 			lon = (parseFloat(facility.lon_min) + parseFloat(facility.lon_max))/2;
 			//MAPAPP.addMarker(new google.maps.LatLng(lat, lon), domdata);
-			 markerimage  = new google.maps.MarkerImage("/images/" + (facility.facility_type + facility.damage_level).toLowerCase() + ".png",
+			 markerimage  = new google.maps.MarkerImage("images/" + (facility.facility_type + facility.damage_level).toLowerCase() + ".png",
 				new google.maps.Size(25,25),
 				new google.maps.Point(0,0),
 				new google.maps.Point(12,12));				
-			var markershadow = new google.maps.MarkerImage("/images/shadow-" + facility.facility_type + ".png",
+			var markershadow = new google.maps.MarkerImage("images/shadow-" + facility.facility_type + ".png",
 				new google.maps.Size(38,25),
 				new google.maps.Point(0,0),
 				new google.maps.Point(12,12));			
@@ -312,7 +310,7 @@ MAPAPP = (function() {
 	    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].removeAt(0);
 	}
 
-	var typeText = '<img src="/images/epicenter.png" /> Earthquake Epicenter<br />';
+	var typeText = '<img src="images/epicenter.png" /> Earthquake Epicenter<br />';
 	//var type_array = [];
         //for (var ii in facTypes) type_array.push(ii);
 	//type_array.sort();
@@ -332,8 +330,8 @@ MAPAPP = (function() {
    
     function addCaption(sm_id, facTypes) {
 			//sm_id = facility.shakemap_id + '-' + facility.shakemap_version;
-			//var dmg_url = '/scripts/damage.pl/from_id/'+sm_id+'?action=summary';
-			var dmg_url = '/scripts/r/damage/from_id/'+sm_id;
+			//var dmg_url = 'scripts/damage.pl/from_id/'+sm_id+'?action=summary';
+			var dmg_url = 'scripts/r/damage/from_id/'+sm_id;
 			var dmg_submit = $.extend(submit_data,  {'action':'summary'});
 			if (facTypes != "ALL") {
 			  dmg_submit.type= facTypes;
@@ -405,7 +403,7 @@ MAPAPP = (function() {
 				var tilex = tile.x % tilesAtThisZoom;
 				if (tilex < 0) {tilex = tilex + tilesAtThisZoom;}
 				//if (zoom > TILE_ZOOM) {
-					//return "/scripts/gmap.pl/event/"+tile.x+","+tile.y+","+zoom;
+					//return "scripts/gmap.pl/event/"+tile.x+","+tile.y+","+zoom;
 				//} else {
 					return "./tiles/event/"+zoom+"/"+tilex+"/"+tile.y+".png";
 				},
@@ -426,7 +424,7 @@ MAPAPP = (function() {
 				var tilex = tile.x % tilesAtThisZoom;
 				if (tilex < 0) {tilex = tilex + tilesAtThisZoom;}
 				if (zoom > TILE_ZOOM) {
-				//	return "/scripts/gmap.pl/facility/"+tile.x+","+tile.y+","+zoom;
+				//	return "scripts/gmap.pl/facility/"+tile.x+","+tile.y+","+zoom;
 				//} else {
 					return "./tiles/facility/"+zoom+"/"+tilex+"/"+tile.y+".png";
 				};
@@ -445,7 +443,7 @@ MAPAPP = (function() {
 				var tilex = tile.x % tilesAtThisZoom;
 				if (tilex < 0) {tilex = tilex + tilesAtThisZoom;}
 				if (zoom > TILE_ZOOM) {
-				//	return "/scripts/gmap.pl/station/"+tile.x+","+tile.y+","+zoom;
+				//	return "scripts/gmap.pl/station/"+tile.x+","+tile.y+","+zoom;
 				//} else {
 					return "./tiles/station/"+zoom+"/"+tilex+"/"+tile.y+".png";
 				};
@@ -459,7 +457,7 @@ MAPAPP = (function() {
 	    if (user_options.station_layer_flag)
 		$(stationDiv).trigger("click");
 	    
-			var markerimage  = new google.maps.MarkerImage("/images/query.png",
+			var markerimage  = new google.maps.MarkerImage("images/query.png",
 				new google.maps.Size(25,25),
 				new google.maps.Point(0,0),
 				new google.maps.Point(12,12));				
@@ -477,8 +475,8 @@ MAPAPP = (function() {
 			
 			google.maps.event.addListener(map, 'rightclick', function(event) {
 				custommarker.setPosition(event.latLng);
-				//var local_url = '/scripts/shaking.pl/shaking_point/' + sm_id +
-				var local_url = '/scripts/r/shaking/shaking_point/' + sm_id +
+				//var local_url = 'scripts/shaking.pl/shaking_point/' + sm_id +
+				var local_url = 'scripts/r/shaking/shaking_point/' + sm_id +
 					'?longitude=' + event.latLng.lng() + '&latitude=' + event.latLng.lat();
 		var local_sub = $.extend(submit_data, {'longitude': event.latLng.lng(), 'latitude': event.latLng.lat()});
 				$.post(local_url, local_sub, function(data) {
@@ -575,7 +573,7 @@ function LegendControl(controlDiv, map, facTypes) {
   goHomeText.style.fontSize = '12px';
   goHomeText.style.paddingLeft = '4px';
   goHomeText.style.paddingRight = '4px';
-  goHomeText.innerHTML = 'Facility Cluster<br/><img src="/images/cluster/m1_1.png" /><img src="/images/cluster/m1_100.png" /><img src="/images/cluster/m1_200.png" /><img src="/images/cluster/m1_300.png" /><img src="/images/cluster/m1_400.png" />';
+  goHomeText.innerHTML = 'Facility Cluster<br/><img src="images/cluster/m1_1.png" /><img src="images/cluster/m1_100.png" /><img src="images/cluster/m1_200.png" /><img src="images/cluster/m1_300.png" /><img src="images/cluster/m1_400.png" />';
   goHomeUI.appendChild(goHomeText);
   
   // Set CSS for the setHome control border
