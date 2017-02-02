@@ -7,8 +7,7 @@ DIR=/usr/local/shakecast/sc
 BIN=$DIR/rc.d
 
 process() {
-    ps axww | grep -v grep |  
-      sed -e "s/^.*\/sc\/bin\/\([a-z][a-z]*\.pl\).*/\1/"
+    ps axww | grep -v grep
 }
 
 start() {
@@ -22,11 +21,11 @@ logger "begin sc-watcher"
 while true; do
   procs=`process`
 #  logger "sc-watcher =$procs="
-  (echo $procs | grep -q dispd.pl) || start dispd
-#  (echo $procs | grep -q polld.pl) || start polld
-  (echo $procs | grep -q notify.pl) || start notify
-  (echo $procs | grep -q notifyqueue.pl) || start notifyqueue
-#  (echo $procs | grep -q rssd.pl) || start rssd
+  (echo $procs | grep -q $DIR/bin/dispd.pl) || start dispd
+#  (echo $procs | grep -q $DIR/bin/polld.pl) || start polld
+  (echo $procs | grep -q $DIR/bin/notify.pl) || start notify
+  (echo $procs | grep -q $DIR/bin/notifyqueue.pl) || start notifyqueue
+#  (echo $procs | grep -q $DIR/bin/rssd.pl) || start rssd
   sleep $S
 done
 

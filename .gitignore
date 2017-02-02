@@ -1,0 +1,8 @@
+# Linux ignore files
+sc/data/
+sc/pids/
+sc/logs/
+sc/html/tiles/
+sc/tmp/
+sc/userdbs/
+

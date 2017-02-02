@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl 
+#!/usr/local/bin/perl -w
 
 BEGIN{
 	#push(@INC,"C:\Perl\lib");
