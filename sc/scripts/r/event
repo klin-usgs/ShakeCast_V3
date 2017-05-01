@@ -79,7 +79,7 @@ sub event_list {
 		    };
     my $events;
     my $count;
-	if ($type =~ /scenario|major/i) {
+	if ($type =~ /scenario|major|comcat/i) {
 		$events = new API::Event->event_list($type);
 	} elsif ($type =~ /test/i) {
 		$events = get_test_events();
@@ -92,28 +92,64 @@ sub event_list {
 
     # Authenticated
 sub comcat_list {
-    my $start = ($self->param('start')) ? ($self->param('start'))-1 : 0;
-    my $length = ($self->param('length')) ? $self->param('length') : 100000;
-    my $type = ($self->param('type')) ? lc($self->param('type')) : '';
-    my $age = $self->param('age') || 'week';
-    my $timestamp = age_trans($age);
-    my $options = {'start' => $start,
-		    'length' => $length,
-		    'type' => $type,
-		    'age' => $age,
-		    'timestamp' => $timestamp,
-		    };
-    my $events;
+	use JSON -support_by_pp;
+	use LWP::UserAgent;
+	my $ua = new LWP::UserAgent();
+    my $query = $self->param('query');
+	$ua->agent('ShakeCast');
+	$ua->ssl_opts('verify_hostname' => 0);
+	$ua->proxy(['http'], SC->config->{'ProxyServer'})
+		if (defined SC->config->{'ProxyServer'});
+	my $url = "https://earthquake.usgs.gov/fdsnws/scenario/1/query?format=geojson";
+	$url .= '&minlatitude='.$self->param('minlatitude') if ($self->param('minlatitude'));
+	$url .= '&maxlatitude='.$self->param('maxlatitude') if ($self->param('maxlatitude'));
+	$url .= '&minlongitude='.$self->param('minlongitude') if ($self->param('minlongitude'));
+	$url .= '&maxlongitude='.$self->param('maxlongitude') if ($self->param('maxlongitude'));
+	$url .= '&starttime='.$self->param('starttime') if ($self->param('starttime'));
+	$url .= '&endtime='.$self->param('endtime') if ($self->param('endtime'));
+    my @events;
     my $count;
-	if ($type =~ /scenario|major/i) {
-		$events = new API::Event->event_list($type);
-	} elsif ($type =~ /test/i) {
-		$events = get_test_events();
-	} elsif ($age) {
-		($count, $events) = new API::Event->newer_than($options);
-	}
+	my $mirror = SC->config->{DataRoot}.'/eq_product/comcat.json';
+	#get current rss
+	my $resp = $ua->mirror($url, $mirror);
+	#SC->error("Fetch JSON feed error from $server") unless ($resp->is_success);
+	return 0 unless ($resp->is_success);
+	open (FH, "< $mirror") or return 0;
+	my @contents = <FH>;
+	close (FH);
+	my $content = join '', @contents;
 
-	return $events;
+	eval{
+		my $json = new JSON;
+	
+		# these are some nice json options to relax restrictions a bit:
+		my $json_text = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($content);
+	
+		exit unless (ref $json_text->{features} eq 'ARRAY');
+		foreach my $feature (@{$json_text->{features}}){
+			my $prop = $feature->{properties};
+			my $geom = $feature->{geometry}->{'coordinates'};
+
+			my $ts =SC->time_to_ts($prop->{'time'}/1000);
+			my $eq_geom = {
+				'id' => $feature->{id},  
+				'event_id' => $feature->{id},  
+				'magnitude' => $prop->{mag}, 
+				'shakemap_id' => $prop->{code},  
+				'shakemap_version' => 1, 
+				'event_location_description' => $prop->{title},
+				'event_timestamp' => $ts,
+				'event_region' => $prop->{net},
+				'lat'	=>	$geom->[1],
+				'lon'	=>	$geom->[0],
+				'depth' => $geom->[2],
+			};
+			push @events, $eq_geom;
+		}
+	};
+
+	unlink $mirror;
+	return \@events;
 }
 
 sub erase {

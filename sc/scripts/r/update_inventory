@@ -107,7 +107,7 @@ sub atlas_fetch {
 	
 	my $json = {};
 	$json->{prog} = $cmd;
-	$json->{result} = 1;
+	$json->{result} = $result;
 
 	return $json;
 }

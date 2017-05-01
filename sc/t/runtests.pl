@@ -3,5 +3,6 @@
 use strict;
 
 use Test::Harness;
+use FindBin;
 
-runtests(<*.t>);
+runtests(<$FindBin::Bin/*.t>);

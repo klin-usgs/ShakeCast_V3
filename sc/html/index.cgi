@@ -36,7 +36,8 @@ my $cgi = new CGI;
 #my $csrf_value = $cgi->csrf_value() if $csrf;
 my $session = new CGI::Session(undef, $cgi);
 $session->expires("+10m");
-my $tmpl_dir= "$FindBin::Bin/../templates/html";
+my $html_tmpl = SC->config->{'html_tmpl'} ? SC->config->{'html_tmpl'} : 'html';
+my $tmpl_dir= "$FindBin::Bin/../templates/$html_tmpl";
 
 my $cookie = $cgi->cookie(CGISESSID => $session->id );
 print $cgi->header(-cookie=>$cookie);

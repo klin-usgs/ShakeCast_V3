@@ -88,8 +88,31 @@ use Data::Dumper;
 #######################################################################
 # Stuff to handle command line options and program documentation:
 #######################################################################
+my $query;
+my $event_type = 'event';
+my ($fetch, $catalog, $minmag);
 
-SC->initialize;
+my %options = (
+	'scenario' =>	$event_type,
+	'query' =>	$query,
+);
+
+GetOptions(
+    \%options,
+
+	'query', \$query,
+	'fetch', \$fetch,
+    'scenario=s', \$event_type,
+	'catalog=s', \$catalog,
+	'minmagnitude=f', \$minmag,
+
+) or usage(1);
+#usage(1) unless scalar @ARGV;
+my $mode = 'scenario'   if ($options{'scenario'} eq 'scenario');
+$query .= $options{'query'}  if $options{'query'};
+my @event = @ARGV     if ($options{'event'});	
+
+exit unless SC->initialize;
 my $config = SC->config;
 my $perl = $config->{perlbin};
 my $scan_int = ($config->{SCAN_INT}) ? $config->{SCAN_INT} : 600;
@@ -98,51 +121,53 @@ my $json_dir = $config->{DataRoot}.'/eq_product';
 mkpath( $json_dir ) if not -d $json_dir;
 my $ua = new LWP::UserAgent();
 $ua->agent('ShakeCast');
+$ua->ssl_opts('verify_hostname' => 0);
 $ua->proxy(['http'], $config->{'ProxyServer'})
 	if (defined $config->{'ProxyServer'});
 my $eq_hash_file = "$json_dir/eq.hash";
 my $eq_hash = retrieve($eq_hash_file) if (-e $eq_hash_file);
 
-my @req_prod = ('grid.xml', 'stationlist.xml', 'intensity.jpg', 'info.xml',
-	'ii_overlay.png');
-my $prod_hash_file = $config->{'RootDir'}.'/db/product.hash';
-my $prod_hash; 
-if (-e $prod_hash_file) {
-	$prod_hash = retrieve($prod_hash_file) ;
-} else {
-	my $product = new API::Product->product_type_list('ALL'); 
-	foreach my $item (@$product) {
-		$prod_hash->{$item->{'filename'}} = $item->{'display'};
-	}
-}
-foreach my $req_prod (@req_prod) {$prod_hash->{$req_prod} = 1;}
-
 #######################################################################
 # Run the program
 #######################################################################
 my @servers = SC::Server->servers_to_rss;
+#my @servers = $config->{Server};
 SC->log(scalar @servers);
 SC->log($servers[0]);
 my $rc = 0;
-if (@ARGV) {
-	my $url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventid=';
+
+if ($query) {
+	my $server = 'earthquake.usgs.gov';
+	my $url = "https://earthquake.usgs.gov/fdsnws/$event_type/1/query?format=geojson";
+	$url .= '&catalog='.$catalog if ($catalog);
+	$url .= '&minmagnitude='.$minmag if ($minmag);
+	my $starttime = SC->time_to_ts(time - $config->{rss}->{TIME_WINDOW} * 20 * 86400);
+	#$url .= '&starttime='.$starttime;
+	print "$url\n";
+	my $event_list = fetch_json_page($server.'_'.$event_type, $url);
+	print Dumper($event_list);
+	if (ref $event_list eq 'ARRAY') {
+		foreach my $event (@$event_list) {
+			my $evt_url = $event->{detail};
+			print "$evt_url\n";
+			fetch_evt_json($server, $evt_url, $event) if ($fetch);
+		}
+	}
+} elsif (@ARGV) {
 	foreach my $evid (@ARGV) {
 		my $event = {};
 		$event->{net} = substr($evid, 0, 2);
 		$event->{code} = substr($evid, 2, length($evid)-2);
+		$event_type = ($event->{code} =~ /_se$/) ? 'scenario': 'event';
+		my $url = "https://earthquake.usgs.gov/fdsnws/$event_type/1/query?format=geojson&eventid=";
 		fetch_evt_json($url, $url.$evid, $event);
 	}
 } elsif (@servers) {
 	foreach my $server (@servers) {
-		# http://earthquake.usgs.gov/eqcenter/catalogs/7day-M2.5.xml
-		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/week";
-		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/day";
 		my $url = "https://" . $server->dns_address . "/earthquakes/feed/v1.0/summary/1.0_day.geojson";
-		#my $url = "http://" . $server->dns_address . "/earthquakes/feed/geojson/1.0/hour";
 		my $event_list = fetch_json_page($server->dns_address, $url);
 		next if (ref $event_list ne 'ARRAY');
 		foreach my $event (@$event_list) {
-			#my $evt_url = $event->{url} . '.json';
 			next unless (time-$scan_int < $event->{'updated'}/1000);
 			my $evt_url = $event->{detail};
 			fetch_evt_json($server->dns_address, $evt_url, $event);
@@ -160,6 +185,7 @@ sub fetch_evt_json
 	my ($server, $json_url, $event) = @_;
 
 	#get current json
+	print $event->{'net'},$event->{'code'}," => ",$json_url,"\n";
 
 	#my $resp = $ua->get($json_url);
 	my $evt_mirror = $json_dir.'/'.$event->{net}.$event->{code};
@@ -189,6 +215,7 @@ sub fetch_evt_json
 		my ($rv, $parms);
 		eval {
 			no strict 'refs';
+			$key =~ s/-scenario$//;
 			$key =~ s/-/_/g;
 			($rv, $parms) = &{ 'parse_'.$key }($server, $product, $event);
 	    };
@@ -240,6 +267,9 @@ sub parse_shakemap
 	my $mirror_dir = $config->{DataRoot}.'/'.$event->{net}.$event->{code};
 	mkpath( $mirror_dir ) if not -d $mirror_dir;
 	my $rv;
+
+	use Archive::Zip qw( :ERROR_CODES :CONSTANTS );;
+	my $zip = Archive::Zip->new();
 	
 	#foreach my $product (@$products) {
 	my $product = shift @$products;
@@ -259,6 +289,14 @@ sub parse_shakemap
 		next unless (_retrieve($content_url, $event));
 		my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
 		$rv=1 if ($resp->is_success);
+		if ($mirror =~ /.xml.zip$/) {
+			my $status = $zip->read($mirror_dir.'/'.$mirror);
+			next if $status != AZ_OK;
+ 
+			foreach my $memberName ($zip->memberNames()) {
+				$zip->extractMemberWithoutPaths($memberName, $mirror_dir.'/'.$memberName);
+			}
+		}
 	}
 	#print ref $product,"\n";
 	my $perl = SC->config->{perlbin};
@@ -267,7 +305,6 @@ sub parse_shakemap
 	my $cmd = "$perl $root/bin/scfeed_local.pl -event $sc_id -sc_id $sc_id";
 	$cmd .= ' -force_run -scenario' if (@ARGV);
 	$rv = `$cmd`;
-	#}
 	
 	return $rv;
 }
@@ -482,13 +519,13 @@ __SQL1__
 	};
 	
 	$epicenter = $product->{'properties'}->{latitude}.",".$product->{'properties'}->{longitude};
-	$mrkcenter = ($product->{'properties'}->{latitude}-0.5).",".$product->{'properties'}->{longitude};
+	$mrkcenter = ($product->{'properties'}->{latitude}-6).",".$product->{'properties'}->{longitude};
 	}
 	
 	my $gm_epicenter = $json_dir.'/'.$event->{net}.$event->{code}.'/gm_epicenter.png';
 	return if (-e $gm_epicenter);
 	my $gm_url = "http://maps.google.com/maps/api/staticmap?center=".$epicenter.
-			"&zoom=5&size=480x320&maptype=terrain&sensor=false".
+			"&zoom=1&size=72x72&maptype=terrain&sensor=false".
 			"&markers=icon:http://earthquake.usgs.gov/research/software/shakecast/icons/epicenter.png|".$mrkcenter;
 	$ua->mirror($gm_url, $gm_epicenter);
 
@@ -512,8 +549,10 @@ sub fetch_json_page
 	my ($server, $json_url) = @_;
 
 	my $header = $ua->head($json_url);
+	my $event_check = ($server =~ /_(.+)$/i) ? 0 : 1;
 	my $eq_expires = SC->ts_to_time($header->{'_headers'}->{'expires'});
-	return if ($eq_hash->{'eq_expires'} > SC->ts_to_time($header->{'_headers'}->{'last-modified'}));
+	return if ($eq_hash->{'eq_expires'} > SC->ts_to_time($header->{'_headers'}->{'last-modified'}) 
+				&& $event_check);
 
 	$eq_hash->{'eq_expires'} = $eq_expires;
 
@@ -533,25 +572,28 @@ sub fetch_json_page
     # these are some nice json options to relax restrictions a bit:
     my $json_text = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($content);
  
-	#exit unless (ref $json_text->{features} eq 'ARRAY');
+	exit unless (ref $json_text->{features} eq 'ARRAY');
     # iterate over each feature in the JSON structure:
 	my %active_eq;
     foreach my $feature (@{$json_text->{features}}){
 		my $prop = $feature->{properties};
 		my $geom = $feature->{geometry}->{'coordinates'};
 		$active_eq{$prop->{'net'}.$prop->{'code'}} = 1;
-		next if ($eq_hash->{$prop->{'code'}} > $prop->{'updated'});
+		next if ($eq_hash->{$prop->{'code'}} > $prop->{'updated'} && $event_check);
 		next if ($prop->{mag} < $mag_cutoff);
 
 		$eq_hash->{$prop->{'net'}.$prop->{'code'}} = $prop->{'updated'};
-		my $ts = SC->time_to_ts($prop->{'time'});
+		my $ts =SC->time_to_ts($prop->{'time'}/1000);
 		my $eq_geom = {
 			event_timestamp => $ts,
 			event_region => $prop->{net},
 			lat	=>	$geom->[1],
 			lon	=>	$geom->[0],
 		};
-		next unless (event_filter($eq_geom));
+
+		#next unless (event_filter($eq_geom));
+		my $rc = event_filter($eq_geom);
+		next unless ($rc);
 		# print episode information:
 		push @evt_list, $prop;
     }
@@ -559,7 +601,7 @@ sub fetch_json_page
 	foreach my $hash_eq (keys %$eq_hash) {
 		delete $eq_hash->{$hash_eq} unless (($hash_eq eq 'eq_expires') || $active_eq{$hash_eq});
 	}
-	store $eq_hash, $eq_hash_file;
+	store $eq_hash, $eq_hash_file if ($event_check);
 
   };
 
@@ -570,6 +612,8 @@ sub fetch_json_page
 	return undef;
   }
   
+  unlink $mirror unless ($event_check);
+
   return \@evt_list;
 }
 
@@ -577,7 +621,7 @@ sub fetch_json_page
 sub event_filter {
 	my ($xml) = @_;
 	my $rc = 0;
-	
+
 	return ($rc) if ($xml->{'event_region'} =~ /pt|at|dr/i);
 	
 	my $time_window = (SC->config->{'rss'}->{'TIME_WINDOW'}) ? 
@@ -665,6 +709,21 @@ sub _retrieve {
 
 	$product =~ s/$evid(\_*)//;
 
-	return $prod_hash->{$product};
+	return 1;
+}
+
+sub usage {
+    my $rc = shift;
+
+    print qq{
+gs_json.pl -- Event Management utility
+Usage:
+  gs_json.pl [ option ... ] event_id ...
+
+Options:
+    --help     Print this message
+    --verbose  Print details of program operation
+};
+    exit $rc;
 }
 
