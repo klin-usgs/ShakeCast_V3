@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/images/sc_logo.png">
+    <link rel="shortcut icon" href="images/sc_logo.png">
 
     <title>ShakeCast System Administration</title>
 
@@ -16,7 +16,7 @@
     <!-- Custom styles for this template -->
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
-	<link rel="stylesheet" href="./css/application.css"> 
+	<!-- <link rel="stylesheet" href="./css/application.css"> -->
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -40,7 +40,7 @@
 	  <span class="icon-bar"></span>
 	  <span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="?dest=index"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
       </div>
       <div class="navbar-collapse collapse">
 	<ul id="nav_menu" class="nav navbar-nav">
@@ -89,17 +89,17 @@
       <!-- Three columns of text below the carousel -->
       <div class="row">
         <div class="col-lg-4 sidebar_pane" id="event_pane">
-          <h3><img alt="Generic placeholder image" src="/images/epicenter.png"> Earthquake Database</h3>
+          <h3><img alt="Generic placeholder image" src="images/epicenter.png"> Earthquake Database</h3>
           <p></p>
           <p><a class="btn btn-default" href="?dest=admin_earthquake" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 sidebar_pane" id="facility_pane">
-          <h3><img alt="Generic placeholder image" src="/images/city.png"> Facility Inventory</h3>
+          <h3><img alt="Generic placeholder image" src="images/city.png"> Facility Inventory</h3>
           <p></p>
           <p><a class="btn btn-default" href="?dest=admin_facility" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 sidebar_pane" id="user_pane">
-          <h3><img class="img-circle" alt="Generic placeholder image" style="max-width:28px" src="/images/sc_logo.png"> User Inventory</h3>
+          <h3><img class="img-circle" alt="Generic placeholder image" style="max-width:28px" src="images/sc_logo.png"> User Inventory</h3>
           <p></p>
           <p><a class="btn btn-default" href="?dest=admin_user" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
@@ -113,17 +113,17 @@
       <!-- Three columns of text below the carousel -->
       <div class="row">
         <div class="col-lg-4 sidebar_pane" id="product_pane">
-          <h3><img alt="Generic placeholder image" style="max-width:28px" src="/images/zip.png"> Product Inventory</h3>
+          <h3><img alt="Generic placeholder image" style="max-width:28px" src="images/zip.png"> Product Inventory</h3>
           <p></p>
           <p><a class="btn btn-default" href="?dest=admin_product" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 sidebar_pane" id="server_pane">
-          <h3><img alt="Generic placeholder image" src="/images/usgs.png"> Server Inventory</h3>
+          <h3><img alt="Generic placeholder image" src="images/usgs.png"> Server Inventory</h3>
           <p></p>
           <p><a class="btn btn-default" href="?dest=admin_config" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 sidebar_pane" id="station_pane">
-          <h3><img alt="Generic placeholder image" src="/images/sta.png"> Station Database</h3>
+          <h3><img alt="Generic placeholder image" src="images/sta.png"> Station Database</h3>
           <p></p>
           <p><a class="btn btn-default" href="?dest=admin_station" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
@@ -142,8 +142,8 @@
           <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
           <li class="muted">&middot;</li>
           <li><a href="?dest=index">Desktop</a></li>
-          <li class="muted">&middot;</li>
-          <li><a href="?dest=admin_mobile">Mobile</a></li>
+          <!-- <li class="muted">&middot;</li>
+          <li><a href="?dest=mobile">Mobile</a></li> -->
         </ul>
      </div>
     </footer>
@@ -153,20 +153,20 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="./js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
     <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui.js"></script>
-    <script type="text/javascript" src="./js/application.js"></script>
+    <!-- <script type="text/javascript" src="./js/application.js"></script> -->
     <script type="text/javascript" src="./js/main.js"></script>
     <script type="text/javascript" src="./js/sc_constant.js"></script>
     <script type="text/javascript" src="./js/storage.js"></script>
 	<script>
 
 	    SC_DEF.init();
-        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+        //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
         var username = SC_DEF.user ? SC_DEF.user : 'guest';
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var sm_url = '/scripts/r/user/from_id/'+username;
+        var sm_url = 'scripts/r/user/from_id/'+username;
         var submit_data = {
         };
 	
@@ -186,7 +186,7 @@
 	
 	function product_info() {
 
-		var config_url = '/scripts/r/product/product_source_list/';
+		var config_url = 'scripts/r/product/product_source_list/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -210,7 +210,7 @@
 			
 	function server_info() {
 
-		var config_url = '/scripts/r/config/server_list/';
+		var config_url = 'scripts/r/config/server_list/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -230,7 +230,7 @@
 			html.push(['</ul>']);
 			$("#server_pane p").first().append(html.join(''));
 		});
-		var config_url = '/scripts/r/config/dispatch_task/';
+		var config_url = 'scripts/r/config/dispatch_task/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -263,7 +263,7 @@
 			
 	function station_info() {
 
-		var config_url = '/scripts/r/station/station_list/';
+		var config_url = 'scripts/r/station/station_list/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -287,7 +287,7 @@
 			
 	function event_info() {
 
-		var config_url = '/scripts/r/event/event_summary/';
+		var config_url = 'scripts/r/event/event_summary/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -311,7 +311,7 @@
 			
 	function user_info() {
 
-		var config_url = '/scripts/r/user/user_group/';
+		var config_url = 'scripts/r/user/user_group/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -335,7 +335,7 @@
 			
 	function facility_info() {
 
-		var config_url = '/scripts/r/facility/facility_list/';
+		var config_url = 'scripts/r/facility/facility_list/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -359,7 +359,7 @@
 			
 	function retrieve_config() {
 
-		var config_url = '/scripts/system_config.pl/';
+		var config_url = 'scripts/system_config.pl/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -421,7 +421,7 @@
 		/* Add a click handler for the delete row */
 		$('.config_update').bind('click', function() {
 			var obj = $(this);
-			var config_url = '/scripts/system_config.pl/config_update/';
+			var config_url = 'scripts/system_config.pl/config_update/';
 			var param = {
 					'param_groupid': $("#param_groupid").val(),
 					'param_gnuplot': $("#param_gnuplot").val(),
@@ -478,7 +478,7 @@
 		/* Add a click handler for the delete row */
 		$('#server_update').bind('click', function() {
 			var obj = $(this);
-			var config_url = '/scripts/system_config.pl/server_update/';
+			var config_url = 'scripts/system_config.pl/server_update/';
 			var param = {
 					'server_id': $("#server_server_id").val(),
 					'dns_address': $("#server_dns_address").val(),

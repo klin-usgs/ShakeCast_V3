@@ -135,6 +135,7 @@ my $sth_del_shakemap;
 my $sth_del_shakemap_metric;
 my $sth_del_grid;
 my $sth_del_product;
+my $sth_del_dispatch;
 my $sth_del_facility_shaking;
 
 my $sth_lookup_facility;
@@ -289,6 +290,10 @@ $sth_del_product = SC->dbh->prepare(qq{
     delete from product
      where shakemap_id = ?});
 
+$sth_del_dispatch = SC->dbh->prepare(qq{
+    delete from dispatch_task
+     where request like ? });
+
 $sth_lookup_facility = SC->dbh->prepare(qq{
     select facility_id
       from facility
@@ -337,15 +342,16 @@ my $data_root =  SC->config->{'DataRoot'};
 my @shakemaps = @ARGV;
 
 if ($options{'maintain'}) {
+    SC->log(0, "Maintain Event Inventory");
 	my $dir = "$data_root/eq_product";
 	opendir(DIR, $dir) or die $!;
 	while (my $eqdir = readdir(DIR)) {
 		next unless (-d "$dir/$eqdir");
-		next if lookup_shakemap($eqdir);
+		next if ($eqdir =~ /^\./ || lookup_shakemap($eqdir));
 		my $mtime = (stat("$dir/$eqdir"))[9];
 		my $timestamp = (time - $mtime)/86400;
 		if ($timestamp>$time_window) {
-		print "Outside Timewindow No ShakeMap: $dir/$eqdir : $timestamp, $mtime\n";
+		SC->log(0, "Outside Timewindow No ShakeMap: $dir/$eqdir : $timestamp, $mtime");
 		rmtree("$dir/$eqdir");
 		}
 	}
@@ -357,7 +363,7 @@ if ($options{'maintain'}) {
 		my $smdir = $eqdir;
 		$eqdir =~ s/-\d+$//;
 		next if (lookup_shakemap($eqdir) || $eqdir =~ /^\.|eq_product/i);
-		print "ShakeMap not in database: $data_root/$eqdir $smdir\n";
+		SC->log(0, "ShakeMap not in database: $data_root/$eqdir $smdir");
 		rmtree("$data_root/$smdir");
 	}
 	closedir(DIR);
@@ -369,7 +375,7 @@ if ($options{'maintain'}) {
 }
 
 foreach my $sm_id (@shakemaps) { 
-    vpr "Processing $sm_id";
+    SC->log(0, "Processing $sm_id $mode");
     process($sm_id);
 }
 
@@ -466,11 +472,12 @@ sub process {
                 $sth_del_shakemap_metric->execute($event_id);
                 $sth_del_grid->execute($event_id);
                 $sth_del_product->execute($event_id);
+                $sth_del_dispatch->execute('%'.$event_id.'%');
 				$ndel++;
 				my @dir_list = <$data_root/$event_id*>;
 				foreach my $dir (@dir_list) {
 					rmtree($dir);
-					vpr "Directory $dir deleted\n";
+					SC->log(0, "Directory $dir deleted");
 				}
 			};
 		}

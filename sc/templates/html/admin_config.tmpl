@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/images/sc_logo.png">
+    <link rel="shortcut icon" href="images/sc_logo.png">
 
     <title>General Settings</title>
 
@@ -40,7 +40,7 @@
 	  <span class="icon-bar"></span>
 	  <span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="?dest=index"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
       </div>
       <div class="navbar-collapse collapse">
 	<ul id="nav_menu" class="nav navbar-nav">
@@ -381,6 +381,18 @@
     </tr>
     </tbody>
     </table>
+    <table class="table table-hover">
+    <thead>
+    <tr>
+    <th>Enable Guest Account</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td><input type="checkbox" id="param_guest_account_flag" > </td>
+    </tr>
+    </tbody>
+    </table>
 	<button type="button" class="btn config_update">Update</button>
 	<div class="server_result"></div>
   </fieldset>
@@ -405,8 +417,8 @@
           <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
           <li class="muted">&middot;</li>
           <li><a href="?dest=index">Desktop</a></li>
-          <li class="muted">&middot;</li>
-          <li><a href="?dest=mobile">Mobile</a></li>
+          <!-- <li class="muted">&middot;</li>
+          <li><a href="?dest=mobile">Mobile</a></li> -->
         </ul>
      </div>
     </footer>
@@ -416,7 +428,7 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="./js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
     <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./js/application.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
@@ -425,7 +437,7 @@
 	<script>
 
       SC_DEF.init();
-      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+      //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
       var username = SC_DEF.user ? SC_DEF.user : 'guest';
       var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
       var submit_data = {
@@ -439,7 +451,7 @@
 
 	function load_list() {
 
-		var config_url = '/scripts/r/config/config/';
+		var config_url = 'scripts/r/config/config/';
 
 		$.post(config_url, submit_data, function(data) {
 
@@ -495,16 +507,18 @@
 			$("#param_redundant_check").val(data.REDUNDANT_CHECK);
 			$("#param_userid").val(data.UserID);
 			$("#param_perlbin").val(data.perlbin);
+			if (data.GUEST_ACCOUNT > 0) $("#param_guest_account_flag").prop('checked', true);
 		}, "json");
 	}
 
 		/* Add a click handler for the delete row */
 		$('.config_update').bind('click', function() {
 			var obj = $(this);
-			var config_url = '/scripts/r/config/config_update/';
+			var config_url = 'scripts/r/config/config_update/';
 			var param = {
 					'param_groupid': $("#param_groupid").val(),
 					'param_gnuplot': $("#param_gnuplot").val(),
+					'param_guest_account_flag': $("#param_guest_account_flag").is(':checked'),
 					'param_wkhtmltopdf': $("#param_wkhtmltopdf").val(),
 					'param_redundant_check': $("#param_redundant_check").val(),
 					'param_userid': $("#param_userid").val(),
@@ -561,7 +575,7 @@
 		/* Add a click handler for the delete row */
 		$('#server_update').bind('click', function() {
 			var obj = $(this);
-			var config_url = '/scripts/r/config/server_update/';
+			var config_url = 'scripts/r/config/server_update/';
 			var param = {
 					'server_id': $("#server_server_id").val(),
 					'dns_address': $("#server_dns_address").val(),

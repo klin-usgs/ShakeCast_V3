@@ -681,6 +681,25 @@ sub facility_regulatory_level {
 }
 
 # send product to a remote server
+sub facility_aebm {
+    my ($remote_id, $event_id, $event_version) = @_;
+	
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/facility_aebm.pl $event_id $event_version`;
+	
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
+
+}
+
+# send product to a remote server
 sub facility_feature_shaking {
     my ($remote_id, $event_id, $event_version) = @_;
 	
@@ -757,6 +776,25 @@ sub screen_shot {
 }
 
 # send product to a remote server
+sub facility_tile {
+    my ($remote_id, $event_id, $event_version) = @_;
+	
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/facility_tile.pl $event_id $event_version`;
+    
+    if ($rv =~ /STATUS=SUCCESS/) {
+	return 1;
+    } else {
+	return 0;
+    }
+    
+    return 0;
+
+}
+
+# send product to a remote server
 sub map_tile {
     my ($remote_id, $event_id, $type) = @_;
 	
@@ -767,6 +805,30 @@ sub map_tile {
 
     return $rv;
 
+}
+
+# send product to a remote server
+sub notifyqueue {
+    my ($remote_id, $event_id, $type) = @_;
+	
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+    
+    my $rv = `$perl $root/bin/notifyqueue.pl --onceonly`;
+
+    return 1;
+}
+
+# send product to a remote server
+sub notify {
+    my ($remote_id, $event_id, $type) = @_;
+	
+    my $perl = SC->config->{perlbin};
+    my $root = SC->config->{RootDir};
+   
+    my $rv = `$perl $root/bin/notify.pl --onceonly`;
+
+    return 1;
 }
 
 # send product to a remote server

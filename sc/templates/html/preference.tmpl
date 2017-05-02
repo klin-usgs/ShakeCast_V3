@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/images/sc_logo.png">
+    <link rel="shortcut icon" href="images/sc_logo.png">
 
     <title>User Settings</title>
 
@@ -16,7 +16,7 @@
     <!-- Custom styles for this template -->
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
-	<link rel="stylesheet" href="./css/application.css"> 
+	<!-- <link rel="stylesheet" href="./css/application.css"> -->
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -39,7 +39,7 @@
 	  <span class="icon-bar"></span>
 	  <span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="?dest=index"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
       </div>
       <div class="navbar-collapse collapse">
 	<ul id="nav_menu" class="nav navbar-nav">
@@ -273,8 +273,8 @@
           <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
           <li class="muted">&middot;</li>
           <li>Desktop</li>
-          <li class="muted">&middot;</li>
-          <li><a href="?dest=mobile">Mobile</a></li>
+          <!-- <li class="muted">&middot;</li>
+          <li><a href="?dest=mobile">Mobile</a></li> -->
         </ul>
      </div>
     </footer>
@@ -282,9 +282,9 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="./js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
     <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="./js/application.js"></script>
+    <!-- <script type="text/javascript" src="./js/application.js"></script> -->
     <script type="text/javascript" src="./js/main.js"></script>
     <script type="text/javascript" src="./js/sc_constant.js"></script>
     <script type="text/javascript" src="./js/storage.js"></script>
@@ -292,10 +292,10 @@
     <script>
 
 	    SC_DEF.init();
-        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+        //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
         var username = SC_DEF.user ? SC_DEF.user : 'guest';
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var sm_url = '/scripts/r/user/from_id/'+username;
+        var sm_url = 'scripts/r/user/from_id/'+username;
         var submit_data = {
         };
 

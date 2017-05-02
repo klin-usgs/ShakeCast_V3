@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/images/sc_logo.png">
+    <link rel="shortcut icon" href="images/sc_logo.png">
 
     <title>Inventory Details</title>
 
@@ -16,7 +16,7 @@
     <!-- Custom styles for this template -->
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
-	<link rel="stylesheet" href="./css/jquery-ui-1.8.16.custom.css">
+	<link rel="stylesheet" href="./css/jquery-ui.css">
 	  
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -39,7 +39,7 @@
 	  <span class="icon-bar"></span>
 	  <span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="?dest=index"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
       </div>
       <div class="navbar-collapse collapse">
 	<ul id="nav_menu" class="nav navbar-nav">
@@ -69,7 +69,7 @@
   <div class="container">
     <h2>Inventory Details <small>Exposed facility list and detailed information on assessed fragility</small></h2>
     <ol class="breadcrumb">
-      <li class="pull-right"><a href="#" id="tab_link">Table View</a></li>
+      <li class="pull-right"><a href="#" id="aebm_link">AEBM View</a><a href="#" id="tab_link">Table View</a></li>
       <li><a href="?dest=index">Home</a></li>
       <li><a href="?dest=list">Earthquakes</a></li>
       <li id="evid"><a href="#">Event</a></li>
@@ -135,7 +135,7 @@
 
 
 			<div id="spinner" class="spinner ui-widget ui-widget-content ui-corner-all" style="width:50px;background:#fff;height:50px;">
-				<img id="img-spinner" src="/images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
+				<img id="img-spinner" src="images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
 			</div>
 
         </div> <!-- /container -->
@@ -149,8 +149,8 @@
           <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
           <li class="muted">&middot;</li>
           <li>Desktop</li>
-          <li class="muted">&middot;</li>
-          <li><a href="?dest=mobile">Mobile</a></li>
+          <!-- <li class="muted">&middot;</li>
+          <li><a href="?dest=mobile">Mobile</a></li> -->
         </ul>
      </div>
     </footer>
@@ -166,10 +166,10 @@
 	prefix = "https://";
       else
 	prefix = "http://";
-      script += prefix + 'maps.google.com/maps/api/js?sensor=false&key=<TMPL_VAR NAME=GM_KEY>"><' + '/script>';
+      script += prefix + 'maps.google.com/maps/api/js?key=<TMPL_VAR NAME=GM_KEY>"><' + '/script>';
       document.write(script);
     </script>
-    <script type="text/javascript" src="./js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
     <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
@@ -190,18 +190,18 @@
       var fac_info = [];
 	  var fac_type;
       var start=0, length=0, total;
-      //var sm_url = '/scripts/damage.pl/datatables';
-      var sm_url = '/scripts/r/damage/datatables';
+      //var sm_url = 'scripts/damage.pl/datatables';
+      var sm_url = 'scripts/r/damage/datatables';
       var marker_icon = [];
 		var markers = [];
 		    var markers_index = [];
 		var markerCluster;	
 
 	    SC_DEF.init();
-        //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+        //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
         var username = SC_DEF.user ? SC_DEF.user : 'guest';
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var sm_url = '/scripts/r/user/from_id/'+username;
+        var sm_url = 'scripts/r/user/from_id/'+username;
         var submit_data = {
         };
 
@@ -218,11 +218,12 @@
 	if (!(age)) {
 	  age = SC_DEF.recent_events ? parseInt(SC_DEF.recent_events) : 'week';
 	}
-	sm_url = '/scripts/event.pl/datatables?type='+type+'&age='+age;
+	sm_url = 'scripts/event.pl/datatables?type='+type+'&age='+age;
 
 	if (sc_id)  {
 	  $(".breadcrumb #evid").html('<a href="#">'+sc_id+'</a>');
-	  $(".breadcrumb #tab_link").html('<a href="?dest=event_tab&event='+sc_id+'">Table View</a>');
+	  $(".breadcrumb #tab_link").html('<a class="btn btn-default" role="button" href="?dest=event_tab&event='+sc_id+'">Table View</a>');
+	  $(".breadcrumb #aebm_link").html('<a class="btn btn-default" role="button" href="?dest=event_aebm&event='+sc_id+'">AEBM View</a>');
 	}
 	
 	load_sm();
@@ -247,8 +248,8 @@
       $('#load_more').on('click', fnAccordion);
 
       function fnAccordion(facility_id){
-		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		var local_url = '/scripts/r/damage/from_id/' + sc_id;
+		//var local_url = 'scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
+		var local_url = 'scripts/r/damage/from_id/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
 		$.post(local_url, {facility : facility_id, all : all}
 			, function(data) {
@@ -452,8 +453,8 @@
 
 	function load_prod ( )
 	{
-	  //var sm_url = '/scripts/product.pl/from_id/'+ sc_id;
-	  var sm_url = '/scripts/r/product/from_id/'+ sc_id;
+	  //var sm_url = 'scripts/product.pl/from_id/'+ sc_id;
+	  var sm_url = 'scripts/r/product/from_id/'+ sc_id;
 	  var html_array = [];
 
 	  $.post(sm_url, submit_data, function(data) {
@@ -472,9 +473,9 @@
 	    var img_path;
 	    if (product.display) {
 	      if (product.eq_product) {
-		file_path = '/data/' + product.filename;
+		file_path = 'data/' + product.filename;
 	      } else {
-		file_path = '/data/' + sc_id + '/' + product.filename;
+		file_path = 'data/' + sc_id + '/' + product.filename;
 	      }
 	    if (product.url) {
 		    img_path = product.url;
@@ -491,7 +492,7 @@
 	      html_array = html_array.concat([
 	      '<a class="list-group-item" href="http://earthquakes.usgs.gov/earthquakes/eventpage/',
 	      event_id + '">',
-		'<img src="/images/usgs_green.png" class="img-thumbnail" style="max-width:32px"> ',
+		'<img src="images/usgs_green.png" class="img-thumbnail" style="max-width:32px"> ',
 		'USGS Event Page</a>',
 	      ]);
 
@@ -500,8 +501,8 @@
 	}
 
       function load_fac(){
-		//sm_url = '/scripts/shaking.pl/shaking_summary/' + sc_id;
-		sm_url = '/scripts/r/shaking/shaking_summary/' + sc_id;
+		//sm_url = 'scripts/shaking.pl/shaking_summary/' + sc_id;
+		sm_url = 'scripts/r/shaking/shaking_summary/' + sc_id;
 		$.post(sm_url, submit_data, function(data) {
 
 			// Are there even any EQ to display?
@@ -518,11 +519,11 @@
 			for (var i=0; i < data.length; i++) {
 				var event = data[i];
 				$("#sidebar").append('<a class="facility_type list-group-item" id="' + event.facility_type +
-					'" href="#"><img src="/images/' + event.facility_type + '.png"> ' + event.facility_type +
+					'" href="#"><img src="images/' + event.facility_type + '.png"> ' + event.facility_type +
 					' (' + event.count + ')</a>');
 				marker_icon[event.facility_type] =
 				  {
-				    url: '/images/' + event.facility_type + '.png',
+				    url: 'images/' + event.facility_type + '.png',
 				    // This marker is 20 pixels wide by 32 pixels tall.
 				    size: new google.maps.Size(25, 25),
 				    // The origin for this image is 0,0.
@@ -561,8 +562,8 @@
 		}
 
       function load_sibar_fac(){
-		//var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-		var local_url = '/scripts/r/damage/from_id/' + sc_id;
+		//var local_url = 'scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
+		var local_url = 'scripts/r/damage/from_id/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
 		$.post(local_url,  {type:type, start:start, length:length, all:all}
 			, function(data) {
@@ -590,7 +591,7 @@
 			var icon_type =  facility.facility_type + facility.damage_level;
 			icon_type = icon_type.toLowerCase();
 			$("#sidebar_fac").append('<a class="facility_type list-group-item" id="' + facility.facility_id +
-				'" href="#"><img src="/images/' + icon_type + '.png"> ' + facility.facility_name + '</a>');
+				'" href="#"><img src="images/' + icon_type + '.png"> ' + facility.facility_name + '</a>');
  			$('#sidebar_fac #'+facility.facility_id).on('click', function() {
 			  google.maps.event.trigger(markers[markers_index[this.id]], 'click');
 			});
@@ -602,8 +603,8 @@
 		}
 
       function load_sm(){
-		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-		var sm_url = '/scripts/r/shakemap/from_id/' + sc_id;
+		//var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
+		var sm_url = 'scripts/r/shakemap/from_id/' + sc_id;
 		$.post(sm_url, submit_data, function(data) {
 
 		// Are there even any EQ to display?
@@ -622,7 +623,7 @@
 		var rectBounds = new google.maps.LatLngBounds(
 					new google.maps.LatLng(lat_min, lon_min),
 					new google.maps.LatLng(lat_max, lon_max));
-		var img = '/data/'+ sc_id +'/ii_overlay.png';
+		var img = 'data/'+ sc_id +'/ii_overlay.png';
 		var latlng = new google.maps.LatLng((lat_min+lat_max)/2, (lon_min+lon_max)/2);
 
 		//map = MAPAPP.init(latlng, 8);
@@ -635,8 +636,8 @@
 
       function load_marker(){
 		MAPAPP.addCaption(sc_id, fac_type);
-		//var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-		var sm_url = '/scripts/r/damage/marker/' + sc_id;
+		//var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
+		var sm_url = 'scripts/r/damage/marker/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
 		$.post(sm_url, {type:fac_type, all:all}, function(data) {
 
@@ -661,7 +662,7 @@
 		  if (typeof marker_icon[icon_type] === "undefined") {
 		      marker_icon[icon_type] =
 			{
-			  url: '/images/' + icon_type + '.png',
+			  url: 'images/' + icon_type + '.png',
 			  // This marker is 20 pixels wide by 32 pixels tall.
 			  size: new google.maps.Size(25, 25),
 			  // The origin for this image is 0,0.
@@ -704,7 +705,7 @@
 		    return a1> b1? 1: -1;
 		});
 		
-		/*var dmg_url = '/scripts/r/damage/from_id/'+sc_id+'?action=summary';
+		/*var dmg_url = 'scripts/r/damage/from_id/'+sc_id+'?action=summary';
 		if (fac_type != "ALL") {
 		  dmg_url += '&type=' + fac_type;
 		}

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/images/sc_logo.png">
+    <link rel="shortcut icon" href="images/sc_logo.png">
 
     <title>Earthquake Database Administration</title>
 
@@ -20,7 +20,7 @@
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
 	<link rel="stylesheet" href="./css/application.css"> 
-	<link rel="stylesheet" href="./css/jquery-ui-1.8.16.custom.css">
+	<link rel="stylesheet" href="./css/jquery-ui.css">
 	<link rel="stylesheet" href="./css/demo_table.css">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
@@ -52,7 +52,7 @@
 	  <span class="icon-bar"></span>
 	  <span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="?dest=index"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
       </div>
       <div class="navbar-collapse collapse">
 	<ul id="nav_menu" class="nav navbar-nav">
@@ -102,39 +102,23 @@
                <a class="list-group-item" id="list_major" href="?dest=admin_earthquake&type=major">Significant Events</a>
              <a class="list-group-item" id="list_scenario" href="?dest=admin_earthquake&type=scenario">Scenarios</a>
              <!--<a class="list-group-item" id="list_test" href="?dest=admin_earthquake&type=test">Test/Exercise Events</a>-->
+             <a class="list-group-item" id="list_comcat" href="?dest=admin_earthquake&type=comcat">ComCat Catalog</a>
 	    </div>
           </div><!--/.well -->
 	  
 	            <div class="panel panel-default">
-	    <div class="panel-heading">Fetch ShakeMap from USGS ShakeMap Web (e.g. Scenario)</div>
-	    <div id="sidebar_prod">
-	      <select class="form-control" id="net_id">
-		<option value=''> - Select Network - </option>
-		<option value='nc'>Northern California</option>
-		<option value='sc'>Southern California</option>
-		<option value='nn'>Nevada</option>
-		<option value='uw'>Pacific Northwest</option>
-		<option value='ut'>Utah</option>
-		<option value='hv'>Hawaii</option>
-		<option value='ak'>Alaska</option>
-		<option value='nm'>New Madrid</option>
-		<option value='global'>Global System</option>
-		<option value='atlas'>Atlas</option>
-	      </select>
-	      <div class="form-group">
-		<input type="text" class="form-control" id="event_id" placeholder="Event ID">
-	      </div>
-	      <button type="button" class="btn btn-primary" id="shake_fetch">Submit</button>
-	    </div>
-          </div><!--/.well -->
-	  
-	            <div class="panel panel-default">
-	    <div class="panel-heading">Fetch ShakeMap from USGS Composite Catalog (e.g. Archive and Atlas)</div>
+	    <div class="panel-heading">USGS ShakeMap Comprehensive Catalog</div>
 	    <div id="sidebar_prod">
 	      <div class="form-group">
-		<input type="text" class="form-control" id="atlas_id" placeholder="Earthquake ID">
+          <input type="text" id="from_year" placeholder="Start Year">
+          <input type="text" id="to_year" placeholder="End Year">
+          <div class="form-control" id="year-slider"></div>
+          <button type="button" class="btn btn-primary" id="comcat_list">Refresh ComCat Catalog</button>
 	      </div>
-	      <button type="button" class="btn btn-primary" id="atlas_fetch">Submit</button>
+	      <div class="form-group">
+          <input type="text" class="form-control" id="atlas_id" placeholder="Earthquake ID">
+          <button type="button" class="btn btn-primary" id="atlas_fetch">Fetch Scenario</button>
+	      </div>
 	    </div>
           </div><!--/.well -->
 	  
@@ -162,7 +146,7 @@
 
 
 			<div id="spinner" class="spinner ui-widget ui-widget-content ui-corner-all" style="width:50px;background:#fff;height:50px;">
-				<img id="img-spinner" src="/images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
+				<img id="img-spinner" src="images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
 			</div>
 
         </div> <!-- /container -->
@@ -176,8 +160,8 @@
           <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
           <li class="muted">&middot;</li>
           <li>Desktop</li>
-          <li class="muted">&middot;</li>
-          <li><a href="?dest=mobile">Mobile</a></li>
+          <!-- <li class="muted">&middot;</li>
+          <li><a href="?dest=mobile">Mobile</a></li> -->
         </ul>
      </div>
     </footer>
@@ -190,10 +174,10 @@
     prefix = "https://";
   else
     prefix = "http://";
-  script += prefix + 'maps.google.com/maps/api/js?sensor=false&key=<TMPL_VAR NAME=GM_KEY>"><' + '/script>';
+  script += prefix + 'maps.google.com/maps/api/js?key=<TMPL_VAR NAME=GM_KEY>"><' + '/script>';
   document.write(script);
 </script>
-<script type="text/javascript" src="./js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="./js/jquery.min.js"></script>
 <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="./js/jquery-ui.js"></script>
 <script type="text/javascript" src="./js/main.js"></script>
@@ -221,7 +205,7 @@
   }
 
   SC_DEF.init();
-  //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+  //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
   var username = SC_DEF.user ? SC_DEF.user : 'guest';
   var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
   var submit_data = {
@@ -229,63 +213,83 @@
 
   $(window).load(function() {
     //user_auth(submit_data);
-	load_list();
     map = MAPAPP.init(sc_id);
     $("#list_"+type+age).addClass("active");
+	load_list();
   });
-  
-  function load_list( oTableLocal ) {
-    //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-    //var sm_url = '/scripts/event.pl/event_list?type='+type+'&age='+age;
-    var sm_url = '/scripts/r/event/event_list';
 
-    $.post(sm_url, {type:type, age:age}, function(data) {
+  function load_list( oTableLocal ) {
+    //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
+    //var sm_url = 'scripts/event.pl/event_list?type='+type+'&age='+age;
+    var sm_url;
+      var list_data = {
+        "type": type,
+        "age": age,
+      };
+    if (type == 'comcat') {
+      sm_url = 'scripts/r/event/comcat_list';
+      var bounds = map.getBounds();
+      if (bounds) {
+      var ne = bounds.getNorthEast();
+      var sw = bounds.getSouthWest();
+      list_data['minlatitude']=sw.lat();
+      list_data['maxlatitude']=ne.lat();
+      list_data['minlongitude']=sw.lng();
+      list_data['maxlongitude']=ne.lng();
+      list_data['starttime']=$("#from_year").val()+'-01-01';
+      list_data['endtime']=$("#to_year").val()+'-12-31';
+      }
+     } else {
+      sm_url = 'scripts/r/event/event_list';
+     }
+
+    $.post(sm_url, list_data, function(data) {
 
       // Are there even any EQ to display?
       if (data.length <= 0) {
-	return;
+        return;
       }
 
       var eqTable = [];
       for (var i=0; i < data.length; i++) {
-	//MAPAPP.addMarker(data.facility_damage[key]);
-	var event = data[i];
-	event.opacity = 1-i/data.length;
-	MAPAPP.addMarker(event);
-	eqTable.push(
-	  {
-	    "index":i+1,
-	    "event_id":event.event_id,  
-	    "magnitude":event.magnitude, 
-	    "latitude":event.lat, "longitude":event.lon, 
-	    "origin":event.event_timestamp, 
-	    "shakemap_id":event.shakemap_id, 
-	    "shakemap_version":event.shakemap_version, 
-	    "description":event.event_location_description,
-	    "major_event":(event.major_event)?'Yes':'',
-	  }
-	);
+        //MAPAPP.addMarker(data.facility_damage[key]);
+        var event = data[i];
+        event.opacity = 1-i/data.length;
+        MAPAPP.addMarker(event);
+        eqTable.push(
+          {
+            "index":i+1,
+            "event_id":event.event_id,  
+            "magnitude":event.magnitude, 
+            "latitude":event.lat, "longitude":event.lon, 
+            "origin":event.event_timestamp, 
+            "shakemap_id":event.shakemap_id, 
+            "shakemap_version":event.shakemap_version, 
+            "description":event.event_location_description,
+            "major_event":(event.major_event)?'Yes':'',
+          }
+        );
       }
 
       var eqDiv = {
-	"bJQueryUI": true,
-	"iDisplayLength": 10,
-	"sScrollY": ($("#map_canvas").height() > 0) ? $("#map_canvas").height() :  $(window).height()/3,
-	"sScrollX": "100%",
-	"aaSorting": [[ 5, "desc" ]],
-	"bUseRendered": false,
-	aaData: eqTable, 
-	aoColumns: 
-	  [
-	  {'sTitle': 'Index',"mDataProp": "index"},
-	  {'sTitle': 'Earthquake ID',"mDataProp": "event_id"},
-	  {'sTitle': 'Magnitude',"mDataProp": "magnitude"},
-	  {'sTitle': 'Latitude',"mDataProp": "latitude"},
-	  {'sTitle': 'Longitude',"mDataProp": "longitude"}, 
-	  {'sTitle': 'Origin Time',"mDataProp": "origin"},
-	  {'sTitle': 'Description',"mDataProp": "description"},
-	  {'sTitle': 'Permanent Archived',"mDataProp": "major_event"},
-	]};
+        "bJQueryUI": true,
+        "iDisplayLength": 10,
+        "sScrollY": ($("#map_canvas").height() > 0) ? $("#map_canvas").height() :  $(window).height()/3,
+        "sScrollX": "100%",
+        "aaSorting": [[ 5, "desc" ]],
+        "bUseRendered": false,
+        aaData: eqTable, 
+        aoColumns: 
+          [
+          {'sTitle': 'Index',"mDataProp": "index"},
+          {'sTitle': 'Earthquake ID',"mDataProp": "event_id"},
+          {'sTitle': 'Magnitude',"mDataProp": "magnitude"},
+          {'sTitle': 'Latitude',"mDataProp": "latitude"},
+          {'sTitle': 'Longitude',"mDataProp": "longitude"}, 
+          {'sTitle': 'Origin Time',"mDataProp": "origin"},
+          {'sTitle': 'Description',"mDataProp": "description"},
+          {'sTitle': 'Permanent Archived',"mDataProp": "major_event"},
+      ]};
 	  
       if (oTable) oTable.fnDestroy();
       
@@ -327,9 +331,9 @@
     var anSelected = fnGetSelected( oTable );
     for (var i=0; i < anSelected.length; i++) {
       var oData = oTable.fnGetData( anSelected[i] );
-      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-      //var evt_url = '/scripts/event.pl/erase?event_id='+oData.event_id;
-      var evt_url = '/scripts/r/event/erase?event_id='+oData.event_id;
+      //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
+      //var evt_url = 'scripts/event.pl/erase?event_id='+oData.event_id;
+      var evt_url = 'scripts/r/event/erase?event_id='+oData.event_id;
       var row = anSelected[i];
 	oTable.fnDeleteRow( row );
 
@@ -357,9 +361,9 @@
     var anSelected = fnGetSelected( oTable );
     for (var i=0; i < anSelected.length; i++) {
       var oData = oTable.fnGetData( anSelected[i] );
-      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-      //var evt_url = '/scripts/event.pl/toggle?event_id='+oData.event_id;
-      var evt_url = '/scripts/r/event/toggle?event_id='+oData.event_id;
+      //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
+      //var evt_url = 'scripts/event.pl/toggle?event_id='+oData.event_id;
+      var evt_url = 'scripts/r/event/toggle?event_id='+oData.event_id;
       var arch_f = (oData.major_event) ? '' : 'Yes';
       oTable.fnUpdate(arch_f, anSelected[i], 7);
       
@@ -378,9 +382,9 @@
     for (var i=0; i < anSelected.length; i++) {
       var oData = oTable.fnGetData( anSelected[i] );
       
-      //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-      //var evt_url = '/scripts/event.pl/inject_test?event_id='+oData.event_id;
-      var evt_url = '/scripts/r/event/trigger_scenario?event_id='+oData.event_id;
+      //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
+      //var evt_url = 'scripts/event.pl/inject_test?event_id='+oData.event_id;
+      var evt_url = 'scripts/r/event/trigger_scenario?event_id='+oData.event_id;
       $.getJSON(evt_url, function(data) {
 	// Are there even any EQ to display?
 	if (data.length <= 0) {
@@ -405,7 +409,7 @@
     submit_data.filename = event_id;
     submit_data.option = net_id;
     
-    var local_url = '/scripts/r/update_inventory';
+    var local_url = 'scripts/r/update_inventory';
     $.post(local_url, submit_data, function(data) {
       if (data.result) {
 	alert(data.result);
@@ -422,7 +426,7 @@
     submit_data.program = 'atlas_fetch';
     submit_data.filename = event_id;
     
-    var local_url = '/scripts/r/update_inventory';
+    var local_url = 'scripts/r/update_inventory';
     $.post(local_url, submit_data, function(data) {
       if (data.result) {
 	alert(data.result);
@@ -430,6 +434,12 @@
 	alert("Error in fetching ShakeMap.");
       }
     });
+  });
+  
+  /* Add a click handler for the delete row */
+  $('#comcat_list').bind('click', function() {
+    oTable.fnClearTable();
+    load_list();
   });
   
   /* Get the rows which are currently selected */
@@ -451,6 +461,18 @@
     $('html').css('height', cont_height);
   });
 
+  $(function() {
+    $("#year-slider").slider({
+      range: true,
+      min: 1900,
+      max: 2020,
+      values: [2010, 2018],
+      slide: function(event, ui) {
+        $("#from_year").val(ui.values[0]);
+        $("#to_year").val(ui.values[1]);
+      }
+    });
+  });
     </script>
     </body>
 </html>

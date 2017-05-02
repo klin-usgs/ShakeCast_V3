@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/images/sc_logo.png">
+    <link rel="shortcut icon" href="images/sc_logo.png">
 
     <title>Facility Inventory Administration</title>
 
@@ -20,7 +20,7 @@
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
 	<link rel="stylesheet" href="./css/application.css"> 
-	<link rel="stylesheet" href="./css/jquery-ui-1.8.16.custom.css">
+	<link rel="stylesheet" href="./css/jquery-ui.css">
 	<link rel="stylesheet" href="./css/demo_table.css">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
@@ -52,7 +52,7 @@
 	  <span class="icon-bar"></span>
 	  <span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="?dest=index"><img src="/images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
       </div>
       <div class="navbar-collapse collapse">
 	<ul id="nav_menu" class="nav navbar-nav">
@@ -128,7 +128,7 @@
           </div><!--/.well -->
 
 <div id="spinner" class="spinner ui-widget ui-widget-content ui-corner-all" style="width:50px;background:#fff;height:50px;">
-	<img id="img-spinner" src="/images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
+	<img id="img-spinner" src="images/usgs.gif" alt="Loading" style="margin:10px auto;"/>
 </div>
 
 <div class="modal fade" id="myModal" >
@@ -163,8 +163,8 @@
           <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
           <li class="muted">&middot;</li>
           <li>Desktop</li>
-          <li class="muted">&middot;</li>
-          <li><a href="?dest=mobile">Mobile</a></li>
+          <!-- <li class="muted">&middot;</li>
+          <li><a href="?dest=mobile">Mobile</a></li> -->
         </ul>
      </div>
     </footer>
@@ -181,10 +181,10 @@
     prefix = "https://";
   else
     prefix = "http://";
-  script += prefix + 'maps.google.com/maps/api/js?sensor=false&key=<TMPL_VAR NAME=GM_KEY>"><' + '/script>';
+  script += prefix + 'maps.google.com/maps/api/js?key=<TMPL_VAR NAME=GM_KEY>"><' + '/script>';
   document.write(script);
 </script>
-<script type="text/javascript" src="./js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="./js/jquery.min.js"></script>
 <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="./js/jquery-ui.js"></script>
 <script type="text/javascript" src="./js/main.js"></script>
@@ -208,7 +208,7 @@
   var anOpen = [];
 
   SC_DEF.init();
-  //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
+  //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
   var username = SC_DEF.user ? SC_DEF.user : 'guest';
   var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
   var submit_data = {
@@ -222,10 +222,10 @@
   });
   	  
   function load_list() {
-    //var sm_url = '/scripts/shakemap.pl/from_id/' + sc_id;
-    //var sm_url = '/scripts/event.pl/event_list?type='+type+'&age='+age;
-    //var sm_url = '/scripts/facility.pl/';
-    var sm_url = '/scripts/r/facility/facility_list';
+    //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
+    //var sm_url = 'scripts/event.pl/event_list?type='+type+'&age='+age;
+    //var sm_url = 'scripts/facility.pl/';
+    var sm_url = 'scripts/r/facility/facility_list';
     
     $.post(sm_url, submit_data, function(data) {
     
@@ -248,8 +248,8 @@
 
       $('#sidebar a').on('click', function (e) {
 	var fac_type = this;
-	//var sm_url = '/scripts/facility.pl/type/' + type.id;
-	var sm_url = '/scripts/r/facility/facility_type/' + fac_type.id;
+	//var sm_url = 'scripts/facility.pl/type/' + type.id;
+	var sm_url = 'scripts/r/facility/facility_type/' + fac_type.id;
 	type = fac_type.id;
 	$("#sidebar a").removeClass("active");
 	$("#"+fac_type.id).addClass("active");
@@ -362,7 +362,7 @@
  
 		$("#confirm_delete").on('click', function() {
 				$('#myModal').modal('hide');
-				var sm_url = '/scripts/r/facility/erase_type/';
+				var sm_url = 'scripts/r/facility/erase_type/';
 				submit_data.type = type;
 				$.post(sm_url, submit_data, function(data) {
 			// Are there even any EQ to display?
@@ -380,7 +380,7 @@
 		    for (var i=0; i < anSelected.length; i++) {
 		      var oData = oTable.fnGetData( anSelected[i] );
 		      submit_data.facility_id = oData.facility_id;
-				var sm_url = '/scripts/r/facility/erase/';
+				var sm_url = 'scripts/r/facility/erase/';
 		      $.post(sm_url, submit_data, function(data) {
 			// Are there even any EQ to display?
 			if (data.status > 0) {
@@ -409,8 +409,8 @@
   });
 
   function fnAccordion(facility_id){
-    //var local_url = '/scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
-    var local_url = '/scripts/r/facility/from_id/' + facility_id;
+    //var local_url = 'scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
+    var local_url = 'scripts/r/facility/from_id/' + facility_id;
     $.post(local_url, submit_data, function(data) {
 
       // Are there even any EQ to display?

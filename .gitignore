@@ -1,0 +1,4 @@
+sc/data/*
+mysql/*
+sc/html/tiles/*
+*.bak
