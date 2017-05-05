@@ -27,6 +27,7 @@ use SC::Server;
 SC->initialize;
 my $test_dir = SC->config->{'RootDir'} . '/test_data';
 my $data_dir = SC->config->{'DataRoot'};
+my $perlbin = SC->config->{'perlbin'};
 my $default_options = API::APIUtil::config_options();
 
 my $self = new CGI;
@@ -211,7 +212,7 @@ sub trigger_scenario {
 		$result = new API::Event->erase_event($event_id);
 		$event_results->{'erase'} = $result;
 		my $cmd = SC->config->{'RootDir'}.'/bin/scfeed_local.pl -verbose -force_run -scenario -event temp';
-		$result = `$cmd`;
+		$result = `$perlbin $cmd`;
 		$event_results->{'scfeed_local'} = $result;
 	}
 	return $event_results;

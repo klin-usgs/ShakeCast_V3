@@ -36,6 +36,7 @@ my @args = ($action, $filename, $param);
 my $action = shift @args;
 my $sc_home = SC->config->{'RootDir'};
 my $data_home = SC->config->{'DataRoot'};
+my $perlbin = SC->config->{'perlbin'};
 
 print "Content-Type: application/json\n\n";
 
@@ -74,11 +75,11 @@ sub shake_fetch {
     }
     $sc_id .= $event_id;
     
-    my $result = `$sc_home/bin/manage_event.pl -delete -verbose $sc_id`;
+    my $result = `$perlbin $sc_home/bin/manage_event.pl -delete -verbose $sc_id`;
 
     SC->log(0, "erase event: $sc_id, $result");
 	
-	my $cmd = "$sc_home/bin/shake_fetch.pl -force_run -scenario -verbose -network $net_id -event $event_id";
+	my $cmd = "$perlbin $sc_home/bin/shake_fetch.pl -force_run -scenario -verbose -network $net_id -event $event_id";
 	SC->log(0, $cmd);
 	$result =  `$cmd`;
 	
@@ -97,11 +98,11 @@ sub atlas_fetch {
     $sc_id =~ s/^\atlas//i;
     $sc_id = 'us'.$sc_id;
     
-    my $result = `$sc_home/bin/manage_event.pl -delete -verbose $sc_id`;
+    my $result = `$perlbin $sc_home/bin/manage_event.pl -delete -verbose $sc_id`;
 
     SC->log(0, "erase event: $sc_id, $result");
 	
-	my $cmd = "$sc_home/bin/gs_json.pl $event_id";
+	my $cmd = "$perlbin $sc_home/bin/gs_json.pl $event_id";
 	SC->log(0, $cmd);
 	$result =  `$cmd`;
 	
@@ -122,7 +123,7 @@ sub scenario_event {
     SC->log(0, "scenario_event: $sc_home/tmp/$filename, $data_home/$filename, $result");
 	
 	my $bin_file = "$sc_home/bin/scfeed_local.pl -force_run -scenario -event ";
-	my $cmd = "$bin_file $filename";
+	my $cmd = "$perlbin $bin_file $filename";
 	
 	my $json = {};
 	$json->{prog} = $cmd;
@@ -149,7 +150,7 @@ sub manage_facility_xml {
 	my ($filename, $param) = @_;
 	my $bin_file = "$sc_home/bin/manage_facility_xml.pl";
 	my $file_path = "$sc_home/tmp/$filename";
-	my $cmd = "$bin_file $param \"$file_path\"";
+	my $cmd = "$perlbin $bin_file $param \"$file_path\"";
 	
 	my $json = {};
 	$json->{prog} = $cmd;
@@ -164,7 +165,7 @@ sub manage_group_xml {
 	my ($filename, $param) = @_;
 	my $bin_file = "$sc_home/bin/manage_group_xml.pl";
 	my $file_path = "$sc_home/tmp/$filename";
-	my $cmd = "$bin_file $param \"$file_path\"";
+	my $cmd = "$perlbin $bin_file $param \"$file_path\"";
 	
 	my $json = {};
 	$json->{prog} = $cmd;
@@ -179,7 +180,7 @@ sub manage_user_xml {
 	my ($filename, $param) = @_;
 	my $bin_file = "$sc_home/bin/manage_user_xml.pl";
 	my $file_path = "$sc_home/tmp/$filename";
-	my $cmd = "$bin_file $param \"$file_path\"";
+	my $cmd = "$perlbin $bin_file $param \"$file_path\"";
 	
 	my $json = {};
 	$json->{prog} = $cmd;
@@ -202,21 +203,21 @@ sub manage_inventory_xml {
 	my $json = {};
 	my $bin_file = "$sc_home/bin/manage_facility_xml.pl";
 	my $file_path = "$sc_home/tmp/facility.xml";
-	my $cmd = "$bin_file $param \"$file_path\"";
+	my $cmd = "$perlbin $bin_file $param \"$file_path\"";
 	
 	$json->{prog} .= $cmd;
 	$json->{result} .= `$cmd -verbose`;
 	
 	$bin_file = "$sc_home/bin/manage_group_xml.pl";
 	$file_path = "$sc_home/tmp/group.xml";
-	$cmd = "$bin_file $param \"$file_path\"";
+	$cmd = "$perlbin $bin_file $param \"$file_path\"";
 	
 	$json->{prog} .= $cmd;
 	$json->{result} .= `$cmd -verbose`;
 
 	$bin_file = "$sc_home/bin/manage_user_xml.pl";
 	$file_path = "$sc_home/tmp/user.xml";
-	$cmd = "$bin_file $param \"$file_path\"";
+	$cmd = "$perlbin $bin_file $param \"$file_path\"";
 	
 	$json->{prog} .= $cmd;
 	$json->{result} .= `$cmd -verbose`;
@@ -232,7 +233,7 @@ sub manage_facility {
 	my ($filename, $param) = @_;
 	my $bin_file = "$sc_home/bin/manage_facility.pl";
 	my $file_path = "$sc_home/tmp/$filename";
-	my $cmd = "$bin_file $param \"$file_path\"";
+	my $cmd = "$perlbin $bin_file $param \"$file_path\"";
 	
 	my $json = {};
 	$json->{prog} = $cmd;
@@ -247,7 +248,7 @@ sub manage_user {
 	my ($filename, $param) = @_;
 	my $bin_file = "$sc_home/bin/manage_user.pl";
 	my $file_path = "$sc_home/tmp/$filename";
-	my $cmd = "$bin_file $param \"$file_path\"";
+	my $cmd = "$perlbin $bin_file $param \"$file_path\"";
 	
 	my $json = {};
 	$json->{prog} = $cmd;
@@ -262,7 +263,7 @@ sub manage_group {
 	my ($filename, $param) = @_;
 	my $bin_file = "$sc_home/bin/manage_group.pl";
 	my $file_path = "$sc_home/tmp/$filename";
-	my $cmd = "$bin_file $param -conf \"$file_path\"";
+	my $cmd = "$perlbin $bin_file $param -conf \"$file_path\"";
 	
 	my $json = {};
 	$json->{prog} = $cmd;

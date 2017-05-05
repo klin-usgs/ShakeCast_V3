@@ -1,4 +1,8 @@
 sc/data/*
 mysql/*
 sc/html/tiles/*
+sc/logs/*
+sc/html/data
+sc/html/images
+sc/html/scripts
 *.bak
