@@ -1,0 +1,5 @@
+sc/data/
+sc/db/
+*/.DS_Store
+sc/logs/*
+packages/

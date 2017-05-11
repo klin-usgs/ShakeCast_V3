@@ -1,0 +1,21 @@
+# pyCast Docker App Example
+FROM python:2.7
+
+MAINTAINER Kuo-Wan Lin
+
+RUN apt-get update
+
+VOLUME /srv
+
+COPY [".", "/srv"]
+
+ENV REQUESTS_CA_BUNDLE=/srv/DOIRootCA2.crt
+
+RUN pip install -r /srv/requirements.txt
+
+WORKDIR /srv/sc/app
+
+#ENTRYPOINT ["/usr/local/bin/perl", "/usr/local/shakecast/sc/bin/gs_json.pl"]
+
+CMD ["/usr/local/bin/python", "server", "start"]
+

@@ -583,25 +583,16 @@ sub intersection {
 		#				  [0, $dem_sa2 - $dem_sa1, 0, -1, -$dem_sa1]) ->solve;
 		#my ($t1, $t2, $sa, $sd) = ($intersect->[0]->[0], $intersect->[1]->[0],
 		#			   $intersect->[2]->[0], $intersect->[3]->[0]);
-		my $div = ($cap_sd1 - $cap_sd2) * ($dem_sa1 - $dem_sa2) - ($cap_sa1 - $cap_sa2) * ($dem_sd1 - $dem_sd2);
+		my ($a1, $b1, $c1, $a2, $b2, $c2) = (
+			$cap_sd2-$cap_sd1, $dem_sd1-$dem_sd2, $dem_sd1-$cap_sd1,
+			$cap_sa2-$cap_sa1, $dem_sa1-$dem_sa2, $dem_sa1-$cap_sa1,
+		);
+		my $div = $a1*$b2 - $b1*$a2;
 		next if ($div == 0);
-		my $px = (($cap_sd1*$cap_sa2 - $cap_sa1*$cap_sd2) * ($dem_sd1 - $dem_sd2) - ($cap_sd1 - $cap_sd2)*($dem_sd1*$dem_sa2 - $dem_sa1*$dem_sd2))
-				/ $div;
-		my $py = (($cap_sd1*$cap_sa2 - $cap_sa1*$cap_sd2) * ($dem_sa1 - $dem_sa2) - ($cap_sa1 - $cap_sa2)*($dem_sd1*$dem_sa2 - $dem_sa1*$dem_sd2))
-				/ $div;
+		my $px = ($c1*$b2 - $b1*$c2) / $div;
+		my $py = ($a1*$c2 - $c1*$a2) / $div;
 		
-		#push @intersect_test, {
-		#	't1' => $t1,
-		#	't2' => $t2,
-		#	'sa' => $sa,
-		#	'sd' => $sd,
-		#	'demand_sa' => $dem_sa1,
-		#	'demand_sd' => $dem_sd1,
-		#	'p_sd' => $px,
-		#	'p_sa' => $py,
-		#};
-		#	$performance->{$cap_sd1} = {'sa' => $py, 'sd' => $px};
-		if (($px - $cap_sd1)*($px - $cap_sd2) <= 0 && ($py - $cap_sa1)*($py - $cap_sa2) <= 0 ) {
+		if ($px>=0 && $px<=1 && $py<=1 && $py>=0) {
 			$performance->{'sa'} = $py;
 			$performance->{'sd'} = $px;
 			last;
