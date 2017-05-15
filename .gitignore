@@ -5,4 +5,9 @@ sc/logs/
 sc/html/tiles/
 sc/tmp/
 sc/userdbs/
-
+sc_default/
+sc_va/
+sc_nrc/
+nohup.out
+sc/db/product.hash
+sc/sc.bin/perl

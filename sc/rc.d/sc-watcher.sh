@@ -2,12 +2,12 @@
 
 S=60
 
-DIR=/usr/local/shakecast/sc
+DIR=/usr/local/shakecast/sc_va
 
 BIN=$DIR/rc.d
 
 process() {
-    ps axww | grep -v grep
+    ps axww | grep -v 
 }
 
 start() {
