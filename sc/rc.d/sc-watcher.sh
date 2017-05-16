@@ -7,7 +7,7 @@ DIR=/usr/local/shakecast/sc_va
 BIN=$DIR/rc.d
 
 process() {
-    ps axww | grep -v 
+    ps axww | grep -v grep
 }
 
 start() {
