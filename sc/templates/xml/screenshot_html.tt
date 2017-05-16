@@ -91,6 +91,7 @@ var facMarkers = [];
 		var img = 'ii_overlay.png';
 		var imageBounds = [[lat_min, lon_min], [lat_max, lon_max]];
 		L.imageOverlay(img, imageBounds, {'opacity': 0.6}).addTo(map);
+		map.fitBounds(imageBounds);
 
 		L.tileLayer('../../html/tiles/event/{z}/{x}/{y}.png', {
 			maxZoom: 18,
