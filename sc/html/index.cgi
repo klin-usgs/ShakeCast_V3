@@ -114,8 +114,7 @@ exit;
             return 1;  # if logged in, don't bother going further
         }
 
-	if (($ENV{SERVER_NAME} =~ /localhost/i && $dest =~ /screenshot/i) 
-		|| valid(SC->config->{'GUEST_ACCOUNT'})) {
+	if (valid(SC->config->{'GUEST_ACCOUNT'})) {
 		$session->param("~logged-in", 1);
 		$session->param('domain', $domain);
 		return 1;
