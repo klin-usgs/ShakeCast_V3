@@ -97,7 +97,7 @@ EOF1
 
 mysql -u root --password="$dbpass" mysql < /tmp/${1}-db.sql
 
-rsync -a --exclude=.svn sc/ ${1}/
+rsync -a --exclude=.svn template/ ${1}/
 
 chown -R apache:apache $1
 
@@ -130,6 +130,11 @@ sed -i -e "s#/usr/local/shakecast/sc/bin/#/usr/local/shakecast/$1/bin/#" /usr/lo
 sed -i -e "s#/usr/local/shakecast/sc/data/#/usr/local/shakecast/$1/data/#" /usr/local/shakecast/$1/bin/*.pl
 
 sed -i -e "s#/usr/local/shakecast/sc/conf/sc.conf#/usr/local/shakecast/$1/conf/sc.conf#" /usr/local/shakecast/$1/bin/*.pl
+
+if [ ! -e "/etc/httpd/conf.d/https-sc.conf" ]; then
+	ln -s /usr/local/shakecast/conf/https-sc.conf /etc/httpd/conf.d/https-sc.conf
+	exit -1
+fi
 
 ln -s /usr/local/shakecast/$1/conf/$1.conf /etc/httpd/conf.d/$1.conf
 
