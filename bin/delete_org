@@ -1,0 +1,93 @@
+#!/bin/bash
+
+
+if [ "$#" -ne 1 ]; then
+	echo "Wrong number of arguments provided! Exiting!"
+	exit -1
+fi
+
+if [ ! -e "/usr/local/shakecast/$1" ]; then
+	echo "Directory $1 doesn't exists. Exiting!"
+	exit -1
+fi
+
+
+
+read -s -p "Please enter the root database user password: " dbpass1
+echo
+read -s -p "Please enter the root database user password again: " dbpass2
+echo
+
+if [ "$dbpass1" != "$dbpass2" ]; then
+        echo
+        echo "Password entries do not match. Exiting!"
+        echo
+        exit 1
+else
+        dbpass=$dbpass2
+fi
+
+
+mysql -u root --password="$dbpass" test < /dev/null
+
+if [ $? -ne 0 ]; then
+	echo "Couldn't connect to mysql as root with the password provided. Exiting."
+	exit -1
+fi
+
+filelock=/usr/local/shakecast/var/delete_org.lock
+
+if [ -e "$filelock" ]; then
+	echo "Lock detected! Some other process is running a setup. Exiting!"
+	exit -1
+fi
+
+timestamp=`date`
+echo "pid:$$ date:$timestamp" > $filelock
+
+### sqlite> create table dispd_port_seq(id integer, org_id text, ctime text, port integer);
+### sqlite> insert into dispd_port_seq(id,org_id,ctime,port) values(1,"shakecast", "Tue Jun 29 10:57:38 MDT 2010", 53458);
+### sqlite> select max(id) from dispd_port_seq;
+### sqlite> select max(port) from dispd_port_seq;
+
+sqlitedb="/usr/local/shakecast/etc/shakecast.sqlite3"
+
+if [ -f "$sqlitedb" ]; then
+	sqlite3 $sqlitedb "delete from dispd_port_seq where org_id = '$1';"
+	rm $filelock
+	echo "Delete $1 record from sqlite3 database: $sqlitedb."
+else
+	echo "No sqlite3 database: $sqlitedb. Exiting!"
+	exit -1
+fi
+
+
+cat <<EOF1 > /tmp/${1}-db.sql
+
+drop database IF EXISTS $1;
+
+EOF1
+
+mysql -u root --password="$dbpass" mysql < /tmp/${1}-db.sql
+
+echo "Drop $1 MySQL database."
+
+rm -rf /usr/local/shakecast/${1}
+
+echo "Remove $1 ShakeCast directory."
+
+rm /usr/local/shakecast/conf/${1}.conf
+
+rm /etc/httpd/conf.d/${1}.conf
+
+echo "Delete Apache config file for $1."
+
+systemctl restart httpd.service
+
+echo "Apache httpd restarted."
+echo "Don't forget to delete $1 user account."
+echo "========================================================================="
+echo 
+
+
+

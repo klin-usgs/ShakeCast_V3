@@ -1,0 +1,97 @@
+
+<Directory /usr/local/sc2remote/orgs/XXXXXXXXXX/sc>
+    Options None
+    AllowOverride None
+    Allow from all
+    #Order deny,allow
+    #AuthType Basic
+    #AuthName ShakeCast
+    #AuthUserFile C:/ShakeCast/sc/userdbs/sc-users
+    # By default forbid everything
+    #Deny from all
+</Directory>
+
+<Directory  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/docs>
+    Allow from all
+    #require valid-user
+</Directory>
+
+<Directory  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/pma>
+    Allow from all
+    AuthName PMA
+        AuthType Basic
+    AuthUserFile  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/userdbs/sc-servers
+    require valid-user
+</Directory>
+
+<Directory  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/download>
+    Options +Indexes
+    IndexOptions FancyIndexing FoldersFirst
+    allow from all
+    #require valid-user
+</Directory>
+
+# Unrestricted access so we can serve error pages to unauthorized users
+<Directory  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/errordocs>
+    allow from all
+</Directory>
+
+<Directory  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/html>
+    Options +Indexes
+    IndexOptions FancyIndexing FoldersFirst
+    Allow from all
+    #require valid-user
+</Directory>
+
+<Directory  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/scripts/c>
+    allow from all
+    AuthName "Admin Panel"
+	AuthType Basic
+    AuthUserFile  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/userdbs/sc-servers
+    require valid-user
+</Directory>
+
+<Directory  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/scripts/s>
+    # Server scripts -- use different password file
+    allow from all
+    AuthName Server
+	AuthType Basic
+    AuthUserFile  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/userdbs/sc-servers
+    require valid-user
+</Directory>
+
+# Data file directory is wide open
+<Directory  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/data>
+    Options +Indexes
+    IndexOptions FancyIndexing FoldersFirst
+    Order deny,allow
+    Allow from all
+</Directory>
+
+#RewriteEngine on
+
+#RewriteRule ^/admin$ /scripts/c/admin/admin.pl			[PT]
+
+ScriptAlias /sc2remote/XXXXXXXXXX/scripts/		 /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/scripts/
+
+Alias /sc2remote/XXXXXXXXXX/docs/				 /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/docs/
+
+Alias /sc2remote/XXXXXXXXXX/data/			 	 /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/data/
+Alias /sc2remote/XXXXXXXXXX/errordocs/		 	 /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/errordocs/
+Alias /sc2remote/XXXXXXXXXX/html/			 	 /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/html/
+
+#Alias /sc2remote/XXXXXXXXXX/pma/			 	 /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/pma/
+
+ErrorDocument 401 /errordocs/401.html
+
+#Setenv PERL5LIB  /usr/local/sc2remote/orgs/XXXXXXXXXX/sc/lib
+
+#LoadModule rewrite_module modules/mod_rewrite.so
+#RewriteEngine on
+#RewriteCond %{REQUEST_METHOD} ^TRACE
+#RewriteRule .* - [F]
+#
+#LoadModule userdir_module modules/mod_userdir.so
+#UserDir disabled
+
+

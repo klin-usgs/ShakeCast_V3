@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SC_DIR=/usr/local/shakecast/sc
+SC_DIR=/usr/local/shakecast/XXXXXXXXXX
 PIDFILE=${SC_DIR}/pids/notify.pid
 PERL=/usr/local/bin/perl
 

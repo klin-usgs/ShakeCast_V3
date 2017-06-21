@@ -1,0 +1,156 @@
+#!/bin/bash
+
+
+if [ "$#" -ne 1 ]; then
+	echo "Wrong number of arguments provided! Exiting!"
+	exit -1
+fi
+
+
+read -s -p "Please enter the root database user password: " dbpass1
+echo
+read -s -p "Please enter the root database user password again: " dbpass2
+echo
+
+if [ "$dbpass1" != "$dbpass2" ]; then
+        echo
+        echo "Password entries do not match. Exiting!"
+        echo
+        exit 1
+else
+        dbpass=$dbpass2
+fi
+
+
+mysql -u root --password="$dbpass" test < /dev/null
+
+if [ $? -ne 0 ]; then
+	echo "Couldn't connect to mysql as root with the password provided. Exiting."
+	exit -1
+fi
+
+filelock=/usr/local/shakecast/var/make_org.lock
+
+if [ -e "$filelock" ]; then
+	echo "Lock detected! Some other process is running a setup. Exiting!"
+	exit -1
+fi
+
+timestamp=`date`
+echo "pid:$$ date:$timestamp" > $filelock
+
+### sqlite> create table dispd_port_seq(id integer, org_id text, ctime text, port integer);
+### sqlite> insert into dispd_port_seq(id,org_id,ctime,port) values(1,"shakecast", "Tue Jun 29 10:57:38 MDT 2010", 53458);
+### sqlite> select max(id) from dispd_port_seq;
+### sqlite> select max(port) from dispd_port_seq;
+
+sqlitedb="/usr/local/shakecast/etc/shakecast.sqlite3"
+
+if [ -f "$sqlitedb" ]; then
+
+	current_port_number=`sqlite3 etc/shakecast.sqlite3 "select port from dispd_port_seq where org_id = '$1';"`
+
+	if [ "$current_port_number" == "" ]; then	
+
+		last_port_number=`sqlite3 $sqlitedb 'select max(port) from dispd_port_seq;'`
+		rc1=$?
+		last_org_id=`sqlite3 $sqlitedb 'select max(id) from dispd_port_seq;'`
+		rc2=$?
+
+		if [ "$rc1" -ne 0 -o "$rc2" -ne 0 ]; then
+			echo "${sqlitedb}: selects failed to retreive values from required table! Exiting!"
+			rm $filelock
+			exit -1
+		fi
+	
+		new_port_number=`echo $last_port_number + 1 | bc`
+		new_worker_port=`echo $last_port_number + 2 | bc`
+		new_request_port=`echo $last_port_number + 3 | bc`
+		new_org_id=`echo $last_org_id + 3 | bc`
+		timestamp=`date`
+
+		sqlite3 $sqlitedb "insert into dispd_port_seq(id,org_id,ctime,port) values($new_org_id,'$1', '$timestamp', $new_port_number);"
+	fi
+
+	rm $filelock
+else
+	echo "No sqlite3 database: $sqlitedb. Exiting!"
+	exit -1
+fi
+
+cookie_val=`pwgen -1 -n -c -s`
+
+new_pass=`pwgen -1 -B -n -c -s`
+
+default_pass='sc'
+
+cat <<EOF1 > /tmp/${1}-db.sql
+
+drop database IF EXISTS $1;
+create database $1;
+grant usage on *.* to ${1}@localhost identified by 'sc';
+grant all privileges on ${1}.* to ${1}@localhost;
+update mysql.user set password=old_password('$default_pass') where user="$1";
+flush privileges;
+
+EOF1
+
+mysql -u root --password="$dbpass" mysql < /tmp/${1}-db.sql
+
+rsync -a --exclude=.svn sc/ ${1}/
+
+chown -R apache:apache $1
+
+mysql -u $1 --password="$default_pass" $1 < /usr/local/shakecast/$1/db/sc-create.sql 
+
+mysql -u $1 --password="$default_pass" $1 < /usr/local/shakecast/$1/db/sc-data.sql
+
+sed -i -e "s/XXXXXXXXXX/$1/g" /usr/local/shakecast/$1/conf/sc.conf /usr/local/shakecast/$1/rc.d/*.sh
+
+sed -i -e "s/53456/$new_port_number/g" /usr/local/shakecast/$1/conf/sc.conf 
+sed -i -e "s/58163/$new_worker_port/g" /usr/local/shakecast/$1/conf/sc.conf 
+sed -i -e "s/58164/$new_request_port/g" /usr/local/shakecast/$1/conf/sc.conf 
+
+md5pass=`php -r "echo md5('$new_pass');"`
+
+htpassline=`/usr/bin/htpasswd -nbm scadmin $new_pass`
+
+echo "$htpassline" >  /usr/local/shakecast/$1/userdbs/sc-users
+
+echo "update shakecast_user set password = '$md5pass' where shakecast_user = 'scadmin';" | mysql -u $1 --password="$default_pass" $1
+
+echo "scadmin password for $1 set to $new_pass"
+
+mv /usr/local/shakecast/$1/conf/template.txt /usr/local/shakecast/$1/conf/$1.conf
+
+sed -i -e "s/XXXXXXXXXX/$1/g" /usr/local/shakecast/$1/conf/$1.conf
+
+sed -i -e "s#/usr/local/shakecast/sc/bin/#/usr/local/shakecast/$1/bin/#" /usr/local/shakecast/$1/bin/*.pl
+
+sed -i -e "s#/usr/local/shakecast/sc/data/#/usr/local/shakecast/$1/data/#" /usr/local/shakecast/$1/bin/*.pl
+
+sed -i -e "s#/usr/local/shakecast/sc/conf/sc.conf#/usr/local/shakecast/$1/conf/sc.conf#" /usr/local/shakecast/$1/bin/*.pl
+
+ln -s /usr/local/shakecast/$1/conf/$1.conf /etc/httpd/conf.d/$1.conf
+
+systemctl restart httpd.service  
+
+echo "Starting services for $1"
+
+sh "/usr/local/shakecast/$1/rc.d/sc-start-watcher.sh" 
+
+echo "========================================================================="
+echo
+echo "    Password for scadmin account is: "
+echo
+echo "       $new_pass "
+echo
+echo "    Frontend URL for new sc2 org instance is:"
+echo 
+echo "       http://shakecast.cr.usgs.gov/$1/"
+echo
+echo "========================================================================="
+echo 
+
+
+

@@ -8,6 +8,7 @@ sc/userdbs/
 sc_default/
 sc_va/
 sc_nrc/
+sc_test/
 nohup.out
 sc/db/product.hash
 sc/sc.bin/perl

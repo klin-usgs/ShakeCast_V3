@@ -2,7 +2,7 @@
 
 S=60
 
-DIR=/usr/local/shakecast/sc
+DIR=/usr/local/shakecast/XXXXXXXXXX
 
 BIN=$DIR/rc.d
 
