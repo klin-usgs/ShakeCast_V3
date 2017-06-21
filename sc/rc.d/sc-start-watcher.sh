@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIR=/usr/local/shakecast/XXXXXXXXXX
+DIR=/usr/local/shakecast/sc
 
 BIN=$DIR/rc.d
 
