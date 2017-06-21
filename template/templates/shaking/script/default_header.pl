@@ -1,4 +1,4 @@
-#!/usr/local/sc/sc.bin/perl
+#!/usr/local/bin/perl
 
 $event = "%EVENT_ID%";
 $event =~ s/_scte.*$//;

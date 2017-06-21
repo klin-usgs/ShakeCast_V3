@@ -1,4 +1,4 @@
-#!/usr/local/sc/sc.bin/perl
+#!/usr/local/bin/perl
 
 my $tmp = "/tmp/junk$$.txt";
 

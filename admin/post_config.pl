@@ -1,4 +1,4 @@
-#!/usr/local/sc/sc.bin/perl
+#!/usr/local/bin/perl
 #!c:/perl/bin/perl
 
 # $Id: post_config.pl 422 2008-05-01 19:15:12Z klin $
