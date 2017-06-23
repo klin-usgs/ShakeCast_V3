@@ -48,6 +48,7 @@ print $cgi->header(-cookie=>$cookie);
         $session->param("referer", $ENV{REQUEST_URI});
     }
 
+    $session->param("software_revision", SC->VERSION());
     $session->param("gm_key", SC->config->{"GM_KEY"}) if (SC->config->{"GM_KEY"});
     
 	my $dest = $cgi->param("dest") || 'index';
@@ -114,7 +115,8 @@ exit;
             return 1;  # if logged in, don't bother going further
         }
 
-	if (valid(SC->config->{'GUEST_ACCOUNT'})) {
+	if (($ENV{SERVER_NAME} =~ /localhost/i && $dest =~ /screenshot/i) 
+		|| valid(SC->config->{'GUEST_ACCOUNT'})) {
 		$session->param("~logged-in", 1);
 		$session->param('domain', $domain);
 		return 1;
