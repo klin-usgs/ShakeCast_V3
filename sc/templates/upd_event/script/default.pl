@@ -1,4 +1,4 @@
-#!/usr/local/sc/sc.bin/perl
+#!/usr/local/bin/perl
 
 open F, ">c:/temp/junk32.txt" or die "Can't open: $!\n";
 
