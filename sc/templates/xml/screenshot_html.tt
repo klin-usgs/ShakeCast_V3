@@ -91,6 +91,7 @@ var facMarkers = [];
 		var img = 'ii_overlay.png';
 		var imageBounds = [[lat_min, lon_min], [lat_max, lon_max]];
 		L.imageOverlay(img, imageBounds, {'opacity': 0.6}).addTo(map);
+		map.fitBounds(imageBounds);
 
 		L.tileLayer('../../html/tiles/event/{z}/{x}/{y}.png', {
 			maxZoom: 18,
@@ -130,6 +131,8 @@ var facMarkers = [];
 		});
 
 		var index = 0;
+		var marker_icon = [];
+
 		  for ( var key in data.facility_damage)
 			{
 			var facility = data.facility_damage[key];
@@ -152,8 +155,30 @@ var facMarkers = [];
 			marker.severity_rank = facility_severity;
 
 			markers.addLayer(marker);
+
+			if (typeof marker_icon[icon_type] === "undefined") {
+		      marker_icon[icon_type] =
+				{
+				url: '../../images/' + icon_type + '.png',
+				facility_type: facility.facility_type,
+				facility_count: 1,
+				};
+			} else {
+				marker_icon[icon_type].facility_count += 1;
+			}
+
+
 			};
 		map.addLayer(markers);
+
+		var disp_icon = [];
+		for (var key in marker_icon) disp_icon.push(marker_icon[key]);
+		disp_icon.sort(function(a, b){
+		    var a1= a.severity_rank, b1= b.severity_rank;
+		    if(a1== b1) return 0;
+		    return a1> b1? 1: -1;
+		});
+		//addLegend(disp_icon);
 
 		var damage_summary = '<div class="progress">';
     var summary = data.damage_summary;
@@ -166,6 +191,29 @@ var facMarkers = [];
 		}
 		damage_summary += '</div>';
 		$("#caption").html(damage_summary);
+
+		var legend = L.control({position: 'bottomright'});
+
+		legend.onAdd = function (map) {
+
+			var div = L.DomUtil.create('div', 'info legend'),
+				labels = [];
+				div.innerHTML = 
+				'Facility Cluster<br/><img src="../../images/cluster/m1_1.png" /><img src="../../images/cluster/m1_100.png" /><img src="../../images/cluster/m1_200.png" /><img src="../../images/cluster/m1_300.png" /><img src="../../images/cluster/m1_400.png" />' + 
+				'<br /><img src="../../images/epicenter.png" /> Earthquake Epicenter<br />';
+			// loop through our density intervals and generate a label with a colored square for each interval
+			for (var key in disp_icon) {
+				div.innerHTML += 
+					'<img src="' + disp_icon[key].url + '" /> ' +
+					disp_icon[key].facility_type + ' : ' +
+					disp_icon[key].facility_count + '<br />';
+			}
+
+			return div;
+		};
+
+		legend.addTo(map);
+
 	});
 
 
@@ -176,3 +224,4 @@ var facMarkers = [];
 
 </script>
 </body></html>
+
