@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 
 # $Id: scfeed_local.pl 481 2008-10-03 16:49:46Z klin $

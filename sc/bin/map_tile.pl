@@ -1,4 +1,4 @@
-#!c:/perl/bin/perl.exe
+#!/usr/local/bin/perl
 
 # $Id: worker.pl 64 2007-06-05 14:58:38Z klin $
 
@@ -170,7 +170,7 @@ if ($options{'rebuild'}) {
 		}
 	}
 }
-print time - $^T, "\n";
+print "process product STATUS=SUCCESS\n";
 exit ;
 
 sub in_bound {

@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 #
 # $Id: heartbeat.pl 475 2008-09-05 17:14:37Z klin $

@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: logrotate.pl 285 2008-01-22 16:10:14Z klin $
 

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: manage_group.pl 423 2008-08-14 16:25:23Z klin $
 

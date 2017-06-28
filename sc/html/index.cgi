@@ -48,6 +48,7 @@ print $cgi->header(-cookie=>$cookie);
         $session->param("referer", $ENV{REQUEST_URI});
     }
 
+    $session->param("software_revision", SC->VERSION());
     $session->param("gm_key", SC->config->{"GM_KEY"}) if (SC->config->{"GM_KEY"});
     
 	my $dest = $cgi->param("dest") || 'index';

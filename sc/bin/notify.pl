@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 #
 ### notify: Scan the Notification Queue and Deliver Messages

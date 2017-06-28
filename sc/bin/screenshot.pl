@@ -1,4 +1,4 @@
-#!c:/perl64/bin/perl.exe
+#!/usr/local/bin/perl
 
 
 # $Id: manage_facility.pl 519 2008-10-22 13:58:44Z klin $

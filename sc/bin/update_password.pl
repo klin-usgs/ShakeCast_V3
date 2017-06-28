@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: update_password.pl 153 2007-09-25 16:29:01Z klin $
 

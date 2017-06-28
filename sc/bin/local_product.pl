@@ -1,4 +1,4 @@
-#!/ShakeCast/Perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: local_product.pl 156 2007-10-10 16:27:10Z klin $
 

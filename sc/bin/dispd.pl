@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: dispd.pl 64 2007-06-05 14:58:38Z klin $
 

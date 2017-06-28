@@ -1,4 +1,4 @@
-#!/ShakeCast/perl/bin/perl
+#!/usr/local/bin/perl
 
 # $Id: manage_facility.pl 149 2007-09-18 20:38:21Z klin $
 
