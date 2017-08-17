@@ -170,7 +170,7 @@ if ($options{'rebuild'}) {
 		}
 	}
 }
-print time - $^T, "\n";
+print "process product STATUS=SUCCESS\n";
 exit ;
 
 sub in_bound {
