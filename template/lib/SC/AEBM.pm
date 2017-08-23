@@ -1775,11 +1775,11 @@ sub process_new_event {
 				# If the dispatcher is not running this will fail.  However,
 				# from the upstream server's perspective this is not an error,
 				# so catch any problems, log them, and return success.
-				SC::Server->this_server->queue_request(
-					'notifyqueue', $self->event_id, $self->event_version);
-				SC::Server->this_server->queue_request(
-					'comp_gmpe', $self->event_id, $self->event_version)
-				if (SC->config->{'COMP_GMPE'});
+				#SC::Server->this_server->queue_request(
+				#	'notifyqueue', $self->event_id, $self->event_version);
+				#SC::Server->this_server->queue_request(
+				#	'comp_gmpe', $self->event_id, $self->event_version)
+				#if (SC->config->{'COMP_GMPE'});
 			};
 			if ($@) {
 				chomp $@;
