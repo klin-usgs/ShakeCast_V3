@@ -127,6 +127,20 @@ $ua->proxy(['http'], $config->{'ProxyServer'})
 my $eq_hash_file = "$json_dir/eq.hash";
 my $eq_hash = retrieve($eq_hash_file) if (-e $eq_hash_file);
 
+my @req_prod = ('grid.xml', 'stationlist.xml', 'intensity.jpg', 'info.xml',
+	'ii_overlay.png');
+my $prod_hash_file = $config->{'RootDir'}.'/db/product.hash';
+my $prod_hash; 
+if (-e $prod_hash_file) {
+	$prod_hash = retrieve($prod_hash_file) ;
+} else {
+	my $product = new API::Product->product_type_list('ALL'); 
+	foreach my $item (@$product) {
+		$prod_hash->{$item->{'filename'}} = $item->{'display'};
+	}
+}
+foreach my $req_prod (@req_prod) {$prod_hash->{$req_prod} = 1;}
+
 #######################################################################
 # Run the program
 #######################################################################
@@ -270,7 +284,7 @@ sub parse_shakemap
 	my $mirror_dir = $config->{DataRoot}.'/'.$event->{net}.$event->{code};
 	mkpath( $mirror_dir ) if not -d $mirror_dir;
 	my $rv;
-
+	
 	use Archive::Zip qw( :ERROR_CODES :CONSTANTS );;
 	my $zip = Archive::Zip->new();
 	
@@ -624,7 +638,7 @@ sub fetch_json_page
 sub event_filter {
 	my ($xml) = @_;
 	my $rc = 0;
-
+	
 	return ($rc) if ($xml->{'event_region'} =~ /pt|at|dr/i);
 	
 	my $time_window = (SC->config->{'rss'}->{'TIME_WINDOW'}) ? 
@@ -712,7 +726,7 @@ sub _retrieve {
 
 	$product =~ s/$evid(\_*)//;
 
-	return 1;
+	return $prod_hash->{$product};
 }
 
 sub usage {
