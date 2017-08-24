@@ -99,7 +99,41 @@ sub from_id {
 			    };
 	}
 
-	return ($damage);
+	if ($self->param('format') eq 'geojson') {
+		my $geojson = {};
+		$damage = API::APIUtil::stringfy($damage);
+		my @features;
+		my %grid_obj;
+		$grid_obj{'type'} = "Feature";
+		$grid_obj{'properties'} = $damage->{'grid'};
+		$grid_obj{'geometry'} = {
+			'type' => 'Polygon',
+			'coordinates' => [[$damage->{'grid'}->{'lon_min'}, $damage->{'grid'}->{'lat_min'}],
+								[$damage->{'grid'}->{'lon_min'}, $damage->{'grid'}->{'lat_max'}],
+								[$damage->{'grid'}->{'lon_max'}, $damage->{'grid'}->{'lat_max'}],
+								[$damage->{'grid'}->{'lon_max'}, $damage->{'grid'}->{'lat_min'}],
+								[$damage->{'grid'}->{'lon_min'}, $damage->{'grid'}->{'lat_min'}]
+			]
+		};
+		push @features, \%grid_obj;
+		foreach my $key (keys %{$damage->{'facility_damage'}}) {
+			my $facility = $damage->{'facility_damage'}->{$key};
+			my %obj;
+			$obj{'type'} = "Feature";
+			$obj{'properties'} = $facility;
+			$obj{'geometry'} = {
+				'type' => 'Point',
+				'coordinates' => [$facility->{'lon_min'}, $facility->{'lat_min'}]
+			};
+			$obj{'id'} = $key;
+			push @features, \%obj;
+		}
+		$geojson->{'type'} = 'FeatureCollection';
+		$geojson->{'features'} = \@features;
+		return $geojson;
+	} else {
+		return $damage;
+	}
 }
 
     # Authenticated

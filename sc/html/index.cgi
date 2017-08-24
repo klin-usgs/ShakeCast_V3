@@ -53,8 +53,9 @@ print $cgi->header(-cookie=>$cookie);
     
 	my $dest = $cgi->param("dest") || 'index';
 	my $admin = ($dest =~ /^admin_/) ? 1 : 0;
-	$dest = (-e "$tmpl_dir/$dest.tmpl") ? "$tmpl_dir/$dest.tmpl" :
-		"$tmpl_dir/index.tmpl";
+
+	$dest = (-e "$tmpl_dir/$dest.tmpl") ? "$tmpl_dir/$dest.tmpl" : 
+        (("$tmpl_dir/$dest.html") ? "$tmpl_dir/$dest.html" : "$tmpl_dir/index.tmpl");
     init($cgi, $session);
     _load_profile($cgi, $session);
 

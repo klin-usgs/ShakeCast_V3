@@ -89,7 +89,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 require Exporter;
 
 @ISA       = qw(Exporter);
-$VERSION   = '3.14.119';
+$VERSION   = '3.14.200';
 
 @EXPORT    = qw(SC_OK SC_FAIL SC_UNKNOWN SC_BAD_XML SC_HTTP_FAIL);
 @EXPORT_OK = qw();
