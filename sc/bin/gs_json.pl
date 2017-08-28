@@ -596,7 +596,8 @@ sub fetch_json_page
 		my $prop = $feature->{properties};
 		my $geom = $feature->{geometry}->{'coordinates'};
 		$active_eq{$prop->{'net'}.$prop->{'code'}} = 1;
-		next if ($eq_hash->{$prop->{'code'}} > $prop->{'updated'} && $event_check);
+		next if (defined $eq_hash->{$prop->{'code'}} && 
+			$eq_hash->{$prop->{'code'}} > $prop->{'updated'} && $event_check);
 		next if ($prop->{mag} < $mag_cutoff);
 
 		$eq_hash->{$prop->{'net'}.$prop->{'code'}} = $prop->{'updated'};
@@ -649,18 +650,22 @@ sub event_filter {
 	return ($rc) unless ($time_cutoff > time() );
 
 	use Graphics_2D;
-	my $sth_lookup_poly = SC->dbh->prepare(qq{
-		select gp.profile_name, gp.geom
-		  from geometry_profile gp inner join shakecast_user su
-		  on gp.profile_name = su.username});
+	my $idp = [];
+	if (SC->config->{'EQ_POLY'}) {
+		@$idp = ('conf', SC->config->{'EQ_POLY'});
+	} else {
+		my $sth_lookup_poly = SC->dbh->prepare(qq{
+			select gp.profile_name, gp.geom
+			from geometry_profile gp inner join shakecast_user su
+			on gp.profile_name = su.username});
 
-    my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
+		$idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
+	}
 	return (1) unless (scalar @$idp >= 1);
 	while (@$idp) {
 		my $profile_name = shift @$idp;
 		my $geom = shift @$idp;
 		my $polygon = load_geometry($profile_name,$geom);
-		#print "$facility::$lon::$lat\n";
 		if ($polygon->{POLY}->crossingstest([$xml->{'lon'}, $xml->{'lat'}])) {
 			$rc=1;
 			last;
@@ -681,7 +686,7 @@ sub load_geometry {
   my ($nc, $poly, $lat, $lon, $north_b, $south_b, $east_b, $west_b);
   my $box    = {};
   my $coords = [];
-  my @args = split /,/, $geom;
+  my @args = split /[\,\;\s\t\n]+/, $geom;
 
   $box->{ZONE}    = $zone;
   $box->{COORDS} = $coords;

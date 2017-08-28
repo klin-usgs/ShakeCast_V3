@@ -271,18 +271,21 @@ sub shakemap_filter {
 	return (0) unless ($time_cutoff > time() );
 
 	use Graphics_2D;
-	my $sth_lookup_poly = SC->dbh->prepare(qq{
-		select profile_name, geom
-		  from geometry_profile});
+	my $idp = [];
+	if (SC->config->{'EQ_POLY'}) {
+		@$idp = ('conf', SC->config->{'EQ_POLY'});
+	} else {
+		my $sth_lookup_poly = SC->dbh->prepare(qq{
+			select profile_name, geom
+			from geometry_profile});
 
-    my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
+		$idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
+	}
 	return (1) unless (scalar @$idp >= 1);
 	while (@$idp) {
 		my $profile_name = shift @$idp;
 		my $geom = shift @$idp;
-
 		my $polygon = load_geometry($profile_name,$geom);
-		#print "$facility::$lon::$lat\n";
 		if ($polygon->{POLY}->crossingstest([$xml->{'lon'}, $xml->{'lat'}])) {
 			$rc=1;
 			last;
@@ -303,7 +306,7 @@ sub load_geometry {
   my ($nc, $poly, $lat, $lon, $north_b, $south_b, $east_b, $west_b);
   my $box    = {};
   my $coords = [];
-  my @args = split /,/, $geom;
+  my @args = split /[\,\;\s\t\n]+/, $geom;
 
   $box->{ZONE}    = $zone;
   $box->{COORDS} = $coords;

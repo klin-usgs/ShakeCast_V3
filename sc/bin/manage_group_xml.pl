@@ -572,7 +572,7 @@ sub load_geometry {
   my ($nc, $poly, $lat, $lon, $north_b, $south_b, $east_b, $west_b);
   my $box    = {};
   my $coords = [];
-  my @points = split /[\,\s\t\n]+/, $colp;
+  my @points = split /[\,\;\s\t\n]+/, $colp;
   $box->{COORDS} = $coords;
 
   return 0 if (($nc = @points) % 2 != 0);
