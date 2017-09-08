@@ -1,0 +1,45 @@
+#!/bin/bash
+
+
+filelock=/usr/local/shakecast/var/update_org.lock
+
+if [ -e "$filelock" ]; then
+	echo "Lock detected! Some other process is running a setup. Exiting!"
+	exit -1
+fi
+
+timestamp=`date`
+echo "pid:$$ date:$timestamp" > $filelock
+
+### sqlite> create table dispd_port_seq(id integer, org_id text, ctime text, port integer);
+### sqlite> insert into dispd_port_seq(id,org_id,ctime,port) values(1,"shakecast", "Tue Jun 29 10:57:38 MDT 2010", 53458);
+### sqlite> select max(id) from dispd_port_seq;
+### sqlite> select max(port) from dispd_port_seq;
+
+sqlitedb="/usr/local/shakecast/etc/shakecast.sqlite3"
+
+if [ -f "$sqlitedb" ]; then
+
+	orgs=`sqlite3 etc/shakecast.sqlite3 "select org_id from dispd_port_seq;"`
+
+	for org in $orgs
+	do	
+		echo $org
+		if [ -d $org ] ; then
+			rsync -av template/bin ${org}/bin
+			rsync -av template/lib ${org}/lib
+			rsync -av template/html ${org}/html
+			rsync -av template/scripts ${org}/scripts
+			rsync -av template/templates ${org}/templates
+		fi
+	done
+	rm $filelock
+else
+	echo "No sqlite3 database: $sqlitedb. Exiting!"
+	exit -1
+fi
+
+exit -1
+
+
+

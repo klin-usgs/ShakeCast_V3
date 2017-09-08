@@ -474,6 +474,7 @@ sub process {
                 $sth_del_product->execute($event_id);
                 $sth_del_dispatch->execute('%'.$event_id.'%');
 				$ndel++;
+                rmtree($data_root.'/eq_product/'.$event_id);
 				my @dir_list = <$data_root/$event_id*>;
 				foreach my $dir (@dir_list) {
 					rmtree($dir);

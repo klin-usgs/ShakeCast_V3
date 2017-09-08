@@ -173,6 +173,7 @@ if ($query) {
 		$event->{net} = substr($evid, 0, 2);
 		$event->{code} = substr($evid, 2, length($evid)-2);
 		$event_type = ($event->{code} =~ /_se$/) ? 'scenario': 'event';
+		$event->{event_type} = uc($event_type);
 		my $url = "https://earthquake.usgs.gov/fdsnws/$event_type/1/query?format=geojson&eventid=";
 		fetch_evt_json($url, $url.$evid, $event);
 	}
@@ -229,6 +230,8 @@ sub fetch_evt_json
 		my ($rv, $parms);
 		eval {
 			no strict 'refs';
+			$event->{event_type} = ($key =~ /-scenario$/) ? 
+				'SCENARIO' : 'ACTUAL';
 			$key =~ s/-scenario$//;
 			$key =~ s/-/_/g;
 			($rv, $parms) = &{ 'parse_'.$key }($server, $product, $event);
@@ -493,7 +496,7 @@ sub parse_origin
 	event_id="$event->{net}$event->{code}"
 	event_version="$version"
 	event_status="NORMAL"
-	event_type="ACTUAL"
+	event_type="$event->{event_type}"
 	event_name=""
 	event_location_description="$event->{place}"
 	event_timestamp="$ts"
