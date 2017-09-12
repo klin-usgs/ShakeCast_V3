@@ -26,11 +26,11 @@ if [ -f "$sqlitedb" ]; then
 	do	
 		echo $org
 		if [ -d $org ] ; then
-			rsync -av template/bin ${org}/bin
-			rsync -av template/lib ${org}/lib
-			rsync -av template/html ${org}/html
-			rsync -av template/scripts ${org}/scripts
-			rsync -av template/templates ${org}/templates
+			rsync -av template/bin/ ${org}/bin/
+			rsync -av template/lib/ ${org}/lib/
+			rsync -av template/html/ ${org}/html/
+			rsync -av template/scripts/ ${org}/scripts/
+			rsync -av template/templates/ ${org}/templates/
 		fi
 	done
 	rm $filelock
