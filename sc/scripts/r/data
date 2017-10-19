@@ -1,0 +1,84 @@
+#!/usr/local/bin/perl
+
+use strict;
+use warnings;
+
+
+use FindBin;
+use lib "$FindBin::Bin/../../lib";
+
+use Carp;
+
+use CGI;
+use CGI::Session;
+
+use JSON::XS;
+use Data::Dumper;
+use File::Copy;
+use File::Path;
+
+use SC;
+use API::Event;
+use API::APIUtil;
+use SC::Event;
+use SC::Shakemap;
+use SC::Product;
+use SC::Server;
+
+
+my $self = new CGI;
+my $session = new CGI::Session("driver:File", $self, {Directory=>"$FindBin::Bin/../../tmp"});
+$session->expires("+10m");
+my $cookie = $self->cookie(CGISESSID => $session->id );
+
+my $domain = $session->param('domain');
+my $conf_file = "$FindBin::Bin/../../../$domain/conf/sc.conf";
+$session->param('cgi', $self->param('type'));
+#$session->param('session', $conf_file);
+SC->initialize($conf_file);
+#SC->initialize();
+#
+
+my %valid_file = (
+    'ii_overlay.png'    => 'image/png',
+    'intensity.jpg'   => 'image/jpg',
+    'pga.jpg'   => 'image/jpg',
+    'pgv.jpg'   => 'image/jpg',
+    'psa03.jpg'   => 'image/jpg',
+    'psa10.jpg'   => 'image/jpg',
+    'psa30.jpg'   => 'image/jpg',
+    'info.xml'   => 'text/xml',
+    'exposure.csv'   => 'text/csv',
+);
+
+my $test_dir = SC->config->{'RootDir'} . '/test_data';
+my $data_dir = SC->config->{'DataRoot'};
+my $default_options = API::APIUtil::config_options();
+
+my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
+my (@args) = split '/', $arg;
+shift @args;
+my $sm_id = shift @args;
+my $data_file = shift @args;
+
+unless ( $session->param("~logged-in")) {
+    exit(0);
+}
+
+my $mime_type = $valid_file{$data_file};
+
+unless ( $session->param("~logged-in") && $mime_type) {
+    exit(0);
+}
+
+my $img_file = "$data_dir/$sm_id/$data_file";
+my $img_data;
+print $self->header(-type=>$mime_type, -cookie=>$cookie);
+if (-e $img_file) {
+	open my $fh, '<:raw', $img_file;
+	binmode STDOUT, ':raw';
+	copy $fh => \*STDOUT;
+	close $fh or return;
+}
+
+exit;

@@ -17,20 +17,29 @@ use API::Damage;
 use API::APIUtil;
 use API::Shaking;
 
-SC->initialize;
+my $self = new CGI;
+my $session = new CGI::Session("driver:File", $self, {Directory=>"$FindBin::Bin/../../tmp"});
+$session->expires("+10m");
+my $cookie = $self->cookie(CGISESSID => $session->id );
+print $self->header(-type=>'application/json', -cookie=>$cookie);
+#print "Content-Type: application/json\n\n";
+
+my $domain = $session->param('domain');
+my $conf_file = "$FindBin::Bin/../../../$domain/conf/sc.conf";
+$session->param('cgi', $self->param('type'));
+#$session->param('session', $conf_file);
+SC->initialize($conf_file);
+#SC->initialize();
+
 my $default_options = API::APIUtil::config_options();
 my %damage_levels = new API::Damage->damage_level();
 $damage_levels{'GREY'} = "10";
 
-my $self = new CGI;
-my $session = new CGI::Session(undef, $self);
-$session->expires("+10m");
 my $arg = ($ENV{PATH_INFO}) ? $ENV{PATH_INFO} : $ARGV[0];
 my (@args) = split '/', $arg;
 shift @args;
 my $action = shift @args;
 
-print "Content-Type: application/json\n\n";
 unless ( $session->param("~logged-in")) {
     exit(0);
 }

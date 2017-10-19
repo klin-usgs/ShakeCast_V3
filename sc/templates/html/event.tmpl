@@ -474,9 +474,9 @@
 	    var img_path;
 	    if (product.display) {
 	      if (product.eq_product) {
-		file_path = 'data/' + product.filename;
+		file_path = 'scripts/r/data/' + product.filename;
 	      } else {
-		file_path = 'data/' + sc_id + '/' + product.filename;
+		file_path = 'scripts/r/data/' + sc_id + '/' + product.filename;
 	      }
 	    if (product.url) {
 		    img_path = product.url;
@@ -624,7 +624,7 @@
 		var rectBounds = new google.maps.LatLngBounds(
 					new google.maps.LatLng(lat_min, lon_min),
 					new google.maps.LatLng(lat_max, lon_max));
-		var img = 'data/'+ sc_id +'/ii_overlay.png';
+		var img = 'scripts/r/data/'+ sc_id +'/ii_overlay.png';
 		var latlng = new google.maps.LatLng((lat_min+lat_max)/2, (lon_min+lon_max)/2);
 
 		//map = MAPAPP.init(latlng, 8);

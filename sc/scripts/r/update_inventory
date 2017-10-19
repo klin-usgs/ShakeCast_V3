@@ -21,12 +21,22 @@ use API::User;
 use API::APIUtil;
 use API::Event;
 
-SC->initialize;
+my $self = new CGI;
+my $session = new CGI::Session("driver:File", $self, {Directory=>"$FindBin::Bin/../../tmp"});
+$session->expires("+10m");
+my $cookie = $self->cookie(CGISESSID => $session->id );
+print $self->header(-type=>'application/json', -cookie=>$cookie);
+#print "Content-Type: application/json\n\n";
+
+my $domain = $session->param('domain');
+my $conf_file = "$FindBin::Bin/../../../$domain/conf/sc.conf";
+$session->param('cgi', $self->param('type'));
+#$session->param('session', $conf_file);
+SC->initialize($conf_file);
+#SC->initialize();
+
 my $default_options = API::APIUtil::config_options();
 
-my $self = new CGI;
-my $session = new CGI::Session(undef, $self);
-$session->expires("+10m");
 my $action = ($self->param('program')) ? $self->param('program') : $ARGV[0];
 my $filename = ($self->param('filename')) ? $self->param('filename') : $ARGV[1];
 my $param = ($self->param('option')) ? $self->param('option') : $ARGV[2];
@@ -37,7 +47,6 @@ my $action = shift @args;
 my $sc_home = SC->config->{'RootDir'};
 my $data_home = SC->config->{'DataRoot'};
 
-print "Content-Type: application/json\n\n";
 
 # Authenticated
 #my $username = $self->param('username') || '';

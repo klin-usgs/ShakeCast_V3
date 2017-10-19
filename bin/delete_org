@@ -73,6 +73,7 @@ mysql -u root --password="$dbpass" mysql < /tmp/${1}-db.sql
 echo "Drop $1 MySQL database."
 
 rm -rf /usr/local/shakecast/${1}
+rm -rf /data/${1}
 
 echo "Remove $1 ShakeCast directory."
 

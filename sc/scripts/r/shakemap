@@ -18,18 +18,27 @@ use SC::Shakemap;
 use API::User;
 use API::APIUtil;
 
-SC->initialize;
+my $self = new CGI;
+my $session = new CGI::Session("driver:File", $self, {Directory=>"$FindBin::Bin/../../tmp"});
+$session->expires("+10m");
+my $cookie = $self->cookie(CGISESSID => $session->id );
+print $self->header(-type=>'application/json', -cookie=>$cookie);
+#print "Content-Type: application/json\n\n";
+
+my $domain = $session->param('domain');
+my $conf_file = "$FindBin::Bin/../../../$domain/conf/sc.conf";
+$session->param('cgi', $self->param('type'));
+#$session->param('session', $conf_file);
+SC->initialize($conf_file);
+#SC->initialize();
+
 my $default_options = API::APIUtil::config_options();
 
-my $self = new CGI;
-my $session = new CGI::Session(undef, $self);
-$session->expires("+10m");
 my $valid = $session->param('admin_user');
 my (@args) = split '/', $ENV{PATH_INFO};
 shift @args;
 my $action = shift @args;
 
-print "Content-Type: application/json\n\n";
 # Authenticated
 #my $username = $self->param('username') || '';
 #my $password = $self->param('password') || '';

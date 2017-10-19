@@ -63,10 +63,10 @@ if [ -f "$sqlitedb" ]; then
 			exit -1
 		fi
 	
-		new_port_number=`echo $last_port_number + 1 | bc`
-		new_worker_port=`echo $last_port_number + 2 | bc`
-		new_request_port=`echo $last_port_number + 3 | bc`
-		new_org_id=`echo $last_org_id + 3 | bc`
+		new_worker_port=`echo $last_port_number + 1 | bc`
+		new_request_port=`echo $last_port_number + 2 | bc`
+		new_port_number=`echo $last_port_number + 3 | bc`
+		new_org_id=`echo $last_org_id + 1 | bc`
 		timestamp=`date`
 
 		sqlite3 $sqlitedb "insert into dispd_port_seq(id,org_id,ctime,port) values($new_org_id,'$1', '$timestamp', $new_port_number);"
@@ -123,11 +123,16 @@ echo "scadmin password for $1 set to $new_pass"
 
 mv /usr/local/shakecast/$1/conf/template.txt /usr/local/shakecast/$1/conf/$1.conf
 
+
 sed -i -e "s/XXXXXXXXXX/$1/g" /usr/local/shakecast/$1/conf/$1.conf
 
 sed -i -e "s#/usr/local/shakecast/sc/bin/#/usr/local/shakecast/$1/bin/#" /usr/local/shakecast/$1/bin/*.pl
 
 sed -i -e "s#/usr/local/shakecast/sc/data/#/usr/local/shakecast/$1/data/#" /usr/local/shakecast/$1/bin/*.pl
+
+sed -i -e "s#/usr/local/shakecast/sc/data/#/usr/local/shakecast/$1/data/#" /usr/local/shakecast/$1/templates/damage/email_html/*.txt
+
+sed -i -e "s#/usr/local/shakecast/sc/data/#/usr/local/shakecast/$1/data/#" /usr/local/shakecast/$1/templates/new_event/email_html/*.txt
 
 sed -i -e "s#/usr/local/shakecast/sc/conf/sc.conf#/usr/local/shakecast/$1/conf/sc.conf#" /usr/local/shakecast/$1/bin/*.pl
 
