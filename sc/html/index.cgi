@@ -19,6 +19,7 @@ use CGI;
 use CGI::Session qw/-ip-match/;
 #use CGI::Plus;
 use HTML::Template;
+use Digest::SHA qw(sha256_hex);
 
 use strict;
 use SC;
@@ -46,11 +47,17 @@ SC->initialize($conf_file);
 my $secret = SC->config->{'salt'} ? SC->config->{'salt'} : 'sc4all';
 my $html_tmpl = SC->config->{'html_tmpl'} ? SC->config->{'html_tmpl'} : 'html';
 my $tmpl_dir= "$FindBin::Bin/../templates/$html_tmpl";
+#my $tmpl_dir= "$FindBin::Bin/../../$domain/templates/$html_tmpl";
 
     #$ENV{REQUEST_URI} or die "Illegal use";
 
     unless ( $session->param("referer") ) {
         $session->param("referer", $ENV{REQUEST_URI});
+    }
+    unless ( $session->param("csrf_token") ) {
+		my $secret = join '', map { ('a'..'z','A'..'Z',0..9)[rand 62] } (0..10);
+		my $csrf_token = sha256_hex($secret);
+        $session->param("csrf_token", $csrf_token);
     }
 
     $session->param("software_revision", SC->VERSION());
@@ -86,7 +93,7 @@ my $tmpl_dir= "$FindBin::Bin/../templates/$html_tmpl";
 	exit(0);
     }
     
-    unless ( $session->param("~logged-in") ) {
+    unless ( $session->param("~logged-in") && SC->config->{'sc2remote'}) {
         print login_page($cgi, $session);
         exit(0);
 
@@ -139,6 +146,7 @@ exit;
         my ($cgi, $session) = @_;
 		# Authenticated
 
+		return unless ($cgi->param("csrf_token") eq $session->param("csrf_token"));
         my $lg_name = $cgi->param("lg_name") or return;
         my $lg_psswd=$cgi->param("lg_password") or return;
 

@@ -44,7 +44,7 @@ my $action = shift @args;
 #my $password = $self->param('password') || '';
 #my $valid = API::User->validate($username, $password, 1);
 #return 1 unless $valid;
-unless ( $session->param("~logged-in") && $session->param("admin_user")) {
+unless ( $session->param("~logged-in") && $session->param("admin_user") && $self->param("csrf_token") eq $session->param("csrf_token")) {
     exit(0);
 }
 

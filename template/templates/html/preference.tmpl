@@ -298,6 +298,7 @@
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
         var sm_url = 'scripts/r/user/from_id/'+username;
         var submit_data = {
+			csrf_token: '<TMPL_VAR NAME=CSRF_TOKEN>',
         };
 
 	$(window).load(function() {

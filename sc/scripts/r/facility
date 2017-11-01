@@ -41,7 +41,7 @@ SC->log(0, $action);
 #my $username = $self->param('username') || '';
 #my $password = $self->param('password') || '';
 
-unless ( $session->param("~logged-in")) {
+unless ( $session->param("~logged-in") && $self->param("csrf_token") eq $session->param("csrf_token")) {
     exit(0);
 }
 

@@ -183,7 +183,7 @@ MAPAPP = (function() {
 				var rectBounds = new google.maps.LatLngBounds(
 					new google.maps.LatLng(lat_min, lon_min),
 					new google.maps.LatLng(lat_max, lon_max));
-				var img = 'data/'+ sm_id +'/ii_overlay.png';
+				var img = 'scripts/r/data/'+ sm_id +'/ii_overlay.png';
 				var latlng = new google.maps.LatLng((lat_min+lat_max)/2, (lon_min+lon_max)/2);
 
 				//map = MAPAPP.init(latlng, 8);

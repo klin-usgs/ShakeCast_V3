@@ -196,6 +196,7 @@
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
         var sm_url = 'scripts/r/user/from_id/'+username;
         var submit_data = {
+			csrf_token: '<TMPL_VAR NAME=CSRF_TOKEN>',
         };
 			
 
@@ -249,7 +250,7 @@
 		var local_url = 'scripts/r/damage/datatables/' + sc_id;
 			  MAPAPP.addCaption(sc_id, type);
 	  $(".breadcrumb li").last().html(type + ' List');
-		$.post(local_url, {type:type, start:start, length:length}
+		$.post(local_url, {csrf_token: submit_data.csrf_token, type:type, start:start, length:length}
 			, function(data) {
 
 			// Are there even any EQ to display?
@@ -325,7 +326,7 @@ var eqDiv = {
 		//var local_url = 'scripts/damage.pl/datatables/' + sc_id + '?type=' + type + '&start=' + start + '&length=' + length;
 		var local_url = 'scripts/r/damage/from_id/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(local_url, {facility:facility_id, all:all}
+		$.post(local_url, {csrf_token: submit_data.csrf_token, facility:facility_id, all:all}
 			, function(data) {
 
 			// Are there even any EQ to display?
@@ -547,9 +548,9 @@ var eqDiv = {
 	    var img_path;
 	    if (product.display) {
 	      if (product.eq_product) {
-		file_path = 'data/' + product.filename;
+		file_path = 'scripts/r/data/' + product.filename;
 	      } else {
-		file_path = 'data/' + sc_id + '/' + product.filename;
+		file_path = 'scripts/r/data/' + sc_id + '/' + product.filename;
 	      }
 	    if (product.url) {
 		    img_path = product.url;
@@ -651,7 +652,7 @@ var eqDiv = {
 		var rectBounds = new google.maps.LatLngBounds(
 					new google.maps.LatLng(lat_min, lon_min),
 					new google.maps.LatLng(lat_max, lon_max));
-		var img = 'data/'+ sc_id +'/ii_overlay.png';
+		var img = 'scripts/r/data/'+ sc_id +'/ii_overlay.png';
 		var latlng = new google.maps.LatLng((lat_min+lat_max)/2, (lon_min+lon_max)/2);
 
 		//map = MAPAPP.init(latlng, 8);
@@ -672,7 +673,7 @@ var eqDiv = {
 		//var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
 		var local_url = 'scripts/r/damage/from_id/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(local_url, {facility:facility_id, all:all}, function(data) {
+		$.post(local_url, {csrf_token: submit_data.csrf_token, facility:facility_id, all:all}, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {

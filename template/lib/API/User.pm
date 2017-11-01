@@ -69,7 +69,7 @@ use warnings;
 package API::User;
 
 use SC;
-use Digest::SHA qw( sha256_hex );
+use Digest::SHA qw( sha256_hex hmac_sha256_hex );
 
 sub BEGIN {
     no strict 'refs';
@@ -132,8 +132,8 @@ sub validate {
     my ($class, $username, $password, $admin) = @_;
     undef $SC::errstr;
     my ($sth, $p);
-    $password = sha256_hex($password);
-    my @argv;
+    $password =  hmac_sha256_hex($password, SC->config->{'salt'});
+	my @argv;
     my $sql = qq/
 	select shakecast_user, user_type
 	    FROM 

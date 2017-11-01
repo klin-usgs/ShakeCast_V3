@@ -36,7 +36,7 @@ my (@args) = split '/', $ENV{PATH_INFO};
 shift @args;
 my $action = shift @args;
 
-unless ( $session->param("~logged-in")) {
+unless ( $session->param("~logged-in") && $self->param("csrf_token") eq $session->param("csrf_token")) {
     exit(0);
 }
 if (not defined *{$action} ) {

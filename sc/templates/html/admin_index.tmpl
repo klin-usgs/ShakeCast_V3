@@ -169,6 +169,7 @@
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
         var sm_url = 'scripts/r/user/from_id/'+username;
         var submit_data = {
+			csrf_token: '<TMPL_VAR NAME=CSRF_TOKEN>',
         };
 	
 	$(window).load(function() {
@@ -453,6 +454,7 @@
 					'db_type': $("#db_type").val(),
 					'db_username': $("#db_username").val(),
 					'db_password': $("#db_password").val(),
+					'csrf_token': submit_data.csrf_token,
 			
 					};
 					//console.log($("#param_groupid").val());
@@ -484,6 +486,7 @@
 					'server_id': $("#server_server_id").val(),
 					'dns_address': $("#server_dns_address").val(),
 					'query_flag': $("#server_query_flag").is(':checked'),
+					'csrf_token': submit_data.csrf_token,
 					};
 				$.post(config_url, param, function(data) {
 

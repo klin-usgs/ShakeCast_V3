@@ -48,6 +48,7 @@
 		<form action="<TMPL_VAR NAME=REFERER>" method="POST" class="form-group">
 			<h1>Login Form</h1>
   			<div class="form-group">
+			<input type="hidden" id="csrf_token" name="csrf_token" value="<TMPL_VAR NAME=CSRF_TOKEN>"/>
     		<label for="InputUsername">Username</label>
 				<input class="form-control" type="text" placeholder="Username" required="" id="lg_name" name="lg_name" />
 			</div>

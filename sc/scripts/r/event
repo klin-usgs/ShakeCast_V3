@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 
-
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
@@ -11,7 +10,6 @@ use Carp;
 
 use CGI;
 use CGI::Session;
-
 use JSON::XS;
 use Data::Dumper;
 use File::Copy;
@@ -50,7 +48,7 @@ my (@args) = split '/', $arg;
 shift @args;
 my $action = shift @args;
 
-unless ( $session->param("~logged-in")) {
+unless ( $session->param("~logged-in") && $self->param("csrf_token") eq $session->param("csrf_token")) {
     exit(0);
 }
 
@@ -550,7 +548,6 @@ sub make_param {
     $xml =~ s/ /\+/g;
     return $xml;
 }
-
 
 
 

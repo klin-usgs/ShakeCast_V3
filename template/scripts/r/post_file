@@ -13,12 +13,20 @@ use SC;
 use API::User;
 use API::APIUtil;
 
-SC->initialize;
-
 my $self = new CGI;
-my $session = new CGI::Session(undef, $self);
+my $session = new CGI::Session("driver:File", $self, {Directory=>"$FindBin::Bin/../../tmp"});
 $session->expires("+10m");
-print "Content-Type: application/json\n\n";
+my $cookie = $self->cookie(CGISESSID => $session->id );
+print $self->header(-type=>'application/json', -cookie=>$cookie);
+#print "Content-Type: application/json\n\n";
+
+my $domain = $session->param('domain');
+my $conf_file = "$FindBin::Bin/../../../$domain/conf/sc.conf";
+$session->param('cgi', $self->param('type'));
+#$session->param('session', $conf_file);
+SC->initialize($conf_file);
+#SC->initialize();
+
 
 my $web_home = "$ENV{DOCUMENT_ROOT}";
 my $sc_home = SC->config->{'RootDir'};
@@ -27,7 +35,7 @@ my $sc_home = SC->config->{'RootDir'};
 #my $password = $self->param('password') || '';
 #my $valid = API::User->validate($username, $password, 1);
 #exit 1 unless $valid;
-unless ( $session->param("~logged-in") && $session->param("admin_user")) {
+unless ( $session->param("~logged-in") && $session->param("admin_user") && $self->param("csrf_token") eq $session->param("csrf_token")) {
     exit(0);
 }
 

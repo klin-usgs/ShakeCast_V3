@@ -187,6 +187,7 @@
 		var latlng = new google.maps.LatLng(35,-120);
 	    SC_DEF.init();
         var submit_data = {
+			csrf_token: '<TMPL_VAR NAME=CSRF_TOKEN>',
         };
 
 	$(window).load(function() {
@@ -209,7 +210,9 @@
 		//var sm_url = 'scripts/event.pl/event_list?type='+type+'&age='+age;
 		var sm_url = 'scripts/r/event/event_list';
 
-		$.post(sm_url, {type:type, age:age}, function(data) {
+		submit_data.age = age;
+		submit_data.type = type;
+		$.post(sm_url, submit_data, function(data) {
 
 			// Are there even any EQ to display?
 			if (data.length <= 0) {
@@ -285,7 +288,7 @@
 		//var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = 'scripts/r/damage/marker/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(sm_url, {all : all}, function(data) {
+		$.post(sm_url, {csrf_token: submit_data.csrf_token, all : all}, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {

@@ -73,7 +73,7 @@ use IO::File;
 use Text::CSV_XS;
 #use Digest::MD5 qw(md5_hex);
 #use Crypt::SaltedHash;
-use Digest::SHA qw( sha256_hex );
+use Digest::SHA qw( sha256_hex hmac_sha256_hex);
 
 use XML::LibXML::Simple;
 use Data::Dumper;
@@ -351,7 +351,9 @@ sub process {
 		#$csh->add($colp->[$columns{PASSWORD}]);
 
 		#$colp->[$columns{PASSWORD}] = $csh->generate;
-		$password = sha256_hex($password);
+		$password = (SC->config->{'salt'}) ? 
+			hmac_sha256_hex($password, SC->config->{'salt'}) : 
+			sha256_hex($password);
 	    }
 		
         if ($shakecast_user < 0) {

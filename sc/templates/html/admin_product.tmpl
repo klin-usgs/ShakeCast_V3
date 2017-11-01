@@ -153,8 +153,9 @@
   //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
   var username = SC_DEF.user ? SC_DEF.user : 'guest';
   var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-  var submit_data = {
-  };
+        var submit_data = {
+			csrf_token: '<TMPL_VAR NAME=CSRF_TOKEN>',
+        };
 
   $(window).load(function() {
     //user_auth(submit_data);
@@ -288,7 +289,7 @@
 	      var arch_f = (oData.display) ? '' : 'Yes';
 	      oTable.fnUpdate(arch_f, anSelected[i], 7);
 	      
-	      $.post(evt_url, {product_id:oData.product_type},
+	      $.post(evt_url, {csrf_token: submit_data.csrf_token, product_id:oData.product_type},
 			function(data) {
 		// Are there even any EQ to display?
 		if (data.length <= 0) {
