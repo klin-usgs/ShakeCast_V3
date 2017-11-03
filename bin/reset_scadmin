@@ -1,0 +1,80 @@
+#!/bin/bash
+
+
+if [ "$#" -ne 1 ]; then
+	echo "Wrong number of arguments provided! Exiting!"
+	exit -1
+fi
+
+
+read -s -p "Please enter the root database user password: " dbpass1
+echo
+read -s -p "Please enter the root database user password again: " dbpass2
+echo
+
+if [ "$dbpass1" != "$dbpass2" ]; then
+        echo
+        echo "Password entries do not match. Exiting!"
+        echo
+        exit 1
+else
+        dbpass=$dbpass2
+fi
+
+
+mysql -u root --password="$dbpass" test < /dev/null
+
+if [ $? -ne 0 ]; then
+	echo "Couldn't connect to mysql as root with the password provided. Exiting."
+	exit -1
+fi
+
+filelock=/usr/local/shakecast/var/reset_org.lock
+
+if [ -e "$filelock" ]; then
+	echo "Lock detected! Some other process is running a setup. Exiting!"
+	exit -1
+fi
+
+timestamp=`date`
+echo "pid:$$ date:$timestamp" > $filelock
+
+sqlitedb="/usr/local/shakecast/etc/shakecast.sqlite3"
+
+if [ -f "$sqlitedb" ]; then
+
+	org_id=`sqlite3 etc/shakecast.sqlite3 "select org_id from dispd_port_seq where org_id = '$1';"`
+		rc1=$?
+
+	if [ "$rc1" -ne 0 ]; then
+		echo "${sqlitedb}: selects failed to retreive values from required table! Exiting!"
+		rm $filelock
+		exit -1
+	fi
+else
+	echo "No sqlite3 database: $sqlitedb. Exiting!"
+	exit -1
+fi
+
+new_pass=`grep salt /usr/local/shakecast/$1/conf/sc.conf | awk '{ print $2 }'`
+default_pass='sc'
+
+shapass=`perl -MDigest::SHA -e "use Digest::SHA qw (hmac_sha256_hex); print hmac_sha256_hex('$new_pass', '$new_pass');"`
+
+echo "update shakecast_user set password = '$shapass' where username = 'scadmin';" | mysql -u $1 --password="$default_pass" $1
+
+echo '```'
+echo
+echo "    Password for scadmin account on domain $1 is: "
+echo
+echo "       $new_pass "
+echo
+echo "    Frontend URL for new sc2 org instance is:"
+echo 
+echo "       http://shakecast.cr.usgs.gov/"
+echo
+echo '```'
+echo 
+
+rm $filelock
+

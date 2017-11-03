@@ -33,8 +33,17 @@ my $cgi = new CGI;
 my $session = new CGI::Session("driver:File", $cgi, {Directory=>"$FindBin::Bin/../tmp"});
 $session->expires("+10m");
 
-my $cookie = $cgi->cookie(CGISESSID => $session->id );
-print $cgi->header(-cookie=>$cookie);
+my $csrf_token;
+unless ( $session->param("csrf_token") ) {
+	my $secret = join '', map { ('a'..'z','A'..'Z',0..9)[rand 62] } (0..10);
+	$csrf_token = sha256_hex($secret);
+	$session->param("csrf_token", $csrf_token);
+}
+
+
+my $csrf_cookie = $cgi->cookie(csrf_token => $session->param("csrf_token"));
+my $cookie = $cgi->cookie(CGISESSID => $session->id);
+print $cgi->header(-cookie=>[$cookie, $csrf_cookie]);
 
 my ($cgi_domain) = $cgi->param('domain') =~ /^(\w+)$/;
 $session->param('domain', $cgi_domain) if ($cgi_domain);
@@ -53,11 +62,6 @@ my $tmpl_dir= "$FindBin::Bin/../templates/$html_tmpl";
 
     unless ( $session->param("referer") ) {
         $session->param("referer", $ENV{REQUEST_URI});
-    }
-    unless ( $session->param("csrf_token") ) {
-		my $secret = join '', map { ('a'..'z','A'..'Z',0..9)[rand 62] } (0..10);
-		my $csrf_token = sha256_hex($secret);
-        $session->param("csrf_token", $csrf_token);
     }
 
     $session->param("software_revision", SC->VERSION());
@@ -121,10 +125,8 @@ exit;
         #my ($session, $cgi) = @_; # receive two args
         my ($cgi, $session) = @_; # receive two args
 
-	#$session->param("csrf", $cgi->csrf_value()) if $csrf;
-	#$session->param("csrf_field", $cgi->csrf_field()) if $csrf;
-
-        if ( $session->param("~logged-in") ) {
+        if ( $session->param("~logged-in") &&
+	$cgi->cookie("csrf_token") eq $session->param("csrf_token")) {
             return 1;  # if logged in, don't bother going further
         }
 

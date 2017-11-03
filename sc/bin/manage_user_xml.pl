@@ -351,9 +351,7 @@ sub process {
 		#$csh->add($colp->[$columns{PASSWORD}]);
 
 		#$colp->[$columns{PASSWORD}] = $csh->generate;
-		$password = (SC->config->{'salt'}) ? 
-			hmac_sha256_hex($password, SC->config->{'salt'}) : 
-			sha256_hex($password);
+		$password = hmac_sha256_hex($password, SC->config->{'salt'});
 	    }
 		
         if ($shakecast_user < 0) {

@@ -111,18 +111,24 @@ sed -i -e "s/53456/$new_port_number/g" /usr/local/shakecast/$1/conf/sc.conf
 sed -i -e "s/58163/$new_worker_port/g" /usr/local/shakecast/$1/conf/sc.conf 
 sed -i -e "s/58164/$new_request_port/g" /usr/local/shakecast/$1/conf/sc.conf 
 
-md5pass=`php -r "echo md5('$new_pass');"`
+sed -i -e "s/salt4sc/$new_pass/g" /usr/local/shakecast/$1/conf/sc.conf 
 
 htpassline=`/usr/bin/htpasswd -nbm scadmin $new_pass`
 
 echo "$htpassline" >  /usr/local/shakecast/$1/userdbs/sc-users
 
-echo "update shakecast_user set password = '$md5pass' where shakecast_user = 'scadmin';" | mysql -u $1 --password="$default_pass" $1
+shapass=`perl -MDigest::SHA -e "use Digest::SHA qw (hmac_sha256_hex); print hmac_sha256_hex('$new_pass', '$new_pass');"`
+
+echo "update shakecast_user set password = '$shapass' where username = 'scadmin';" | mysql -u $1 --password="$default_pass" $1
 
 echo "scadmin password for $1 set to $new_pass"
 
 mv /usr/local/shakecast/$1/conf/template.txt /usr/local/shakecast/$1/conf/$1.conf
 
+# local changes
+mv /usr/local/shakecast/$1/data /data/$1
+ln -s /data/$1 /usr/local/shakecast/$1/data
+#
 
 sed -i -e "s/XXXXXXXXXX/$1/g" /usr/local/shakecast/$1/conf/$1.conf
 

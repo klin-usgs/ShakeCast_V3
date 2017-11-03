@@ -69,7 +69,7 @@ use warnings;
 
 use SC;
 #use Crypt::SaltedHash;
-use Digest::SHA qw( sha256_hex );
+use Digest::SHA qw( sha256_hex hmac_sha256_hex );
 
 sub BEGIN {
     no strict 'refs';
@@ -119,7 +119,7 @@ my ($self, $user, $pass) = @_;
 
 # Success
 return 1 if $self->{$user} 
-	&& ($self->{$user}->{'password'} eq sha256_hex($pass));
+	&& ($self->{$user}->{'password'} eq hmac_sha256_hex($pass, SC->config->{'salt'}));
 
 # Fail
 return undef;

@@ -175,7 +175,7 @@ sub from_id {
 	my $p = $sth->fetchrow_hashref('NAME_lc');
 	$user = new API::User(%$p);
 	$sth->finish;
-	$user->{'pass_val'} = ($user->{'pass'} == sha256_hex("shakecast_user"));
+	$user->{'pass_val'} = ($user->{'pass'} == hmac_sha256_hex("shakecast_user"));
 	my $shakecast_user = $user->{"shakecast_user"};
 	
 	my %user_delivery_method;
