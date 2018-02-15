@@ -19,7 +19,6 @@ use CGI;
 use CGI::Session qw/-ip-match/;
 #use CGI::Plus;
 use HTML::Template;
-use Digest::SHA qw(sha256_hex);
 
 use strict;
 use SC;
@@ -27,37 +26,26 @@ use API::User;
 use API::APIUtil;
 use JSON::XS;
 
-my $cgi = new CGI;
-#$cgi->csrf(1) if $csrf;
-#my $csrf_value = $cgi->csrf_value() if $csrf;
-my $session = new CGI::Session("driver:File", $cgi, {Directory=>"$FindBin::Bin/../tmp"});
-$session->expires("+10m");
-
-my $cookie = $cgi->cookie(CGISESSID => $session->id );
-print $cgi->header(-cookie=>$cookie);
-
-my ($cgi_domain) = $cgi->param('domain') =~ /^(\w+)$/;
-$session->param('domain', $cgi_domain) if ($cgi_domain);
-my $domain = $session->param('domain') ? $session->param('domain') : 'sc';
-
-my $conf_file = "$FindBin::Bin/../../$domain/conf/sc.conf";
-SC->initialize($conf_file);
+SC->initialize;
 #my $csrf = SC->config->{'GUEST_ACCOUNT'} ? 0 : 1;
 #my $csrf = 0;
 my $secret = SC->config->{'salt'} ? SC->config->{'salt'} : 'sc4all';
+my $domain = SC->config->{'domain'} ? SC->config->{'domain'} : 'sc';
+my $cgi = new CGI;
+#$cgi->csrf(1) if $csrf;
+#my $csrf_value = $cgi->csrf_value() if $csrf;
+my $session = new CGI::Session(undef, $cgi);
+$session->expires("+10m");
 my $html_tmpl = SC->config->{'html_tmpl'} ? SC->config->{'html_tmpl'} : 'html';
 my $tmpl_dir= "$FindBin::Bin/../templates/$html_tmpl";
-#my $tmpl_dir= "$FindBin::Bin/../../$domain/templates/$html_tmpl";
+
+my $cookie = $cgi->cookie(CGISESSID => $session->id );
+print $cgi->header(-cookie=>$cookie);
 
     #$ENV{REQUEST_URI} or die "Illegal use";
 
     unless ( $session->param("referer") ) {
         $session->param("referer", $ENV{REQUEST_URI});
-    }
-    unless ( $session->param("csrf_token") ) {
-		my $secret = join '', map { ('a'..'z','A'..'Z',0..9)[rand 62] } (0..10);
-		my $csrf_token = sha256_hex($secret);
-        $session->param("csrf_token", $csrf_token);
     }
 
     $session->param("software_revision", SC->VERSION());
@@ -81,7 +69,6 @@ my $tmpl_dir= "$FindBin::Bin/../templates/$html_tmpl";
     if ( $cgi->param("logout") || ($admin && (!$session->param("admin_user"))) 
 		|| $domain ne $session->param("domain") ) {
         $session->clear(["~logged-in", "admin", "admin_user", "~profile", "domain", "referer"]);
-	$session->delete();
     }
 
     if ($cgi->param("api")) {
@@ -146,7 +133,6 @@ exit;
         my ($cgi, $session) = @_;
 		# Authenticated
 
-		return unless ($cgi->param("csrf_token") eq $session->param("csrf_token"));
         my $lg_name = $cgi->param("lg_name") or return;
         my $lg_psswd=$cgi->param("lg_password") or return;
 
@@ -198,4 +184,3 @@ exit;
         return 1 if ($entry eq 'true' || $entry > 0);
 
     }
-

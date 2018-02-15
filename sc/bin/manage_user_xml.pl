@@ -73,7 +73,7 @@ use IO::File;
 use Text::CSV_XS;
 #use Digest::MD5 qw(md5_hex);
 #use Crypt::SaltedHash;
-use Digest::SHA qw( sha256_hex hmac_sha256_hex);
+use Digest::SHA qw( sha256_hex hmac_sha256_hex );
 
 use XML::LibXML::Simple;
 use Data::Dumper;

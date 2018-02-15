@@ -119,7 +119,7 @@ my ($self, $user, $pass) = @_;
 
 # Success
 return 1 if $self->{$user} 
-	&& ($self->{$user}->{'password'} eq hmac_sha256_hex($pass, SC->config->{'salt'}));
+	&& ($self->{$user}->{'password'} eq hmac_sha256_hex($pass));
 
 # Fail
 return undef;

@@ -209,9 +209,8 @@
   //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
   var username = SC_DEF.user ? SC_DEF.user : 'guest';
   var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var submit_data = {
-			csrf_token: '<TMPL_VAR NAME=CSRF_TOKEN>',
-        };
+  var submit_data = {
+  };
 
   $(window).load(function() {
     //user_auth(submit_data);
@@ -227,7 +226,6 @@
       var list_data = {
         "type": type,
         "age": age,
-		"csrf_token": submit_data.csrf_token,
       };
     if (type == 'comcat') {
       sm_url = 'scripts/r/event/comcat_list';

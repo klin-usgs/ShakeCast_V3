@@ -38,7 +38,7 @@ my (@args) = split '/', $arg;
 shift @args;
 my $action = shift @args;
 
-unless ( $session->param("~logged-in") && $self->param("csrf_token") eq $session->param("csrf_token")) {
+unless ( $session->param("~logged-in")) {
     exit(0);
 }
 if (not defined *{$action} ) {

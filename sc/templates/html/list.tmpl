@@ -177,7 +177,6 @@
         var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
         var sm_url = 'scripts/r/user/from_id/'+username;
         var submit_data = {
-			csrf_token: '<TMPL_VAR NAME=CSRF_TOKEN>',
         };
 
       $(window).load(function() {
@@ -205,7 +204,7 @@
 			
       function fnAccordion ( )
       {
-	$.post(sm_url, {csrf_token: submit_data.csrf_token, type:type, age:age, start:start}, function(eqdata) {
+	$.post(sm_url, {type:type, age:age, start:start}, function(eqdata) {
 
 	  var data = eqdata.data;
 	  // Are there even any EQ to display?
@@ -388,7 +387,7 @@ function selector(sm_id) {
 		//var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
 		var sm_url = 'scripts/r/damage/marker/' + sc_id;
 		var all = (SC_DEF.allmarker_flag) ? 1 : 0;
-		$.post(sm_url, {csrf_token: submit_data.csrf_token, all:all}, function(data) {
+		$.post(sm_url, {all:all}, function(data) {
 
 		// Are there even any EQ to display?
 		if (typeof data === "undefined") {

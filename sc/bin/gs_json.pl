@@ -312,7 +312,7 @@ sub parse_shakemap
  
 			foreach my $memberName ($zip->memberNames()) {
 				$zip->extractMemberWithoutPaths($memberName, $mirror_dir.'/'.$memberName);
-			}
+	}
 		}
 	}
 	#print ref $product,"\n";

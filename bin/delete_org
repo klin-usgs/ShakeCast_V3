@@ -77,18 +77,18 @@ rm -rf /data/${1}
 
 echo "Remove $1 ShakeCast directory."
 
-rm /usr/local/shakecast/conf/${1}.conf
+#rm /usr/local/shakecast/conf/${1}.conf
 
-rm /etc/httpd/conf.d/${1}.conf
+#rm /etc/httpd/conf.d/${1}.conf
 
-echo "Delete Apache config file for $1."
+#echo "Delete Apache config file for $1."
 
-systemctl restart httpd.service
+#systemctl restart httpd.service
 
-echo "Apache httpd restarted."
-echo "Don't forget to delete $1 user account."
-echo "========================================================================="
-echo 
+#echo "Apache httpd restarted."
+#echo "Don't forget to delete $1 user account."
+#echo "========================================================================="
+#echo 
 
 
 

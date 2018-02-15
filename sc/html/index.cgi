@@ -56,7 +56,6 @@ SC->initialize($conf_file);
 my $secret = SC->config->{'salt'} ? SC->config->{'salt'} : 'sc4all';
 my $html_tmpl = SC->config->{'html_tmpl'} ? SC->config->{'html_tmpl'} : 'html';
 my $tmpl_dir= "$FindBin::Bin/../templates/$html_tmpl";
-#my $tmpl_dir= "$FindBin::Bin/../../$domain/templates/$html_tmpl";
 
     #$ENV{REQUEST_URI} or die "Illegal use";
 

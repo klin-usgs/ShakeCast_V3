@@ -47,8 +47,12 @@ my %valid_file = (
     'psa03.jpg'   => 'image/jpg',
     'psa10.jpg'   => 'image/jpg',
     'psa30.jpg'   => 'image/jpg',
+    'screenshot.jpg'   => 'image/jpg',
     'info.xml'   => 'text/xml',
     'exposure.csv'   => 'text/csv',
+    'stationlist.xml'   => 'text/xml',
+    'exposure.kml'   => 'text/kml',
+    'shakecast_report.pdf'   => 'application/pdf',
 );
 
 my $test_dir = SC->config->{'RootDir'} . '/test_data';

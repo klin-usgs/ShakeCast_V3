@@ -22,7 +22,7 @@ print $self->header(-type=>'application/json', -cookie=>$cookie);
 
 my $domain = $session->param('domain');
 my $conf_file = "$FindBin::Bin/../../../$domain/conf/sc.conf";
-$session->param('cgi', $self->param('type'));
+#$session->param('cgi', $self->param('type'));
 #$session->param('session', $conf_file);
 SC->initialize($conf_file);
 #SC->initialize();
@@ -35,7 +35,7 @@ my $sc_home = SC->config->{'RootDir'};
 #my $password = $self->param('password') || '';
 #my $valid = API::User->validate($username, $password, 1);
 #exit 1 unless $valid;
-unless ( $session->param("~logged-in") && $session->param("admin_user") && $self->param("csrf_token") eq $session->param("csrf_token")) {
+unless ( $session->param("~logged-in") && $session->param("admin_user")) {
     exit(0);
 }
 
@@ -184,14 +184,7 @@ sub process_xml {
     my ($file) = @_;
     my %result;
 
-    use XML::LibXML::Simple;
-   # eval {
-    my $xml = XMLin($file, ForceArray => 1);
-    #my $worksheet = $xml->{Worksheet};
-	my $key = (keys %$xml)[0];
-	my $data = $xml->{$key};
-
-	my $facility = shift @$data;
+    use XML::LibXML;
 
     # specify required columns, 1=always required, 2=not required for update
     my %apps = (
@@ -214,27 +207,31 @@ sub process_xml {
 	},
     );
 
-        SC->log(0,  keys %$facility);
-    # check for required fields
+   # eval {
+    #my $xml = XMLin($file, ForceArray => 1);
+    my $xml = XML::LibXML->load_xml(location => $file);
+
+    my $facility_xml = @{$xml->findnodes('//FacilityTable/FacilityRow/EXTERNAL_FACILITY_ID')};
+    my $group_xml = @{$xml->findnodes('//GroupTable/GroupRow/GROUP_NAME')};
+    my $user_xml = @{$xml->findnodes('//UserTable/UserRow/USERNAME')};
+
     foreach my $app (keys %apps) {
-	$result{$app}{'result'} = 1 unless ($app eq 'manage_inventory_xml');
-	my @fields;
-	my $err_cnt;
-    while (my ($req, $req_type) = each %{$apps{$app}}) {
+#$result{$app}{'result'} = 0 unless ($app eq 'manage_inventory_xml');
 	if ($app eq 'manage_inventory_xml') {
 	    $result{$app}{'result'} = 1
-		if (defined $facility->{$req});
+		if ($facility_xml  > 0&& $group_xml  > 0&& $user_xml > 0);
 
-	} else {
-	    unless (defined $facility->{$req}) {
-	    SC->log(0,  "required field $req is missing");
-		push @fields, $req;
-		$result{$app}{'result'} = 0;
-		    $err_cnt++;
-	    }
+	} elsif ($app eq 'manage_facility_xml') {
+	    $result{$app}{'result'} = 1
+		if ($facility_xml > 0);
+	} elsif ($app eq 'manage_group_xml') {
+	    $result{$app}{'result'} = 1
+		if ($group_xml > 0);
+	} elsif ($app eq 'manage_user_xml') {
+	    $result{$app}{'result'} = 1
+		if ($user_xml > 0);
 	}
-    }
-     $result{$app}{'err_cnt'} = \@fields;
+     $result{$app}{'err_cnt'} = [];
    }
 
     #return 0 if $err_cnt;

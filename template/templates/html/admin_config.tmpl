@@ -441,9 +441,8 @@
       //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
       var username = SC_DEF.user ? SC_DEF.user : 'guest';
       var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var submit_data = {
-			csrf_token: '<TMPL_VAR NAME=CSRF_TOKEN>',
-        };
+      var submit_data = {
+      };
     
       $(window).load(function() {
 	//user_auth(submit_data);
@@ -550,7 +549,6 @@
 					'db_password': $("#db_password").val(),
             'username': username,
             'password': password,
-					'csrf_token': submit_data.csrf_token,
 			
 					};
 					//console.log($("#param_groupid").val());
@@ -585,7 +583,6 @@
 					'query_flag': $("#server_query_flag").is(':checked'),
             'username': username,
             'password': password,
-					'csrf_token': submit_data.csrf_token,
 					};
 				$.post(config_url, param, function(data) {
 

@@ -625,8 +625,8 @@ sub process {
                 # replace both the facility and all fragilities and attributes
                 $sth_del_metrics->execute($fac_id);
                 $sth_del_attrs->execute($fac_id);
-                #$sth_del_notification->execute($fac_id);
-                #$sth_del_facility_shaking->execute($fac_id);
+                $sth_del_notification->execute($fac_id);
+                $sth_del_facility_shaking->execute($fac_id);
                 $sth_del_geometry_facility_profile->execute($fac_id);
                 eval {
                     #$sth_del->execute($fac_id);
