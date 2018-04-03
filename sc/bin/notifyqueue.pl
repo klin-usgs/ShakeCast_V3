@@ -975,6 +975,7 @@ unless (SC->initialize($confname, $facility)) {
 
 my $config = SC->config;
 my $perl = $config->{perlbin};
+my $grid_xml = ($config->{'grid_xml'}) ? $config->{'grid_xml'} : 'grid.xml';
 
 
 $verbose ||= option 'LogLevel', $LOG_LEVEL;
@@ -1460,12 +1461,12 @@ sub local_product {
 	if ($shakemap_id =~ /_scte$/) {
 		my $test_data_dir = $config->{'RootDir'}."/test_data/$shakemap_id";
 		$data_dir = $config->{'DataRoot'}."/$shakemap_id-$shakemap_version";
-		$grid_file = $data_dir."/grid.xml";
+		$grid_file = $data_dir."/$grid_xml";
 		$shakemap_file = $test_data_dir."/shakemap_template.xml";
 		$event_file = $test_data_dir."/event_template.xml";
 	} else {
 		$data_dir = $config->{'DataRoot'}."/$shakemap_id-$shakemap_version";
-		$grid_file = $data_dir."/grid.xml";
+		$grid_file = $data_dir."/$grid_xml";
 		$shakemap_file = $data_dir."/shakemap.xml";
 		$event_file = $data_dir."/event.xml";
 	}	

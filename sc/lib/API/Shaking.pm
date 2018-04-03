@@ -75,8 +75,10 @@ use API::Facility;
 use API::Station;
 use API::APIUtil;
 
+SC->initialize();
 my $options = API::APIUtil::config_options();
 my $count = ($options->{'topics_per_page'}) ? $options->{'topics_per_page'} : 50;
+my $grid_xml = (defined SC->config->{'grid_xml'}) ? SC->config->{'grid_xml'} : 'grid.xml';
 
 sub BEGIN {
     no strict 'refs';
@@ -226,7 +228,7 @@ sub shaking_point {
 	$SC::errstr = "No shaking for id $shakemap_id";
     }
 	
-	my $grid_file = SC->config->{'DataRoot'}."/$shakemap_id-$shakemap_version/grid.xml";
+	my $grid_file = SC->config->{'DataRoot'}."/$shakemap_id-$shakemap_version/$grid_xml";
 	my $point_shaking = process_grid($grid_file, $options->{'latitude'}, $options->{'longitude'});
 	$shaking->{'longitude'} = $options->{'longitude'};
 	$shaking->{'latitude'} = $options->{'latitude'};

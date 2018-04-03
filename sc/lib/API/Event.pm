@@ -108,7 +108,7 @@ sub event_list {
 		FROM 
 			(event e INNER JOIN grid g on
 			g.shakemap_id = e.event_id)
-         where event_type = '$type'
+         where event_type = '$type' and e.superceded_timestamp is NULL
 		/;
 	
 	$sql .= $major;
@@ -144,6 +144,7 @@ sub event_summary {
         select e.event_type, count(e.event_id) as count
 		FROM 
 			(event e inner join shakemap s on e.event_id = s.shakemap_id)
+        WHERE e.superceded_timestamp is NULL
 		GROUP BY
 			e.event_type
 	/;
@@ -195,7 +196,7 @@ sub newer_than {
 		FROM 
 			(grid g INNER JOIN event e on
 			g.shakemap_id = e.event_id)
-         where event_type = 'ACTUAL'
+         where event_type = 'ACTUAL' and e.superceded_timestamp is NULL
 		/;
     if ($options->{'timestamp'}) {
 	$sql .= qq/ and event_timestamp > $SC::to_date/;
@@ -242,7 +243,7 @@ sub from_id {
 		FROM 
 			(event e LEFT JOIN grid g on
 			g.shakemap_id = e.event_id)
-		where event_id = ?
+		where event_id = ? and e.superceded_timestamp is NULL
 		ORDER BY
 			e.seq DESC, g.grid_id DESC
 	    });
@@ -273,7 +274,7 @@ sub current_version {
 	$sth = SC->dbh->prepare(qq/
 	    select *
 	      from event
-	     where event_id = ?
+	     where event_id = ? and e.superceded_timestamp is NULL
 	       and (superceded_timestamp IS NULL)/);
 	$sth->execute($event_id);
 	my $p = $sth->fetchrow_hashref('NAME_lc');
@@ -303,6 +304,7 @@ sub current_event {
 		FROM 
 			(grid g INNER JOIN event e on
 			g.shakemap_id = e.event_id)
+        WHERE e.superceded_timestamp is NULL
 		GROUP BY
 			e.event_id
 		ORDER BY
@@ -475,7 +477,7 @@ sub toggle_major_event {
 	my ($nrec) = SC->dbh->selectrow_array(qq/
 	    select count(*)
 	      from event
-	     where event_id = ?/, undef, $event_id);
+	     where event_id = ? and e.superceded_timestamp is NULL/, undef, $event_id);
         unless ($nrec) {
             $SC::errstr = "Can't archive events whose type is not ACTUAL";
             return 0;
@@ -485,13 +487,13 @@ sub toggle_major_event {
         my ($eventp) = SC->dbh->selectcol_arrayref(qq/
             select major_event
               from event
-             where event_id = ?/, undef, $event_id);
+             where event_id = ? and e.superceded_timestamp is NULL/, undef, $event_id);
 
          # Delete grids and associated values
          my $sth_upd_event = SC->dbh->prepare(qq/
              update event
 				set major_event = ?
-				where event_id = ?/);
+				where event_id = ? and e.superceded_timestamp is NULL/);
          foreach my $archivep (@$eventp) {
 				my $arc_flag = ($archivep) ? undef : 1;
              $sth_upd_event->execute($arc_flag, $event_id);

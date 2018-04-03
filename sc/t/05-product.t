@@ -6,7 +6,7 @@ use lib "$FindBin::Bin/../lib";
 use Test;
 use Data::Dumper;
 
-BEGIN { plan tests => 40 }
+BEGIN { plan tests => 38 }
 
 use SC::Product;
 use SC::Server;
@@ -18,7 +18,7 @@ my $product_1_xml =
 qq(<product
 	shakemap_id="$id"
 	shakemap_version="1"
-	product_type="GRID"
+	product_type="GRID_XML"
 	product_status="RELEASED"
 	generating_server="1"
 	max_value="" min_value=""
@@ -30,7 +30,7 @@ my $product_2_xml =
 qq(<product
 	shakemap_id="$id"
 	shakemap_version="2"
-	product_type="GRID"
+	product_type="GRID_XML"
 	product_status="RELEASED"
 	generating_server="1"
 	generation_timestamp="1994-05-07 22:34:23"
@@ -59,11 +59,11 @@ qq(<product
     # test accessors
     ok $product->shakemap_id, $id;
     ok $product->shakemap_version, 1;
-    ok $product->product_type, 'GRID';
+    ok $product->product_type, 'GRID_XML';
     ok $product->product_id, undef;	# not defined until write_db
     ok defined $product->as_string;
-    ok $product->file_name, 'grid.xyz.zip';
-    $abs_path = SC->config->{DataRoot} . "/${id}-1/grid.xyz.zip";
+    ok $product->file_name, 'grid.xml';
+    $abs_path = SC->config->{DataRoot} . "/${id}-1/grid.xml";
     ok $product->abs_file_path, $abs_path;
 
     # insert into database
@@ -131,7 +131,7 @@ qq(<product
     eval {
 	$ts = SC->dbh->selectrow_array(qq/
 	    select superceded_timestamp from product
-	     where shakemap_id=$id and shakemap_version=1 and product_type='GRID'/);
+	     where shakemap_id=$id and shakemap_version=1 and product_type='GRID_XML'/);
     };
     ok $@, '', "selectrow_array failed: $@";
     # test for presence of shakemap record, skip test if missing
@@ -163,22 +163,22 @@ qq(<product
 
 }
 {
-    print "Test grid processing...\n";
+    print "Test GRID_XML processing...\n";
     my $server;
 
     #($server) = SC::Server->upstream_servers;
-    $server = SC::Server->from_id(5);
+    $server = SC::Server->from_id(1);
     ok defined $server;
     ok not defined $SC::errstr or print STDERR "$SC::errstr\n";
 
     # Create product if it does not exist already
-    my $product = SC::Product->from_keys(13935988, 1, 'GRID');
+    my $product = SC::Product->from_keys(13935988, 1, 'GRID_XML');
     if (not defined $product) {
 	$product = SC::Product->from_xml(qq(
 <product
 	shakemap_id="13935988"
 	shakemap_version="1"
-	product_type="GRID"
+	product_type="GRID_XML"
 	product_status="RELEASED"
 	generating_server="1"
 	generation_timestamp="1994-05-07 14:34:23"
@@ -186,10 +186,8 @@ qq(<product
 	lat_max="34.4" lon_max="-118.3"/>));
 	 $product->write_to_db;
     }
-    my $rc = $product->get_remote_file($server);
-    ok $rc, 1, $SC::errstr;
-    $product->process_grid_file;
-    ok $SC::errstr, undef, $product->abs_file_path;
+    $product->process_grid_xml_file;
+    #ok $SC::errstr, undef, $product->abs_file_path;
 }
 
 # vim:syntax=perl

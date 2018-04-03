@@ -50,12 +50,14 @@ print $cgi->header(-cookie=>$cookie);
 
     $session->param("software_revision", SC->VERSION());
     $session->param("gm_key", SC->config->{"GM_KEY"}) if (SC->config->{"GM_KEY"});
-    
+    $session->param("map_view", SC->config->{'map_view'} ? SC->config->{'map_view'} : '[40, -100], 4');
+    $session->param("map_provider", SC->config->{'map_provider'} ? SC->config->{'map_provider'} : 
+        '\'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png\', {attribution: \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors\'}');
 	my $dest = $cgi->param("dest") || 'index';
 	my $admin = ($dest =~ /^admin_/) ? 1 : 0;
 
-	$dest = (-e "$tmpl_dir/$dest.tmpl") ? "$tmpl_dir/$dest.tmpl" : 
-        (("$tmpl_dir/$dest.html") ? "$tmpl_dir/$dest.html" : "$tmpl_dir/index.tmpl");
+	$dest = (-e "$tmpl_dir/$dest.html") ? "$tmpl_dir/$dest.html" : 
+        (("$tmpl_dir/$dest.tmpl") ? "$tmpl_dir/$dest.tmpl" : "$tmpl_dir/index.html");
     init($cgi, $session);
     _load_profile($cgi, $session);
 
@@ -171,7 +173,8 @@ exit;
     sub login_page {
         my ($cgi, $session) = @_;
 
-        my $template = new HTML::Template(filename=>"$tmpl_dir/login_page.tmpl",
+        my $dest = (-e "$tmpl_dir/login_page.html") ? "$tmpl_dir/login_page.html" : "$tmpl_dir/login_page.tmpl";
+        my $template = new HTML::Template(filename=>$dest,
                                           associate=>$session,
                                           die_on_bad_params=>0);
         return $template->output();

@@ -11,3 +11,5 @@ perl %D%\watcherd.pl --install --sname=sc_watcherd
 
 rem sc config sc_polld start= demand
 rem sc config sc_rssd start= demand
+
+pause

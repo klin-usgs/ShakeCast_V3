@@ -125,6 +125,7 @@ my $sc_dir = $config->{'DataRoot'};
 my $db_dir = $config->{'RootDir'} . '/db';
 my $root_dir = $config->{'RootDir'};
 my $temp_dir = $config->{'TemplateDir'} . '/pdf';
+my $grid_xml = ($config->{'grid_xml'}) ? $config->{'grid_xml'} : 'grid.xml';
 
 my @confs = <$temp_dir/*.conf>;
 my ($pdf, $page, $rc) ;
@@ -263,7 +264,7 @@ sub sm_inject {
 
 sub sc_xml {
 	my $evid = shift;
-	my $file = "$sc_dir/$evid/grid.xml";
+	my $file = "$sc_dir/$evid/$grid_xml";
 	
 	use XML::LibXML::Simple;
 	my $parser = SC->sm_twig($file);;
@@ -286,7 +287,7 @@ sub _ts {
 sub time_to_ts {
     my $time = (@_ ? shift : time);
     my ($sec, $min, $hr, $mday, $mon, $yr);
-    if (SC->config->{board_timezone} > 0) {
+    if ($config->{board_timezone} > 0) {
 		($sec, $min, $hr, $mday, $mon, $yr) = localtime $time;
 	} else {
 		($sec, $min, $hr, $mday, $mon, $yr) = gmtime $time;

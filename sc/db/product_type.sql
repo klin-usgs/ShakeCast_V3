@@ -54,6 +54,7 @@ REPLACE INTO `product_type` (`PRODUCT_TYPE`, `NAME`, `DESCRIPTION`, `METRIC`, `F
 ('TVBARE_JPG', 'Media intensity (bare) JPEG', NULL, 'MMI', 'tvmap_bare.jpg', NULL, NULL, 'ShakeMap', 'dwb', '2003-07-25 12:49:00'),
 ('TVBARE_PS', 'Media intensity (bare) PS', NULL, 'MMI', 'tvmap_bare.ps.zip', NULL, NULL, 'ShakeMap', 'dwb', '2003-07-25 12:49:00'),
 ('GRID_XML', 'GRID_XML', NULL, NULL, 'grid.xml', NULL, NULL, 'ShakeMap', 'kwl', '2006-11-30 15:32:10'),
+('ROCK_GRID', 'Rock Grid', NULL, NULL, 'rock_grid.xml', NULL, NULL, 'ShakeMap', 'kwl', '2018-03-21 09:37:00'),
 ('KML', 'ShakeMap KML', NULL, NULL, 'shakemap.kml', '/images/kml.png', 0, 'ShakeMap', 'kwl', '2006-12-01 15:28:29'),
 ('SM_KML', 'ShakeMap KML', NULL, NULL, '%evt_id%.kml', NULL, NULL, 'ShakeMap', 'kwl', '2014-07-08 10:46:00'),
 ('CONT_KMZ', 'ShakeMap Contour KMZ', NULL, NULL, 'contours.kmz', NULL, NULL, 'ShakeMap', 'kwl', '2014-07-08 10:46:00'),

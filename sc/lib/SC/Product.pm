@@ -820,10 +820,7 @@ sub process_grid_xml_file {
     }
 
     undef $SC::errstr;
-    if ($self->{'product_type'} ne 'GRID_XML') {
-	$SC::errstr = 'not a GRID XML file';
-	return 0;
-    } elsif (!$self->{'product_file_exists'} ||
+    if (!$self->{'product_file_exists'} ||
 	    not -f $self->abs_file_path) {
 	$SC::errstr = 'local file not found';
 	return 0;
@@ -939,13 +936,13 @@ sub process_grid_xml_file {
 	# Update min/max values in the SHAKEMAP_METRIC records.  Note that
         # shakemap_metric.value_column_number is 1-based, not 0-based.
         my $sth_u = SC->dbh->prepare(qq{
-	    update shakemap_metric
-               set value_column_number=?,
-                   min_value=?,
-                   max_value=?
-             where shakemap_id=?
-               and shakemap_version=?
-               and metric=?});
+	    insert into shakemap_metric
+               (value_column_number,
+                   min_value,
+                   max_value,
+				shakemap_id,
+               shakemap_version,
+               metric) values (?,?,?,?,?,?)});
 
 	my %metric_column_map = metric_list();
 	for (my $i = 0; $i < scalar @min; $i++) {
@@ -1040,8 +1037,8 @@ sub process_grid_xml_file {
                 $sth_i->execute($p->[0], $grid_id, $dist, @summary);
             }
         }
-	SC::Server->this_server->queue_request(
-		'facility_tile', $self->shakemap_id, $self->shakemap_version);
+	#SC::Server->this_server->queue_request(
+	#	'facility_tile', $self->shakemap_id, $self->shakemap_version);
 	
 	SC::Server->this_server->queue_request(
 		'screen_shot', $self->shakemap_id, $self->shakemap_version);
@@ -1367,6 +1364,21 @@ sub process_new_product {
 		#	return 0;
 		#}
     } elsif ($self->product_type eq 'GRID_XML') {
+		return 0 if (defined SC->config->{'grid_xml'} && SC->config->{'grid_xml'} ne 'grid.xml');
+		if ($self->process_grid_xml_file) {
+			SC->log(2, "xml grid file processed");
+			#SC::Server->this_server->queue_request(
+			#	'notifyqueue', $self->shakemap_id, $self->shakemap_version);
+    		} else {
+			SC->error($SC::errstr);
+			# XXX might not be correct.  Even though we got an error while
+			# processing the grid we might want to push the file downstream.
+			# Probably we should NOT inform the notifier, though, since the
+			# grid hasn't been loaded into the database.
+			return 0;
+		}
+    } elsif ($self->product_type eq 'ROCK_GRID') {
+		return 0 if (SC->config->{'grid_xml'} ne 'rock_grid.xml');
 		if ($self->process_grid_xml_file) {
 			SC->log(2, "xml grid file processed");
 			#SC::Server->this_server->queue_request(

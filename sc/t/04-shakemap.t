@@ -8,7 +8,9 @@ use Data::Dumper;
 
 BEGIN { plan tests => 32 }
 
+use SC;
 use SC::Shakemap;
+use SC::Server;
 
 # create an event ID for testing purposes
 my $event_id = time % 100000000;
@@ -81,7 +83,7 @@ qq(<shakemap
     # check a metric
     my @metrics = grep { $_->{metric_name} eq 'PGA' } @{ $shakemap->metric };
     ok scalar @metrics, 1;
-    ok $metrics[0]->{max_value} - 9.8 < 0.0001 or print STDERR $metrics[0]->{max_value};
+    ok $metrics[0]->{max_value} - 70.1 < 0.0001 or print STDERR $metrics[0]->{max_value};
 
     # insert into database
     $rc = $shakemap->write_to_db;
@@ -97,7 +99,7 @@ qq(<shakemap
     # check a metric
     @metrics = grep { $_->{metric_name} eq 'PGA' } @{ $shakemap->metric };
     ok scalar @metrics, 1;
-    ok $metrics[0]->{max_value} - 9.8 < 0.0001;
+    ok $metrics[0]->{max_value} - 70.1 < 0.0001;
 
     # try inserting same shakemap again -- should be no-op
     $shakemap = SC::Shakemap->from_xml($shakemap_1_xml);
@@ -135,8 +137,8 @@ qq(<shakemap
 
     # insert into database
     $rc = $shakemap->write_to_db;
-    ok $rc, 1, "rc=$rc, should be 1";
-    ok $SC::errstr, undef, $SC::errstr;
+    ok $rc, 0, "rc=$rc, should be 0";
+    ok $SC::errstr;
 
     # verify that the original shakemap record is marked superceded
     eval {
@@ -145,7 +147,7 @@ qq(<shakemap
 	     where shakemap_id=$event_id and shakemap_version=1/);
     };
     ok $@, '', "selectrow_array failed: $@";
-    ok defined $ts;
+    ok $ts, undef, $ts;
 
     # read back the shakemap just added
     $shakemap_reread = SC::Shakemap->from_id($shakemap->shakemap_id, $shakemap->shakemap_version);

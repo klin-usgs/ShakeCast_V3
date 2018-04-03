@@ -66,55 +66,26 @@
 #
 #############################################################################
 
-use Win32::TieRegistry(Delimiter=>'/');
 $| = 1;
 
-my @packages = ('MinGW64'	=> 'MinGW64',
-				'DBI'	=> 'DBI',
-				'DBD::mysql'	=> 'DBD-mysql',
-				'DBD::ODBC'	=> 'DBD-ODBC',
-				'Text::CSV_XS'	=> 'Text-CSV_XS',
-				'Config::General'	=> 'Config-General',
-				'XML::LibXML::Simple'	=> 'XML-LibXML-Simple',
-				'XML::Writer'	=> 'XML-Writer',
-				'Template'	=> 'Template-Toolkit',
-				'enum'	=> 'enum', 
-				'PDF::API2'	=> 'PDF-API2', 
-				'PDF::Table'	=> 'PDF-Table', 
-				'Win32::Daemon'	=> 'Win32-Daemon', 
-				'Image::Size'	=> 'Image-Size',
-				'MIME::Lite'	=> 'MIME-Lite',
-				'GD'	=> 'GD', 
-				'GD::Text'	=> 'GD-Text', 
-				'GD::Graph'	=> 'GD-Graph', 
-				'GD::Graph3d'	=> 'GD-Graph3d', 
-				'HTML::TableExtract'	=> 'HTML-TableExtract', 
-				'XML::Simple'	=> 'XML-Simple', 
-				'Net::SMTP::TLS'	=> 'Net-SMTP-TLS', 
-				'Net::SMTP::SSL'	=> 'Net-SMTP-SSL', 
-				'Archive::Zip'	=> 'Archive-Zip', 
-				'JSON'	=> 'JSON', 
-				'JSON::XS'	=> 'JSON-XS', 
-				#'mojolicious'	=> 'mojolicious', 
-				'Crypt::SaltedHash'	=> 'Crypt-SaltedHash', 
-				'Digest::SHA'	=> 'Digest-SHA',
-				'XML::Twig'	=> 'XML-Twig',
-				'CGI::Session'	=> 'CGI-Session',
-				'HTML::Template'	=> 'HTML-Template',
-				'Net::SMTPS'	=> 'Net-SMTPS',
-				);
+my @packages = (
+	'App::cpanminus','Archive::Zip','Authen::SASL',
+	'CGI','CGI::Session','Config::General',
+	'DBI','DBD::mysql', 
+	'GD','GD::Graph','GD::Graph3d','GD::Text',
+	'enum',  
+	'HTML::TableExtract','HTML::Template',
+	'Image::Size', 
+	'JSON',
+	'LWP::Protocol::https',
+	'Math::CDF','MIME::Lite', 
+	'Net::SSLeay','Net::SMTP::SSL','Net::SMTPS',
+	'PDF::API2','PDF::Table','OMEGA/PDF-Table-0.9.10.tar.gz',
+	'Template', 'Text::CSV_XS', 
+	'XML::LibXML','XML::LibXML::Simple','XML::Parser','XML::Simple',
+		'XML::Twig','XML::Writer',
+);
 				
-my $applications = {'Apache'	=> 'ServerRoot', 
-				'MySQL'	=> 'Location',
-				#'perl'	=> 'BinDir', 
-				'PHP'	=> 'InstallDir', 
-				};
-my ($match_app, $match_key);
-
-my $install = ($ARGV[0] =~ /install/i) ? 1 : 0;
-#
-#  Check installed Perl modules
-#
 print "Checking installed Perl modules \n";
 $install_count = 0;
 $pack_count = scalar @packages;
@@ -137,16 +108,6 @@ while (my $module = shift @packages) {
 
 if ($install_count < $pack_count) {
 	print "Perl module check failed. \n\n";
-} else {
-	print "Looks good. \n\n";
-}
-
-#
-#  Check installed applications required by ShakeCast
-#
-print "Checking installed Applications \n";
-if (check_content('LMachine/Software')) {
-	print "Application check failed. \n\n";
 } else {
 	print "Looks good. \n\n";
 }
@@ -186,72 +147,22 @@ sub install_module {
 	}
 	
 	foreach my $repo (@repos) {
-		if ($^O eq 'MSWin32') {
-			system("ppm install $repo");
-		} else {
-			require Cwd;
-			require File::Spec;
-			require CPAN;
+		require Cwd;
+		require File::Spec;
+		require CPAN;
 
-			# Save this 'cause CPAN will chdir all over the place.
-			my $cwd = Cwd::cwd();
+		# Save this 'cause CPAN will chdir all over the place.
+		my $cwd = Cwd::cwd();
 
-			CPAN::Shell->install('$module');
-			CPAN::Shell->expand("Module", "$module")->uptodate
-			  or return $installed;
+		CPAN::Shell->install('$module');
+		CPAN::Shell->expand("Module", "$module")->uptodate
+			or return $installed;
 
-			chdir $cwd or return $installed;
-		}
+		chdir $cwd or return $installed;
 		return 1 if (eval "use $module; 1");
 	}
 	
 	return $installed;
 
 }
-
-sub display_reg
-{
-	my $hash_ref = shift;
-
-	if (ref($hash_ref) eq "Win32::TieRegistry") {
-		foreach my $hash_key (keys %$hash_ref) {
-			if ($hash_key =~ m#/$#) {
-				#print "SubKey $hash_key ",$hash_ref->{hash_key},"\n";
-				display_reg($hash_ref->{$hash_key});
-			} else {
-				if ($hash_key =~ /$match_key/) {
-					print "Found ", $app, " installed at ",$hash_ref->{$hash_key},"\n";
-					$install_count++;
-					return $hash_ref->{$hash_key};
-				}
-			}
-		}
-	}
-}
-
-
-sub check_content
-{
-	$install_count = 0;
-	my $root = shift;
-	my $diskkeys = $Registry->{$root};
-	$apps = join '|', keys %$applications;
-	foreach $entry ( keys %$diskkeys )
-	{
-		next unless ($entry =~ /$apps/i);
-		foreach $app (keys %$applications) {
-			next unless ($entry =~ /$app/i);
-			$match_key = $applications->{$app};
-			display_reg($diskkeys->{$entry});
-			last;
-		}
-	}
-	if ($install_count < scalar (keys %$applications)) {
-		return 1;
-	} else {
-		return 0;
-	}
-
-}
-
 

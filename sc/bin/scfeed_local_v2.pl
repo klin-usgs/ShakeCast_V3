@@ -155,6 +155,8 @@ logscr "Unknown argument(s): @ARGV" if (@ARGV);
 my $config_file = (exists $options->{'conf'} ? $options->{'conf'} : 'sc.conf');
 SC->initialize($config_file, 'local_inject')
 	or die "could not initialize SC: $SC::errstr";
+my $config = SC->config;
+my $grid_xml = ($config->{'grid_xml'}) ? $config->{'grid_xml'} : 'grid.xml';
 
 my $download_dir;
 my @grids = metric_list();
@@ -172,13 +174,13 @@ sub main {
   my $prog = basename($0);
 
 	$download_dir = SC->config->{DataRoot};
-	#validate directory
+  #validate directory
 	my $dest = $download_dir."/$evid";
 	if (not -e "$dest") {
 		die "Couldn't locate event $dest";
 	}
 	
-	if (-e "$download_dir/$evid/grid.xml") {
+	if (-e "$download_dir/$evid/$grid_xml") {
 		print "using sc_xml\n";
 		sc_xml($evid); 
 	} else {
@@ -475,7 +477,7 @@ my $evid = shift;
   my ($owd, $writer, $key, $product);
   my ($command, $result);
 
-	my $file = "$download_dir/$evid/grid.xml";
+	my $file = "$download_dir/$evid/$grid_xml";
 	
 	my $parser = new XML::Parser;
 	$parser->setHandlers(      Start => \&startElement,
@@ -499,7 +501,7 @@ my $evid = shift;
 	my $lon_max = $grid_spec{'lon_max'};
 	
 	my (@max, @min);
-	open (FH, "< $sc_data/grid.xml") || die "couldn't parse grid data $!";
+	open (FH, "< $sc_data/$grid_xml") || die "couldn't parse grid data $!";
 	my $line;
 	do {
 		$line = <FH>;

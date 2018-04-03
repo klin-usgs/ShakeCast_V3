@@ -82,6 +82,7 @@ use SC;
 
 SC->initialize;
 my $config = SC->config;
+my $grid_xml = ($config->{'grid_xml'}) ? $config->{'grid_xml'} : 'grid.xml';
 
 my %options = (
     'event'    => 0,
@@ -193,7 +194,7 @@ $timestamp =~ s/\s*$/Z/;
 my ($data_dir, $grid_file, $shakemap_file, $event_file);
 
 $data_dir = $config->{'DataRoot'}."/$event-$version";
-$grid_file = $data_dir."/grid.xml";
+$grid_file = $data_dir."/$grid_xml";
 $shakemap_file = $data_dir."/shakemap.xml";
 $event_file = $data_dir."/event.xml";
 

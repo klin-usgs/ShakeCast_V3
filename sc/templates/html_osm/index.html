@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <link rel="shortcut icon" href="images/sc_logo.png">
+
+	<title>ShakeCast Overview</title>
+
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js" integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA==" crossorigin=""></script>
+    <!-- Bootstrap core CSS -->
+    <link href="./bootstrap3/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
+	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./leaflet/leaflet.css" />
+	<link rel="stylesheet" href="./leaflet/MarkerCluster-sc.css" />
+	<link rel="stylesheet" href="./css/jquery-ui.css">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+	
+</head>
+<body>
+
+  <!-- Fixed navbar -->
+  <div class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	  <span class="sr-only">Toggle navigation</span>
+	  <span class="icon-bar"></span>
+	  <span class="icon-bar"></span>
+	  <span class="icon-bar"></span>
+	</button>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+      </div>
+      <div class="navbar-collapse collapse">
+	<ul id="nav_menu" class="nav navbar-nav">
+	  <li class="active"><a href="?dest=index">Home</a></li>
+	  <li><a href="?dest=index#about">About</a></li>
+	  <li class="dropdown">
+	  <a href="?dest=list" class="dropdown-toggle" data-toggle="dropdown">Earthquake List <b class="caret"></b></a>
+	  <ul class="dropdown-menu">
+	    <li><a href="?dest=list">Recent Events</a></li>
+	    <li class="divider"></li>
+	    <li><a href="?dest=list&type=major">Significant Events</a></li>
+	    <li><a href="?dest=list&type=scenario">Scenarios</a></li>
+	    <li class="divider"></li>
+	  </ul>
+	  </li>
+	    <li><a href="?dest=preference">Settings</a></li>
+		<TMPL_VAR NAME=ADMIN>
+		<TMPL_VAR NAME=LOGOUT>
+	</ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+
+  <!-- Subhead
+  ================================================== -->
+  <header class="header" id="overview">
+    <div class="container">
+      <h2>ShakeCast Overview <small>Recent earthquake activities and ShakeCast summary</small></h2>
+    </div>
+  </header>
+  
+  
+  <div class="container">
+  
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="jumbotron" style="padding:5px">
+    <div id="map_title"></div>
+    <div id="map_canvas" style="width:800px; height:400px;"></div>
+    <div id="caption"></div>
+    </div>
+  
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-md-4">
+	<h3>ShakeMap Archive</h3>
+	<p>ShakeMap is a product of the U.S. Geological Survey Earthquake Hazards Program in conjunction with regional seismic network operators. ShakeMap sites provide near-real-time maps of ground motion and shaking intensity following significant earthquakes. These maps are used by federal, state, and local organizations, both public and private, for post-earthquake response and recovery, public and scientific information, as well as for preparedness exercises and disaster planning.</p>
+	<p><a class="btn btn-default" href="?dest=list">View Archive &raquo;</a> <a class="btn btn-default" href="?dest=list&type=scenario">View Scenario &raquo;</a></p>
+      </div>
+      <div class="col-md-4">
+	<h3>Scientific Background</h3>
+	<p>
+	  ShakeCast, short for ShakeMap Broadcast, is a fully automated, freely-available open-source system for delivering specific ShakeMap products to critical users and for triggering established post-earthquake response protocols.
+	 <br>
+	 <br>
+	  ShakeCast allows utilities, transportation agencies, and other large organizations to automatically determine the shaking value at their facilities, set thresholds for notification of damage states (typically green, yellow, and red) for each facility and then automatically notify (via pager, cell phone, or email) specified operators, inspectors, and others within their organizations responsible for those particular facilities in order to prioritize inspection and response.
+	<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+	 </p>
+      </div>
+      <div class="col-md-4">
+	<h3>Product Formats</h3>
+	<p><a class="btn btn-default" type="button"  href="http://earthquake.usgs.gov/research/shakemap/formats.php"><i class="icon-info-sign"></i> ShakeMap Product Formats</a></p>			
+	<blockquote>
+	<p class="lead">ShakeCast Product Formats</p>
+	<dl>
+	<dt>Facility List</dt>
+	<dd>
+	A table of earthquake and station parameters, formatted to be read easily by humans. An XML formatted file is also available, and is the best option for parsing the information by computer.
+	The station information includes name and/or code, location coordinates, and peak velocity and acceleration values.
+	</dd>
+	</dl>
+	</p>
+	</blockquote>
+	<p><a class="btn btn-default" href="#">View details &raquo;</a></p>
+      </div>
+      <div class="col-md-4">
+	<h3>Related Resources</h3>
+	<p>
+	<a class="btn btn-default" type="button"  href="http://earthquake.usgs.gov/research/shakemap/"><i class="icon-info-sign"></i> ShakeMap Research Project</a>
+	<a class="btn btn-default btn-primary" type="button"  href="https://www.sciencebase.gov/confluence/display/ShakeCast/Home"><i class="icon-folder-open icon-white"></i> ShakeCast Wiki</a>
+	</p>
+      </div>
+    </div>
+  
+  </div> <!-- /container -->
+
+    <!-- Footer
+    ================================================== -->
+    <footer class="footer">
+      <div class="container">
+        <ul class="footer-links">
+          <li><a href="http://earthquake.usgs.gov">&copy; USGS 2017</a></li>
+          <li class="muted">&middot;</li>
+          <!-- <li><a href="?dest=index">Desktop</a></li>
+          <!-- <li class="muted">&middot;</li> -->
+          <!-- <li><a href="?dest=mobile">Mobile</a></li> -->
+					<li>Rev. 		<TMPL_VAR NAME=SOFTWARE_REVISION></li>
+        </ul>
+     </div>
+    </footer>
+
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/sc_constant.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>
+    <script type="text/javascript" src="./js/storage.js"></script>
+	<script  type="text/javascript" src="./leaflet/leaflet.markercluster-sc.js"></script>
+
+<script>
+	var map = L.map('map_canvas').setView([40, -100], 4);
+
+	L.tileLayer(<TMPL_VAR NAME=MAP_PROVIDER>).addTo(map);
+
+	L.control.scale({maxWidth: 150}).addTo(map);
+	var local_url = './data/eq_product/earthquake.usgs.gov.json';
+	$.getJSON(local_url, function(data) {
+
+		var eqLayer = L.geoJSON(data, {
+
+			style: function (feature) {
+				return feature.properties && feature.properties.style;
+			},
+
+			onEachFeature: onEQFeature,
+
+			pointToLayer: function (feature, latlng) {
+				return L.circleMarker(latlng, {
+					radius: feature.properties.mag,
+					fillColor: getColor(feature.geometry.coordinates[2]),
+					color: "#111",
+					weight: 0.1,
+					opacity: 1,
+					fillOpacity: 0.8
+				});
+			}
+		}).addTo(map);
+		map.fitBounds(eqLayer.getBounds());
+	});
+
+	function onEQFeature(feature, layer) {
+		layer.on({
+			click: titleFeature
+		});
+	}
+
+	function titleFeature(e) {
+		var feature = e.target.feature;
+
+		var html_array = ['<a href="' + feature.properties.url,
+		 	'" target="_blank" title="External link to USGS event page"><h3><small>',
+			feature.properties.title + '</small></h3></a>',
+		];
+
+		$("#map_title").html(html_array.join(''));
+	}
+
+	function getColor(d) {
+		return d > 500 ? '#FFEDA0' :
+			   d > 200  ? '#FED976' :
+			   d > 100  ? '#FEB24C' :
+			   d > 75  ? '#FD8D3C' :
+			   d > 50   ? '#FC4E2A' :
+			   d > 20   ? '#E31A1C' :
+			   d > 10   ? '#BD0026' :
+						 '#800026' ;
+	}
+
+	var epicenterIcon = L.icon({
+		iconUrl: './images/epicenter.png',
+		iconSize: [25, 25],
+		iconAnchor: [12, 12],
+		popupAnchor: [0, -28]
+	});
+
+
+	$(window).load(function() {
+		$(window).trigger('resize');
+	});
+
+	$(window).resize(function() {
+		$("#map_canvas").width($(".jumbotron").width());
+		$("#map_canvas").height(($("#map_canvas").width())/2);
+		var cont_height = $("#map_canvas").height() + $(".row").height();
+		$('html').css('height', cont_height+ 300);
+
+		setTimeout(function(){ map.invalidateSize()}, 400);
+	});
+
+	var type = SC_DEF.event_type ? SC_DEF.event_type : 'actual';
+	age = SC_DEF.recent_events ? parseInt(SC_DEF.recent_events) : '7';
+	var sm_url = 'scripts/r/event/event_list';
+
+	$.post(sm_url, {type:type, age:age, format:'geojson'}, function(data) {
+
+		// Are there even any EQ to display?
+		if (data.length <= 0) {
+			return;
+		}
+
+		var overlays = {};
+		var scLayer = L.geoJSON(data, {
+			style: function (feature) {
+				return feature.properties && feature.properties.style;
+			},
+			//onEachFeature: onSMFeature,
+			pointToLayer: function (feature, latlng) {
+				var shakemap = L.featureGroup();
+				var smMarker = L.marker(latlng, {
+					icon: epicenterIcon
+				}).addTo(shakemap);
+
+				var facility = feature.properties;
+				var local_url_dir = 'data/' + facility.shakemap_id + '-' + facility.shakemap_version;
+				var sm_url = local_url_dir + '/fac_damage.json';
+				$.getJSON(sm_url, function(data) {
+					var grid = data.grid;
+					// Are there even any EQ to display?
+					if (typeof grid.shakemap_id === "undefined") {
+					return;
+					}
+					var lat_min = parseFloat(grid.lat_min);
+					var lat_max = parseFloat(grid.lat_max);
+					var lon_min = parseFloat(grid.lon_min);
+					var lon_max = parseFloat(grid.lon_max);
+
+					var img = local_url_dir + '/ii_overlay.png';
+					var imageBounds = [[lat_min, lon_min], [lat_max, lon_max]];
+					var overlay = L.imageOverlay(img, imageBounds, {'opacity': 0.6});
+					overlay.addTo(shakemap);
+
+					//Custom radius and icon create function
+					var markers = L.markerClusterGroup({
+						maxClusterRadius: 38,
+						iconCreateFunction: function (cluster) {
+							//var sizes = [26, 28, 33, 40, 50];
+							var markers = cluster.getAllChildMarkers();
+							var maxSeverity = 1;
+							var c = 'marker-cluster-grey';
+							for (var i=0; i < markers.length; i++) {
+								if (markers[i].severity_rank > maxSeverity) {maxSeverity = markers[i].severity_rank;}
+							}
+							if (maxSeverity === 100) {
+								c = 'marker-cluster-green';
+							} else if (maxSeverity === 200) {
+								c = 'marker-cluster-yellow';
+							} else if (maxSeverity === 300) {
+								c = 'marker-cluster-orange';
+							} else if (maxSeverity === 400) {
+								c = 'marker-cluster-red';
+							}	
+							return L.divIcon({ html: '<div><span>' + markers.length + '</span></div>', className: 'marker-cluster '+c, iconSize: new L.point(33,33) });
+						},
+						//Disable all of the defaults:
+						spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: true
+					});
+
+					var index = 0;
+					var marker_icon = [];
+
+					for ( var key in data.facility_damage) {
+						var facility = data.facility_damage[key];
+						lat = parseFloat(facility.lat_min);
+						lon = parseFloat(facility.lon_min);
+						icon_type =  facility.facility_type + facility.damage_level;
+						icon_type = icon_type.toLowerCase();
+						var facility_severity = parseInt(facility.severity_rank);
+
+						var myIcon = L.icon({
+							iconUrl: "./images/" + icon_type + ".png",
+							iconSize: [25, 24],
+							iconAnchor: [12, 12],
+							shadowUrl: "./images/shadow.png",
+							shadowSize: [21, 14],
+							//shadowAnchor: [12, 12]
+						});
+
+						var marker = L.marker([lat, lon], {icon: myIcon});
+						marker.severity_rank = facility_severity;
+
+						markers.addLayer(marker);
+
+						if (typeof marker_icon[icon_type] === "undefined") {
+						marker_icon[icon_type] =
+							{
+							url: './images/' + icon_type + '.png',
+							facility_type: facility.facility_type,
+							facility_count: 1,
+							};
+						} else {
+							marker_icon[icon_type].facility_count += 1;
+						}
+
+
+					};
+					shakemap.addLayer(markers);
+					
+					var disp_icon = [];
+					for (var key in marker_icon) disp_icon.push(marker_icon[key]);
+					disp_icon.sort(function(a, b){
+						var a1= a.severity_rank, b1= b.severity_rank;
+						if(a1== b1) return 0;
+						return a1> b1? 1: -1;
+					});
+
+					shakemap.on('add click', function() {
+							var damage_summary = '<div class="progress">';
+						var summary = data.damage_summary;
+							if (data.count > 0) {
+								jQuery.each(bar, function(i, val) {
+									damage_summary += '<div class="progress-bar ' + val + '" style="width:20%;">' + ((summary[i]) ? summary[i] : 0) + '</div>';
+								});
+							}
+							damage_summary += '</div>';
+							$("#caption").html(damage_summary);
+								map.fitBounds(shakemap.getBounds());
+								var evt_info = feature.properties;
+							var html_array = ['<a href="?dest=event&event=' + evt_info.shakemap_id + '-' + evt_info.shakemap_version,
+									'" target="_blank" title="ShakeCast Event Page"><h3>M'+ evt_info.magnitude,
+									(evt_info.mag_type) ? ' (' + evt_info.mag_type + ') ' : ' ',
+									'<small>' + evt_info.event_location_description,
+									', ' + evt_info.event_timestamp,
+									'</a>  <a href="https://earthquake.usgs.gov/earthquakes/eventpage/' + evt_info.event_id,
+								'" target="_blank"> [External USGS Page]</small></h3></a>',
+							];
+							$("#map_title").html(html_array.join(''));
+								info.update(disp_icon);
+					});
+
+					shakemap.on('remove', function() {
+							$("#caption").html('');
+							$("#map_title").html('');
+					});
+
+				});
+
+				overlays[feature.properties.title] = shakemap;
+				return shakemap;
+			}
+		}).addTo(map);
+		L.control.layers(null, overlays).addTo(map);
+
+	}, 'json');
+
+	var info = L.control({position: 'bottomright'});
+
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info legend'),
+		this.update();
+		return this._div;
+	};
+
+	// method that we will use to update the control based on feature properties passed
+	info.update = function (disp_icon) {
+		this._div.innerHTML = '<img src="./images/cluster/m1_1.png" /><img src="./images/cluster/m1_100.png" /><img src="./images/cluster/m1_200.png" /><img src="./images/cluster/m1_300.png" /><img src="./images/cluster/m1_400.png" />' + 
+				'<br />Facility Cluster<br/><img src="./images/epicenter.png" /> Earthquake Epicenter<br />';
+
+		for (var key in disp_icon) {
+			this._div.innerHTML += 
+				'<img src="' + disp_icon[key].url + '" /> ' +
+				disp_icon[key].facility_type + ' : ' +
+				disp_icon[key].facility_count + '<br />';
+		}
+	};
+
+	info.addTo(map);
+
+
+</script>
+
+
+
+</body>
+</html>

@@ -217,6 +217,27 @@ sub servers_to_poll {
 }
 
 
+# returns a list of all servers that should be queried for new events, etc.
+sub servers_to_query {
+    my $class = shift;
+    my @servers;
+
+    undef $SC::errstr;
+    eval {
+	my $sth = SC->dbh->prepare(qq/
+	    select *
+	      from server
+	     where query_flag = 1/);
+	$sth->execute;
+	while (my $p = $sth->fetchrow_hashref('NAME_lc')) {
+	    push @servers, new SC::Server(%$p);
+	}
+    };
+    $SC::errstr = $@, return () if $@;
+    return @servers;
+}
+
+
 sub BEGIN {
     no strict 'refs';
     # Not all attributes have method accessors.  I am only generating those

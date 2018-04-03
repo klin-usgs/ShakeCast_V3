@@ -16,8 +16,8 @@ echo Removing Server Services
 sc delete Apache2.4
 sc delete MySQL56
 
-echo uninstalling Perl
-wmic product where name="ActivePerl 5.16.3 Build 1604 (64-bit)" call uninstall /nointeractive
+rem echo uninstalling Perl
+rem wmic product where name="ActivePerl 5.16.3 Build 1604 (64-bit)" call uninstall /nointeractive
 
 echo uninstalling MySQL
 wmic product where name="MySQL Server 5.6" call uninstall /nointeractive
@@ -35,6 +35,7 @@ echo remove MySQL data
 echo remove Perl data
 rmdir /S /Q "C:\Perl"
 rmdir /S /Q "C:\Perl64"
+rmdir /S /Q "C:\Strawberry"
 
 echo Removing ShakeCast Services
 sc delete sc_dispd

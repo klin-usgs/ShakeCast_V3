@@ -80,6 +80,7 @@ sub BEGIN {
 			event_timestamp receive_timestamp
 			initial_version superceded_timestamp
 			seq mag_type shakemap_id shakemap_version grid_id
+			ids
 			)) {
 	*$method = sub {
 	    my $self = shift;
@@ -349,7 +350,7 @@ sub to_xml {
 	    event_status event_type
 	    event_name event_location_description
 	    magnitude lat lon depth  event_region event_source_type
-	    event_timestamp mag_type
+	    event_timestamp mag_type ids
 	    )],
 	1);
 }
@@ -382,83 +383,15 @@ sub write_to_db {
 			SC->dbh->commit;
 			$rc = 1;
 			return; # returns from the eval, not the sub!
-        } else {
-            # check for existing record
-            #my $sth_getkey = SC->dbh->prepare_cached(qq/
-            #    select event_id
-            #      from event
-            #     where event_id=?
-            #       and event_version=?/);
-            #if (SC->dbh->selectrow_array($sth_getkey, undef,
-            #        $self->{'event_id'},
-            #        $self->{'event_version'})) {
-            #    $rc = 2;
-            #    return; # returns from the eval, not the sub!
-            #}
-            # check for existing record
-            #my $sth_getkey = SC->dbh->prepare_cached(qq/
-            #    select event_id
-            #      from event
-            #     where event_id=?
-			#	   and abs(lat - ?) < 0.01
-            #       and abs(lon - ?) < 0.01 
-            #       and abs(magnitude - ?) < 0.01 
-            #       and abs(depth - ?) < 0.01 
-			#	   and event_status <> "cancelled" /);
-            #if (SC->dbh->selectrow_array($sth_getkey, undef,
-            #        $self->{'event_id'},
-            #        $self->{'lat'},
-            #        $self->{'lon'},
-            #        $self->{'magnitude'},
-            #        $self->{'depth'}
-			#		)) {
-            #    $rc = 2;
-            #    return; # returns from the eval, not the sub!
-            #}
-            # check for possible redundant record with different ID
-            #my $sth_getkey = SC->dbh->prepare(qq/
-            #    select event_id
-            #      from event
-            #     where event_id != ?
-			#	   and event_type not in ('SCENARIO', 'TEST')
-			#	   and abs(lat - ?) < 0.1
-            #       and abs(lon - ?) < 0.1 
-			#	   and abs( timestampdiff(SECOND , EVENT_TIMESTAMP, ? )) < 10 /);
-            #if (my $red_evt = SC->dbh->selectrow_array($sth_getkey, undef,
-            #        $self->{'event_id'},
-            #        $self->{'lat'},
-            #        $self->{'lon'},
-            #        $self->{'event_timestamp'})) {
-			#	$sth_getkey = SC->dbh->prepare(qq/
-			#		select event_id
-			#		  from event
-			#		 where event_id = ?
-			#		   and event_status = "cancelled" /);
-			#	if (!SC->dbh->selectrow_array($sth_getkey, undef, $red_evt)) {
-			#		$rc = 3;
-			#		return $rc if (SC->config->{'REDUNDANT_CHECK'}); # returns from the eval, not the sub!
-			#		SC->log(3, $self->as_string, "may already exists with different ids");
-			#	}
-        #   }
         }
 
 	# Determine whether this is the first version of this event we
 	# have received or not, $rc=3 if REDUNDANT_CHECK flag is set
-	my $num_recs = SC->dbh->selectrow_array(qq/
-	    select count(*)
+	my ($num_recs, $ids) = SC->dbh->selectrow_array(qq/
+	    select count(event_id), ids
 	      from event
 	     where event_id = ?/, undef, $self->event_id);
-	#my $num_recs = ($rc == 3) ? 1 :
-	#	SC->dbh->selectrow_array(qq/
-	#    select count(*)
-	#      from event
-	#     where event_id = ?/, undef, $self->event_id);
-	#if ($num_recs) {
-	#	SC->dbh->do(qq/
-	#		delete from event
-	#		 where event_id = ?/, undef,
-	#		$self->event_id);
-	#}
+
 	if ($num_recs) {
 	SC->dbh->do(qq/
 	    update event set
@@ -478,7 +411,8 @@ sub write_to_db {
 		depth = ?, 
 		event_region = ?, 
 		event_source_type = ?, 
-		initial_version = ?
+		initial_version = ?,
+		ids = ?
 		where event_id = ?/,
             undef,
 	    $self->event_id,
@@ -497,7 +431,8 @@ sub write_to_db {
 	    $self->depth,
 	    $self->event_region,
 	    $self->event_source_type,
-	    1,
+		0,
+		(defined $self->ids) ? $self->ids : $ids,
 	    $self->event_id);
 	} else {
 	SC->dbh->do(qq/
@@ -505,8 +440,8 @@ sub write_to_db {
 		event_id, event_version,  event_status, event_type,
 		event_name, event_location_description, event_timestamp,
 		external_event_id, receive_timestamp,
-		magnitude, mag_type, lat, lon, depth, event_region, event_source_type, initial_version)
-	      values (?,?,?,?,?,?,$SC::to_date,?,$SC::to_date,?,?,?,?,?,?,?,?)/,
+		magnitude, mag_type, lat, lon, depth, event_region, event_source_type, initial_version, ids)
+	      values (?,?,?,?,?,?,$SC::to_date,?,$SC::to_date,?,?,?,?,?,?,?,?,?)/,
             undef,
 	    $self->event_id,
 	    $self->event_version,
@@ -524,7 +459,8 @@ sub write_to_db {
 	    $self->depth,
 	    $self->event_region,
 	    $self->event_source_type,
-	    1);
+	    1,
+		$self->ids);
 	}
 	# Supercede all other versions of this event.
 	SC->dbh->do(qq/

@@ -237,18 +237,6 @@ sub error {
 	
     undef $errstr;
 
-	# Determine whether this is the first version of this event we
-	# have received or not
-	SC->dbh->do(qq/
-	    insert into log_message (
-		LOG_MESSAGE_TYPE, SERVER_ID,  DESCRIPTION, RECEIVE_TIMESTAMP)
-	      values (?,?,?,$db_now)/,
-            undef,
-	    'ERROR',
-	    $server_id,
-	    (join '', @msg));
-
-	SC->dbh->commit;
     if ($@) {
         $errstr = $@;
         $rc = 0;

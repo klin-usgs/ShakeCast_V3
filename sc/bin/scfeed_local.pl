@@ -163,8 +163,10 @@ my $config_file = (exists $options->{'conf'} ? $options->{'conf'} : 'sc.conf');
 SC->initialize($config_file, 'local_inject')
 	or die "could not initialize SC: $SC::errstr";
 
-my $perl = SC->config->{perlbin};
-my $scroot = SC->config->{RootDir};
+my $config = SC->config;
+my $perl = $config->{perlbin};
+my $scroot = $config->{RootDir};
+my $grid_xml = ($config->{'grid_xml'}) ? $config->{'grid_xml'} : 'grid.xml';
 my $download_dir;
 my @grids = metric_list();
 my $sc_data;
@@ -180,14 +182,14 @@ sub main {
   my ($command, $result);
   my $prog = basename($0);
 
-	$download_dir = SC->config->{DataRoot};
+	$download_dir = $config->{DataRoot};
 	#validate directory
 	my $dest = $download_dir."/$evid";
 	if (not -e "$dest") {
 		die "Couldn't locate event $dest";
 	}
 	
-	if (-e "$download_dir/$evid/grid.xml") {
+	if (-e "$download_dir/$evid/rock_grid.xml") {
 		print "using sc_xml\n";
 		sc_xml($evid); 
 	} else {
@@ -255,7 +257,7 @@ sub shakemap_filter {
 	my @regions;
 	my ($all_regions, $rc);
 	
-	push @regions, split(' ', SC->config->{'rss'}->{'REGION'});
+	push @regions, split(' ', $config->{'rss'}->{'REGION'});
 	$all_regions = 1 if (grep /all/i, @regions);
 	my $network = $xml->{'event_region'};
 	
@@ -263,8 +265,8 @@ sub shakemap_filter {
 	$network =~ s/global/us/;
 	$network =~ s/pn/uw/;
 	$network =~ s/sc/ci/;
-	my $time_window = (SC->config->{'rss'}->{'TIME_WINDOW'}) ? 
-						SC->config->{'rss'}->{'TIME_WINDOW'} : 30;
+	my $time_window = ($config->{'rss'}->{'TIME_WINDOW'}) ? 
+						$config->{'rss'}->{'TIME_WINDOW'} : 30;
 	my $eq_time = SC->ts_to_time($xml->{'event_timestamp'});
 	my $time_cutoff = $eq_time + $time_window * 86400;
 
@@ -272,8 +274,8 @@ sub shakemap_filter {
 
 	use Graphics_2D;
 	my $idp = [];
-	if (SC->config->{'EQ_POLY'}) {
-		@$idp = ('conf', SC->config->{'EQ_POLY'});
+	if ($config->{'EQ_POLY'}) {
+		@$idp = ('conf', $config->{'EQ_POLY'});
 	} else {
 		my $sth_lookup_poly = SC->dbh->prepare(qq{
 			select profile_name, geom
@@ -581,7 +583,7 @@ my $evid = shift;
 	my %shakemap_spec;
 	my %event_spec;
 
-	my $file = "$download_dir/$evid/grid.xml";
+	my $file = "$download_dir/$evid/rock_grid.xml";
 	my $info_file = "$download_dir/$evid/info.xml";
 	
 	use XML::LibXML::Simple;

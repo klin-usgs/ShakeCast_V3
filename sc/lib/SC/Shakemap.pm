@@ -237,14 +237,7 @@ sub to_xml {
 	    generation_timestamp
 	    begin_timestamp end_timestamp
 	   )],
-	0);
-    # add metrics
-    foreach my $mp ( @{ $self->metric() } ) {
-	$xml .= SC->to_xml_attrs($mp,
-	    'metric', [qw(metric_name min_value max_value)], 1);
-    }
-    # generate </shakemap>
-    $xml .= '</shakemap>';
+	1);
 
     return $xml;
 }

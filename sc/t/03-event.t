@@ -10,6 +10,7 @@ BEGIN { plan tests => 29 }
 
 use SC;
 use SC::Event;
+use SC::Server;
 
 # create an event ID for testing purposes
 my $event_id = time % 100000000;
@@ -25,6 +26,7 @@ qq(<event
     event_timestamp="1994-05-07 14:34:23"
     external_event_id="ci$event_id"
     magnitude="6.8"
+    depth="10"
     lat="34.23"
     lon="-118.12"
 />);
@@ -40,6 +42,7 @@ qq(<event
     event_timestamp="1994-05-07 14:34:23"
     external_event_id="ci$event_id"
     magnitude="6.7"
+    depth="10"
     lat="34.2345222"
     lon="-118.123222"
 />);
@@ -81,7 +84,7 @@ qq(<event
     ok $SC::errstr, undef, $SC::errstr;
     # insert into database
     $rc = $event->write_to_db;
-    ok $rc, 2, "rc=$rc, should be 2";
+    ok $rc, 1, "rc=$rc, should be 1";
     ok $SC::errstr, undef, $SC::errstr;
 
     # verify that the original event record is not marked superceded
@@ -122,14 +125,12 @@ qq(<event
 	     where event_id=$event_id and event_version=1/);
     };
     ok $@, '', "selectrow_array failed: $@";
-    ok defined $ts;
+    ok $ts, undef, $ts;
 
     # read back the event just added
     $event_reread = SC::Event->from_id($event->event_id, $event->event_version);
     ok $SC::errstr, undef, $SC::errstr;
     ok $event_reread->initial_version, 0;
-
-
 }
 
 # vim:syntax=perl

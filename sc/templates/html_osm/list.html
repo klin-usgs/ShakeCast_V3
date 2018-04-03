@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <link rel="shortcut icon" href="images/sc_logo.png">
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js" integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA==" crossorigin=""></script>
+
+    <title>Earthquake List</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./bootstrap3/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
+	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./leaflet/leaflet.css" />
+	<link rel="stylesheet" href="./leaflet/MarkerCluster-sc.css" />
+	<link rel="stylesheet" href="./css/jquery-ui.css">
+	<link rel="stylesheet" href="./css/demo_table.css">
+	  
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+  <!-- Fixed navbar -->
+  <div class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	  <span class="sr-only">Toggle navigation</span>
+	  <span class="icon-bar"></span>
+	  <span class="icon-bar"></span>
+	  <span class="icon-bar"></span>
+	</button>
+	<a class="navbar-brand" href="?dest=index"><img src="images/sc_logo.png" class="img-circle logo" /> ShakeCast</a>
+      </div>
+      <div class="navbar-collapse collapse">
+	<ul id="nav_menu" class="nav navbar-nav">
+	  <li><a href="?dest=index">Home</a></li>
+	  <li><a href="#about">About</a></li>
+	  <li class="dropdown">
+	  <a href="?dest=list" class="dropdown-toggle" data-toggle="dropdown">Earthquake List <b class="caret"></b></a>
+	  <ul class="dropdown-menu active">
+	    <li><a href="?dest=list">Recent Events</a></li>
+	    <li class="divider"></li>
+	    <li><a href="?dest=list&type=major">Significant Events</a></li>
+	    <li><a href="?dest=list&type=scenario">Scenarios</a></li>
+	    <li class="divider"></li>
+	  </ul>
+	  </li>
+	    <li><a href="?dest=preference">Settings</a></li>
+		<TMPL_VAR NAME=ADMIN>
+		<TMPL_VAR NAME=LOGOUT>
+	</ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+
+<!-- Subhead
+================================================== -->
+<header class="header" id="overview">
+  <div class="container">
+    <h2>Earthquake List <small>Earthquake list and available products of each event.</small></h2>
+    <ol class="breadcrumb">
+      <li><a href="?dest=index">Home</a></li>
+      <li><a href="#">Earthquakes</a></li>
+      <li class="active"></li>
+    </ol>
+  </div>
+</header>
+
+<div class="container">
+
+      <div class="row">
+        <div class="col-md-2">
+          <div class="panel panel-default">
+	    <div class="list-group" id="sidebar">
+              <a class="list-group-item" id="list_day" href="?dest=list&age=day">Last Day</a>
+              <a class="list-group-item" id="list_week" href="?dest=list&age=week">Within a Week</a>
+              <a class="list-group-item" id="list_month" href="?dest=list&age=month">Within a Month</a>
+              <a class="list-group-item" id="list_year" href="?dest=list&age=year">Within a Year</a>
+              <a class="list-group-item" id="list_all" href="?dest=list&age=all">All</a>
+				<span></span>
+               <a class="list-group-item" id="list_major" href="?dest=list&type=major">Significant Events</a>
+             <a class="list-group-item" id="list_scenario" href="?dest=list&type=scenario">Scenarios</a>
+             <a class="list-group-item" id="list_test" href="?dest=list&type=test">Test/Exercise Events</a>
+	    </div>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="col-md-10">
+            <!-- Main hero unit for a primary marketing message or call to action -->
+            <div class="panel panel-default" id="main_pane">
+				<div id="map_title"></div>
+				<div id="map_canvas" style="width:800px; height:400px;"></div>
+ 				<div id="caption"></div>
+ 				<div id="notification"></div>
+           </div>
+
+            <!-- Example row of columns -->
+            <div class="panel panel-default">
+						<table cellpadding="0" cellspacing="0" border="0" class="display" id="eq_content_table"></table>
+            </div>
+
+        </div> <!-- /container -->
+      </div> <!-- /container -->
+
+    <!-- Footer
+    ================================================== -->
+    <footer class="footer">
+      <div class="container">
+        <ul class="footer-links">
+          <li><a href="http://earthquake.usgs.gov">&copy; USGS 2017</a></li>
+          <li class="muted">&middot;</li>
+          <!-- <li><a href="?dest=index">Desktop</a></li>
+          <!-- <li class="muted">&middot;</li> -->
+          <!-- <li><a href="?dest=mobile">Mobile</a></li> -->
+					<li>Rev. 		<TMPL_VAR NAME=SOFTWARE_REVISION></li>
+        </ul>
+     </div>
+    </footer>
+
+
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-ui.js"></script>
+    <script type="text/javascript" src="./js/sc_constant.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>
+    <script type="text/javascript" src="./js/storage.js"></script>
+    <script type="text/javascript" src="./leaflet/leaflet.markercluster-sc.js"></script>
+	<script type="text/javascript" src="./js/jquery.dataTables.min.js"></script>
+ 
+    <script>
+		var map = L.map('map_canvas').setView([40, -100], 4);
+		var sc_id = gup('event');
+		var type = gup('type') ? gup('type') : 'actual';
+		var age = gup('age') ? gup('age') : 'day';
+		var eq_des = [];
+		var start=0, length=0, total;
+		var markers = [];
+		var markerCluster;
+		var marker_icon = [];
+		var sm_url = 'scripts/r/event/datatables';
+		var fac_des = [];
+		var anOpen = [];
+		var oTable;
+			
+	    SC_DEF.init();
+		var submit_data = {};
+
+		var epicenterIcon = L.icon({
+			iconUrl: './images/epicenter.png',
+			iconSize: [25, 25],
+			iconAnchor: [12, 12],
+			popupAnchor: [0, -28]
+		});
+
+      $(window).load(function() {
+				L.tileLayer(<TMPL_VAR NAME=MAP_PROVIDER>).addTo(map);
+				L.control.scale({maxWidth: 150}).addTo(map);
+
+				if (!(type)) {
+					type = SC_DEF.event_type ? SC_DEF.event_type : 'actual';
+				}
+				if (!(age)) {
+					age = SC_DEF.recent_events ? parseInt(SC_DEF.recent_events) : 'week';
+				}
+				//sm_url = 'scripts/event.pl/datatables?type='+type+'&age='+age;
+				sm_url = 'scripts/r/event/event_list';
+
+				if (type == 'actual') {
+					$(".breadcrumb li").last().html(age.toUpperCase() + ' List');
+					$("#list_"+age).addClass("active");
+				} else {
+					$(".breadcrumb li").last().html(type.toUpperCase() + ' Event List');
+					$("#list_"+type).addClass("active");
+				}
+				load_list();
+      }).trigger('resize');
+			
+			function load_list( oTableLocal ) {
+				//var sm_url = 'scripts/r/event/event_list';;
+					var list_data = {
+						"type": type,
+						"age": age,
+						"start": start,
+						"format": 'geojson'
+					};
+					var overlays = {};
+
+				$.post(sm_url, list_data, function(data) {
+
+					// Are there even any EQ to display?
+					if (data.length <= 0) {
+						return;
+					}
+
+					function onEQFeature(feature, layer) {
+						layer.on({
+							click: titleFeature
+						});
+					}
+
+					function titleFeature(e) {
+						var feature = e.target.feature;
+
+						var html_array = ['<a href="' + feature.properties.url,
+							'" target="_blank" title="External link to USGS event page"><h3><small>',
+							feature.properties.title + '</small></h3></a>',
+						];
+
+						$("#map_title").html(html_array.join(''));
+					}
+
+					var scLayer = L.geoJSON(data, {
+						style: function (feature) {
+							return feature.properties && feature.properties.style;
+						},
+						//onEachFeature: onSMFeature,
+						onEachFeature: onEQFeature,
+
+						pointToLayer: function (feature, latlng) {
+							var shakemap = L.featureGroup();
+							var smMarker = L.marker(latlng, {
+								icon: epicenterIcon
+							}).addTo(shakemap);
+
+							var facility = feature.properties;
+							var local_url_dir = 'data/' + facility.shakemap_id + '-' + facility.shakemap_version;
+							var sm_url = local_url_dir + '/fac_damage.json';
+							$.getJSON(sm_url, function(data) {
+								var grid = data.grid;
+								//console.log(grid);
+								// Are there even any EQ to display?
+								if (typeof grid.shakemap_id === "undefined") {
+								return;
+								}
+								var lat_min = parseFloat(grid.lat_min);
+								var lat_max = parseFloat(grid.lat_max);
+								var lon_min = parseFloat(grid.lon_min);
+								var lon_max = parseFloat(grid.lon_max);
+
+								var img = local_url_dir + '/ii_overlay.png';
+								var imageBounds = [[lat_min, lon_min], [lat_max, lon_max]];
+								var overlay = L.imageOverlay(img, imageBounds, {'opacity': 0.6});
+								overlay.addTo(shakemap);
+
+								//Custom radius and icon create function
+								var markers = L.markerClusterGroup({
+									maxClusterRadius: 38,
+									iconCreateFunction: function (cluster) {
+										//var sizes = [26, 28, 33, 40, 50];
+										var markers = cluster.getAllChildMarkers();
+										var maxSeverity = 1;
+										var c = 'marker-cluster-grey';
+										for (var i=0; i < markers.length; i++) {
+											if (markers[i].severity_rank > maxSeverity) {maxSeverity = markers[i].severity_rank;}
+										}
+										if (maxSeverity === 100) {
+											c = 'marker-cluster-green';
+										} else if (maxSeverity === 200) {
+											c = 'marker-cluster-yellow';
+										} else if (maxSeverity === 300) {
+											c = 'marker-cluster-orange';
+										} else if (maxSeverity === 400) {
+											c = 'marker-cluster-red';
+										}	
+										return L.divIcon({ html: '<div><span>' + markers.length + '</span></div>', className: 'marker-cluster '+c, iconSize: new L.point(33,33) });
+									},
+									//Disable all of the defaults:
+									spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: true
+								});
+
+								var index = 0;
+								var marker_icon = [];
+
+								for ( var key in data.facility_damage) {
+									var facility = data.facility_damage[key];
+									lat = parseFloat(facility.lat_min);
+									lon = parseFloat(facility.lon_min);
+									icon_type =  facility.facility_type + facility.damage_level;
+									icon_type = icon_type.toLowerCase();
+									var facility_severity = parseInt(facility.severity_rank);
+
+									var myIcon = L.icon({
+										iconUrl: "./images/" + icon_type + ".png",
+										iconSize: [25, 24],
+										iconAnchor: [12, 12],
+										shadowUrl: "./images/shadow.png",
+										shadowSize: [21, 14],
+										//shadowAnchor: [12, 12]
+									});
+
+									var marker = L.marker([lat, lon], {icon: myIcon});
+									marker.severity_rank = facility_severity;
+
+									markers.addLayer(marker);
+
+									if (typeof marker_icon[icon_type] === "undefined") {
+									marker_icon[icon_type] =
+										{
+										url: './images/' + icon_type + '.png',
+										facility_type: facility.facility_type,
+										facility_count: 1,
+										};
+									} else {
+										marker_icon[icon_type].facility_count += 1;
+									}
+
+
+								};
+								shakemap.addLayer(markers);
+								
+								var disp_icon = [];
+								for (var key in marker_icon) disp_icon.push(marker_icon[key]);
+								disp_icon.sort(function(a, b){
+									var a1= a.severity_rank, b1= b.severity_rank;
+									if(a1== b1) return 0;
+									return a1> b1? 1: -1;
+								});
+
+								shakemap.on('add click', function() {
+										var damage_summary = '<div class="progress">';
+									var summary = data.damage_summary;
+										if (data.count > 0) {
+											jQuery.each(bar, function(i, val) {
+												damage_summary += '<div class="progress-bar ' + val + '" style="width:20%;">' + ((summary[i]) ? summary[i] : 0) + '</div>';
+											});
+										}
+										damage_summary += '</div>';
+										$("#caption").html(damage_summary);
+											map.fitBounds(shakemap.getBounds());
+											var evt_info = feature.properties;
+										var html_array = ['<a href="?dest=event&event=' + evt_info.shakemap_id + '-' + evt_info.shakemap_version,
+												'" target="_blank" title="ShakeCast Event Page"><h3>M'+ evt_info.magnitude,
+												(evt_info.mag_type) ? ' (' + evt_info.mag_type + ') ' : ' ',
+												'<small>' + evt_info.event_location_description,
+												', ' + evt_info.event_timestamp,
+												'</a>  <a href="https://earthquake.usgs.gov/earthquakes/eventpage/' + evt_info.event_id,
+											'" target="_blank"> [External USGS Page]</small></h3></a>',
+										];
+										$("#map_title").html(html_array.join(''));
+											info.update(disp_icon);
+								});
+
+								shakemap.on('remove', function() {
+										$("#caption").html('');
+										$("#map_title").html('');
+								});
+
+							});
+							overlays[feature.properties.shakemap_id] = shakemap;
+							return shakemap;
+						}
+					}).addTo(map);
+
+					var data = data.features;
+					var eqTable = [];
+					for (var i=0; i < data.length; i++) {
+						var event = data[i].properties;
+						event.opacity = 1-i/data.length;
+						//MAPAPP.addMarker(event);
+						eqTable.push(
+							{
+								"index":i+1,
+								"event_id":event.event_id,  
+								"magnitude":event.magnitude, 
+								"latitude":event.lat, "longitude":event.lon, 
+								"origin":event.event_timestamp, 
+								"shakemap_id":event.shakemap_id, 
+								"shakemap_version":event.shakemap_version, 
+								"description":event.event_location_description,
+								"major_event":(event.major_event)?'Yes':'',
+							}
+						);
+					}
+
+					var eqDiv = {
+						"bJQueryUI": true,
+						"iDisplayLength": 10,
+						"sScrollY": ($("#map_canvas").height() > 0) ? $("#map_canvas").height() :  $(window).height()/3,
+						"sScrollX": "100%",
+						"aaSorting": [[ 5, "desc" ]],
+						"bUseRendered": false,
+						aaData: eqTable, 
+						aoColumns: 
+							[
+							{'sTitle': 'Index',"mDataProp": "index"},
+							{'sTitle': 'Earthquake ID',"mDataProp": "event_id"},
+							{'sTitle': 'Magnitude',"mDataProp": "magnitude"},
+							{'sTitle': 'Latitude',"mDataProp": "latitude"},
+							{'sTitle': 'Longitude',"mDataProp": "longitude"}, 
+							{'sTitle': 'Origin Time',"mDataProp": "origin"},
+							{'sTitle': 'Description',"mDataProp": "description"},
+							{'sTitle': 'Permanent Archived',"mDataProp": "major_event"},
+					]};
+				
+					if (oTable) oTable.fnDestroy();
+					
+					oTable = $('#eq_content_table').dataTable(eqDiv);
+					
+					oTable.$('tr').click( function () {
+						var data = oTable.fnGetData( this );
+						row_click(this);
+					});
+			
+					function row_click(data) {
+						if ( $(data).hasClass('row_selected') ) {
+							$(data).removeClass('row_selected');
+							//MAPAPP.infowindow.close(map);
+							//MAPAPP.removeSM();
+						}
+						else {
+							oTable.$('tr.row_selected').removeClass('row_selected');
+							$(data).addClass('row_selected');
+							var oData = oTable.fnGetData( data );
+							var sLat = parseFloat(oData.latitude);
+							var sLon = parseFloat(oData.longitude);
+							overlays[oData.event_id].fire('click');
+							//map.setCenter(MAPAPP.facMarkers[oData.event_id].getPosition());
+						}
+						$(window).trigger('resize');
+					}
+					//google.maps.event.trigger(MAPAPP.facMarkers[data[0].event_id], 'click');
+					//map.setCenter(MAPAPP.facMarkers[data[0].event_id].getPosition());
+					$(window).trigger('resize');
+				}, 'json');
+			}
+
+			
+
+	$(window).resize(function() {
+		//oTable.fnAdjustColumnSizing();
+		//$("#eq_content_table").width($(".row").width());
+		$("#map_canvas").width($("#main_pane").width());
+		$("#map_canvas").height(($("#map_canvas").width())/2);
+		//console.log($("#map_canvas").width());
+/*
+		google.maps.event.trigger(map, 'resize');
+*/
+		var cont_height = $("#map_canvas").height() + $("#eq_content_table").height();
+		if ($("#sidebar").length) {
+			cont_height = ($("#sidebar").height() > cont_height) ? $("#sidebar").height() : cont_height;
+		}
+		$('html').css('height', cont_height);
+	});
+
+function selector(sm_id) {
+    var specials = [
+      '#', '&', '~', '=', '>', 
+      "'", ':', '"', '!', ';', ','
+    ];
+    var regexSpecials = [
+      '.', '*', '+', '|', '[', ']', '(', ')', '/', '^', '$'
+    ];
+    var sRE = new RegExp(
+      '(' + specials.join('|') + '|\\' + regexSpecials.join('|\\') + ')', 'g'
+    );
+
+      return sm_id.replace(sRE, '\\$1');
+    }
+
+    function switch_sm(){
+			var event = event_array[display_ind];
+			var shakemap = event.shakemap_id + '-' + event.shakemap_version;
+			//var dmg_url = 'scripts/damage.pl/from_id/'+shakemap+'?action=summary';
+			var dmg_url = 'scripts/r/damage/from_id/'+shakemap+'?action=summary';
+			if (!SC_DEF.fixed_pos_flag) {
+					//google.maps.event.trigger(MAPAPP.facMarkers[event.event_id], 'click');
+					//map.setCenter(MAPAPP.facMarkers[event.event_id].getPosition());
+			}
+			display_ind ++;
+			if (display_ind >= event_ind) {display_ind = 0;}
+    }
+
+		var info = L.control({position: 'bottomright'});
+
+		info.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info legend'),
+			this.update();
+			return this._div;
+		};
+
+		// method that we will use to update the control based on feature properties passed
+		info.update = function (disp_icon) {
+			this._div.innerHTML = '<img src="./images/cluster/m1_1.png" /><img src="./images/cluster/m1_100.png" /><img src="./images/cluster/m1_200.png" /><img src="./images/cluster/m1_300.png" /><img src="./images/cluster/m1_400.png" />' + 
+					'<br />Facility Cluster<br/><img src="./images/epicenter.png" /> Earthquake Epicenter<br />';
+
+			for (var key in disp_icon) {
+				this._div.innerHTML += 
+					'<img src="' + disp_icon[key].url + '" /> ' +
+					disp_icon[key].facility_type + ' : ' +
+					disp_icon[key].facility_count + '<br />';
+			}
+		};
+
+		info.addTo(map);
+
+	</script>
+
+  </body>
+</html>

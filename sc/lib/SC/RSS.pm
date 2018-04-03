@@ -168,6 +168,7 @@ my @regions;
 my $all_regions;
 my @grids = metric_list();
 my $perl = SC->config->{perlbin};
+my $grid_xml = (SC->config->{'grid_xml'}) ? SC->config->{'grid_xml'} : 'grid.xml';
 
 
 #######################################
@@ -664,7 +665,7 @@ sub process_new_rss {
 		}
 	}
 
-	if (-e "$dest/grid.xml") {
+	if (-e "$dest/$grid_xml") {
 		sc_xml($dest, $evid, %products); 
 	} elsif (-e "$dest/grid.xyz.zip") {
 		sc_grid($dest, $evid, %products);

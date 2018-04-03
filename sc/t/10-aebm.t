@@ -24,7 +24,7 @@ my $sm_input = {
 {
     print "Initialization tests...\n";
     ok not defined $SC::errstr;
-    SC->initialize();
+    SC->initialize('sc_test.conf');
     ok not defined $SC::errstr or print STDERR "$SC::errstr\n";
     SC->log(1, "test message for AEBM.pm");
     ok not defined $SC::errstr;
@@ -89,9 +89,9 @@ my $sm_input = {
     ok "10.00", sprintf("%.2f", $aebm->{'Be'}->[0]);
     $aebm->compute_dsf($sm_input);
     ok "1.00", sprintf("%.2f", $aebm->{'dsf'}->[0]);
-    $aebm->{'demand_sa'} = $aebm->demand($aebm->{'sa_smooth'}, $aebm->{'dsf'});
+    $aebm->{'demand_sa'} = $aebm->demand('demand_sa');
     ok "1.27", sprintf("%.2f", $aebm->{'demand_sa'}->[4]);
-    $aebm->{'demand_sd'} = $aebm->demand($aebm->{'sd_smooth'}, $aebm->{'dsf'});
+    $aebm->{'demand_sd'} = $aebm->demand('demand_sd');
     $aebm->performance_point();
     ok "0.57", sprintf("%.2f", $aebm->{'performance'}->{'median'}->{'sa'});
     ok "1.98", sprintf("%.2f", $aebm->{'performance'}->{'median'}->{'sd'});

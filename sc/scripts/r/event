@@ -345,7 +345,33 @@ sub datatables {
 	$datatables->{"length"} = scalar @$events;
 	$datatables->{"data"} = API::APIUtil::stringfy($events);
 
-	return $datatables;
+	if ($self->param('format') eq 'geojson') {
+		my $geojson = {};
+		$events = API::APIUtil::stringfy($events);
+		my @features;
+		foreach my $event (@$events) {
+			my %obj;
+			$event->{'title'} = 'M'.$event->{'magnitude'}.' - '.$event->{'event_location_description'};
+			$event->{'mag'} = $event->{'magnitude'};
+			$event->{'facility_type'} = 'epicenter';
+			$obj{'type'} = "Feature";
+			$obj{'properties'} = $event;
+			$obj{'geometry'} = {
+				'type' => 'Point',
+				'coordinates' => [$event->{'lon'}, $event->{'lat'}, $event->{'depth'}]
+			};
+			$obj{'id'} = $event->{'event_id'};
+			push @features, \%obj;
+		}
+		$geojson->{'type'} = 'FeatureCollection';
+		$geojson->{'features'} = \@features;
+		$geojson->{"total"} = $count;
+		$geojson->{"start"} = $start;
+		$geojson->{"length"} = scalar @features;
+		return $geojson;
+	} else {
+		return $datatables;
+	}
 }
 
 sub age_trans {

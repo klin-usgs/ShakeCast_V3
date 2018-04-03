@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/ShakeCast/perl/bin/perl
 
 # $Id: gs_json.pl 478 2008-09-24 18:47:04Z klin $
 
@@ -74,14 +74,16 @@ use File::Path;
 use IO::File;
 use Getopt::Long;
 use Carp;
-use SC;
-use SC::Server;
 use LWP::UserAgent;
 use JSON -support_by_pp;
 use Time::Local;
 use Storable;
 
+use SC;
 use SC::Event;
+use SC::Server;
+use SC::Product;
+use SC::Shakemap;
 use API::Product;
 
 use Data::Dumper;
@@ -126,20 +128,6 @@ $ua->proxy(['http'], $config->{'ProxyServer'})
 	if (defined $config->{'ProxyServer'});
 my $eq_hash_file = "$json_dir/eq.hash";
 my $eq_hash = retrieve($eq_hash_file) if (-e $eq_hash_file);
-
-my @req_prod = ('grid.xml', 'stationlist.xml', 'intensity.jpg', 'info.xml',
-	'ii_overlay.png');
-my $prod_hash_file = $config->{'RootDir'}.'/db/product.hash';
-my $prod_hash; 
-if (-e $prod_hash_file) {
-	$prod_hash = retrieve($prod_hash_file) ;
-} else {
-	my $product = new API::Product->product_type_list('ALL'); 
-	foreach my $item (@$product) {
-		$prod_hash->{$item->{'filename'}} = $item->{'display'};
-	}
-}
-foreach my $req_prod (@req_prod) {$prod_hash->{$req_prod} = 1;}
 
 #######################################################################
 # Run the program
@@ -281,16 +269,53 @@ sub check_duplicated_event
 sub parse_shakemap
 {
 	my ($server, $products, $event) = @_;
-	my $mirror_dir = $config->{DataRoot}.'/'.$event->{net}.$event->{code};
-	mkpath( $mirror_dir ) if not -d $mirror_dir;
 	my $rv;
-	
+
 	use Archive::Zip qw( :ERROR_CODES :CONSTANTS );;
 	my $zip = Archive::Zip->new();
 	
 	#foreach my $product (@$products) {
 	my $product = shift @$products;
+	my $mirror_dir = $config->{DataRoot}.'/'.$event->{net}.$event->{code}
+		.'-'.$product->{'properties'}->{version};
+	mkpath( $mirror_dir ) if not -d $mirror_dir;
+	my $timestamp = _ts($product->{'properties'}->{'process-timestamp'});
+	my %shakemap_hash = ( 
+		'event_id' => $event->{'net'}.$event->{'code'},
+		'event_version' => 1,
+		'shakemap_id' => $product->{'code'},
+		'shakemap_version' => $product->{'properties'}->{'version'},
+		'shakemap_status' => $product->{'properties'}->{'map-status'},
+		'generating_server' => "1",
+		'shakemap_region' => $product->{'properties'}->{'eventsource'},
+		'generation_timestamp' => $timestamp,
+		'begin_timestamp' => $timestamp,
+		'end_timestamp' => $timestamp,
+		'lat_min' => $product->{'properties'}->{'minimum-latitude'},
+		'lat_max' => $product->{'properties'}->{'maximum-latitude'},
+		'lon_min' => $product->{'properties'}->{'minimum-longitude'},
+		'lon_max' => $product->{'properties'}->{'maximum-longitude'},
+	);
+
+	eval {
+		my $sm = SC::Shakemap->new(%shakemap_hash);
+		# store and pass along to downstream servers
+		$sm->process_new_shakemap;
+
+		open (FH, "> $mirror_dir/shakemap.xml");
+		print FH $sm->to_xml;
+		close (FH);
+	};	
+	# catch crashes:
+	if($@){
+		$SC::errstr = $@;
+		SC->error($SC::errstr);
+		return undef;
+	}
+  
+
 	my $gs_url;
+	my %products = product_list();
 	while (my ($mirror, $shakemap) = each( %{$product->{'contents'}})) {
 		if (!$gs_url) {
 			$gs_url = $shakemap->{'url'};
@@ -313,17 +338,43 @@ sub parse_shakemap
 			foreach my $memberName ($zip->memberNames()) {
 				$zip->extractMemberWithoutPaths($memberName, $mirror_dir.'/'.$memberName);
 			}
+			$mirror =~ s/.zip$//;
 		}
+		my $product_type = $products{$mirror};
+		next unless ($product_type);
+		my %product_hash = ( 
+			'shakemap_id' => $product->{'code'},
+			'shakemap_version' => $product->{'properties'}->{'version'},
+			'product_type' => $product_type,
+			'product_status' => $product->{'properties'}->{'map-status'},
+			'generating_server' => "1",
+			'generation_timestamp' => $timestamp,
+			'lat_min' => $product->{'properties'}->{'minimum-latitude'},
+			'lat_max' => $product->{'properties'}->{'maximum-latitude'},
+			'lon_min' => $product->{'properties'}->{'minimum-longitude'},
+			'lon_max' => $product->{'properties'}->{'maximum-longitude'},
+		);
+		
+		print Dumper(%product_hash);
+		eval {
+			my $sm = SC::Product->new(%product_hash);
+			$sm->process_new_product();
+		};
+		if($@){
+			$SC::errstr = $@;
+			SC->error($SC::errstr);
+		}
+
 	}
 	#print ref $product,"\n";
 	my $perl = SC->config->{perlbin};
 	my $root = SC->config->{RootDir};
 	my $sc_id = $event->{net}.$event->{code};
-	my $cmd = "$perl $root/bin/scfeed_local.pl -event $sc_id -sc_id $sc_id";
-	$cmd .= ' -force_run -scenario' if (@ARGV);
-	$rv = `$cmd`;
+	#my $cmd = "$perl $root/bin/scfeed_local.pl -event $sc_id -sc_id $sc_id";
+	#$cmd .= ' -force_run -scenario' if (@ARGV);
+	#$rv = `$cmd`;
 	
-	return $rv;
+	#return $rv;
 }
 
 sub parse_dyfi
@@ -481,71 +532,65 @@ sub parse_origin
 {
 	my ($server, $products, $event) = @_;
 	my $mirror = $json_dir.'/'.$event->{net}.$event->{code}.'/event.xml';
+	my $event_url = $event->{'url'};
 	my $version;
 	my $epicenter;
 	my $mrkcenter;
-	
-	foreach my $product (@$products) {		
-		#my $ts = ts($product->{eventtime}/1000);	
-		my $ts = _ts($product->{'properties'}->{eventtime});	
-		$version = 1;	
-		#$version = ($product->{'properties'}->{'version'}) ? 
-		#	$product->{'properties'}->{'version'} : 1;	
-		my $xml_text =<<__SQL1__ 
-<event
-	event_id="$event->{net}$event->{code}"
-	event_version="$version"
-	event_status="NORMAL"
-	event_type="$event->{event_type}"
-	event_name=""
-	event_location_description="$event->{place}"
-	event_timestamp="$ts"
-	event_region="$event->{net}"
-	event_source_type=""
-	external_event_id=""
-	magnitude="$product->{'properties'}->{magnitude}"
-	mag_type="$product->{'properties'}->{'magnitude-type'}"
-	lat="$product->{'properties'}->{latitude}"
-	lon="$product->{'properties'}->{longitude}"
-	depth="$product->{'properties'}->{depth}"
-/>
-__SQL1__
-;
-	eval{
-	open(FH, "> $mirror");
-	print FH $xml_text;
-	close(FH);
-	};
-	my $xml = SC->xml_in($xml_text) or return($SC::errstr);
-	#return (1) unless (event_filter($xml->{'event'}));
-	
-    my $event = SC::Event->new(%{ $xml->{'event'} }) or die "error processing XML for Event";
-    # store and pass along to downstream servers
-    $event->process_new_event or die $SC::errstr;
+	my $event_type = ($event_type eq 'event') ? 'ACTUAL' : 'SCENARIO';
 
-	eval{
-    require Dispatch::Client;
+	foreach my $product (@$products) {
+		my %event_hash = ( 
+			'event_id' => $event->{'net'}.$event->{'code'},
+			'event_version' => 1,
+			'event_status' => "NORMAL",
+			'event_type' => $event_type,
+			'event_name' => "",
+			'event_location_description' => $event->{'place'},
+			'event_timestamp' => _ts($product->{'properties'}->{'eventtime'}),
+			'event_region' => $event->{'net'},
+			'event_source_type' => "",
+			'external_event_id' => "",
+			'magnitude' => $product->{'properties'}->{'magnitude'},
+			'mag_type' => $product->{'properties'}->{'magnitude-type'},
+			'lat' => $product->{'properties'}->{'latitude'},
+			'lon' => $product->{'properties'}->{'longitude'},
+			'depth' => $product->{'properties'}->{'depth'},
+			'ids' => $event->{'ids'},
+		);
+		
+		my $event = SC::Event->new(%event_hash) or return "error processing XML for Event";
+		# store and pass along to downstream servers
+		$event->process_new_event or return $SC::errstr;
 
-    Dispatch::Client::set_logger($SC::logger);
+		eval{
+		require Dispatch::Client;
 
-    Dispatch::Client::dispatch(
-	SC->config->{'Dispatcher'}->{'RequestPort'},
-	"map_tile", SC::Server->this_server->server_id, $event->{event_id}, 'event_tile');   
-	SC->log(0,"Event Tile ".$event->{event_id});
- 
-	};
-	
-	$epicenter = $product->{'properties'}->{latitude}.",".$product->{'properties'}->{longitude};
-	$mrkcenter = ($product->{'properties'}->{latitude}-6).",".$product->{'properties'}->{longitude};
+		Dispatch::Client::set_logger($SC::logger);
+
+		Dispatch::Client::dispatch(
+		SC->config->{'Dispatcher'}->{'RequestPort'},
+		"map_tile", SC::Server->this_server->server_id, $event->{event_id}, 'event_tile');   
+		SC->log(0,"Event Tile ".$event->{event_id});
+
+			open (FH, "> $mirror");
+			print FH $event->to_xml;
+			close (FH);
+		};
+		
+		my $ids = $event->{'ids'};
+		$ids =~ s/^,//;
+		$ids =~ s/,$//;
+		my @fields = split ',', $ids;
+		next if ($#fields <= 0);
+		foreach my $field (@fields) {
+			SC->dbh->do(qq/
+				update event set superceded_timestamp = $SC::to_date
+				where event_id = ?/, undef,
+				SC->time_to_ts(), $field);
+		}
+
 	}
 	
-	my $gm_epicenter = $json_dir.'/'.$event->{net}.$event->{code}.'/gm_epicenter.png';
-	return if (-e $gm_epicenter);
-	my $gm_url = "http://maps.google.com/maps/api/staticmap?center=".$epicenter.
-			"&zoom=1&size=72x72&maptype=terrain&sensor=false".
-			"&markers=icon:http://earthquake.usgs.gov/research/software/shakecast/icons/epicenter.png|".$mrkcenter;
-	$ua->mirror($gm_url, $gm_epicenter);
-
 }
 
 sub _ts
@@ -636,10 +681,28 @@ sub fetch_json_page
 }
 
 # returns a list of all products that should be polled for new events, etc.
+sub product_list {
+	my @products;
+	
+    undef $SC::errstr;
+    eval {
+		my $sth = SC->dbh->prepare(qq/
+			select filename,
+			  product_type
+			  from product_type/);
+		$sth->execute;
+		while (my @p = $sth->fetchrow_array()) {
+			push @products, @p;
+		}
+    };
+    return @products;
+}
+
+# returns a list of all products that should be polled for new events, etc.
 sub event_filter {
 	my ($xml) = @_;
 	my $rc = 0;
-	
+
 	return ($rc) if ($xml->{'event_region'} =~ /pt|at|dr/i);
 	
 	my $time_window = (SC->config->{'rss'}->{'TIME_WINDOW'}) ? 
@@ -731,7 +794,7 @@ sub _retrieve {
 
 	$product =~ s/$evid(\_*)//;
 
-	return $prod_hash->{$product};
+	return 1;
 }
 
 sub usage {

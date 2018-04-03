@@ -2,8 +2,8 @@
 
 echo Loading ShakeCast Data...
 
-set MYSQL="c:\shakecast\mysql\mysql server 5.6\bin\mysql"
+set MARIADB="c:\shakecast\mariadb\bin\mysql"
 
-%MYSQL% -u sc -psc sc <..\sc\db\sc-data.sql
+%MARIADB% -u sc -psc sc <..\sc\db\sc-data.sql
 
 echo Done.

@@ -14,6 +14,7 @@ my $config = SC->config;
 
 my $sc_dir = $config->{'DataRoot'};
 my $db_dir = $config->{'RootDir'} . '/db';
+my $grid_xml = ($config->{'grid_xml'}) ? $config->{'grid_xml'} : 'grid.xml';
 
 my $evid = $ARGV[0];
 my $version = $ARGV[1];
@@ -51,7 +52,7 @@ my $fac_list = SC->dbh->selectall_arrayref(qq{
 my $nrec=0;
 #my $xs = XML::LibXML::Document->new("$dir_path/fac_att.txt");
 use XML::LibXML::Simple;
-my $xml = SC->sm_twig("$dir_path/grid.xml");
+my $xml = SC->sm_twig("$dir_path/$grid_xml");
 my $grid_spec = $xml->{'grid_specification'};
 my $grid_data = $xml->{'grid_data'};
 my $event_spec = $xml->{'event'};

@@ -776,23 +776,23 @@ sub screen_shot {
 }
 
 # send product to a remote server
-sub facility_tile {
-    my ($remote_id, $event_id, $event_version) = @_;
+#sub facility_tile {
+#    my ($remote_id, $event_id, $event_version) = @_;
 	
-    my $perl = SC->config->{perlbin};
-    my $root = SC->config->{RootDir};
+#    my $perl = SC->config->{perlbin};
+#    my $root = SC->config->{RootDir};
     
-    my $rv = `$perl $root/bin/facility_tile.pl $event_id $event_version`;
+#    my $rv = `$perl $root/bin/facility_tile.pl $event_id $event_version`;
     
-    if ($rv =~ /STATUS=SUCCESS/) {
-	return 1;
-    } else {
-	return 0;
-    }
+#    if ($rv =~ /STATUS=SUCCESS/) {
+#	return 1;
+#    } else {
+#	return 0;
+#    }
     
-    return 0;
+#    return 0;
 
-}
+#}
 
 # send product to a remote server
 sub map_tile {

@@ -82,6 +82,7 @@ use SC;
 
 SC->initialize;
 my $config = SC->config;
+my $grid_xml = ($config->{'grid_xml'}) ? $config->{'grid_xml'} : 'grid.xml';
 
 my %options = (
     'event'    => 0,
@@ -181,12 +182,12 @@ my ($data_dir, $grid_file, $shakemap_file, $event_file);
 if ($event =~ /_scte$/) {
 	my $test_data_dir = $config->{'RootDir'}."/test_data/$event";
 	$data_dir = $config->{'DataRoot'}."/$event-$version";
-	$grid_file = $data_dir."/grid.xml";
+	$grid_file = $data_dir."/$grid_xml";
 	$shakemap_file = $test_data_dir."/shakemap_template.xml";
 	$event_file = $test_data_dir."/event_template.xml";
 } else {
 	$data_dir = $config->{'DataRoot'}."/$event-$version";
-	$grid_file = $data_dir."/grid.xml";
+	$grid_file = $data_dir."/$grid_xml";
 	$shakemap_file = $data_dir."/shakemap.xml";
 	$event_file = $data_dir."/event.xml";
 }	
