@@ -1,0 +1,70 @@
+#!/bin/bash
+
+
+if [ "$#" -ne 1 ]; then
+	echo "Wrong number of arguments provided! Exiting!"
+	exit -1
+fi
+
+
+read -s -p "Please enter the root database user password: " dbpass1
+echo
+read -s -p "Please enter the root database user password again: " dbpass2
+echo
+
+if [ "$dbpass1" != "$dbpass2" ]; then
+        echo
+        echo "Password entries do not match. Exiting!"
+        echo
+        exit 1
+else
+        dbpass=$dbpass2
+fi
+
+
+mysql -u root --password="$dbpass" test < /dev/null
+
+if [ $? -ne 0 ]; then
+	echo "Couldn't connect to mysql as root with the password provided. Exiting."
+	exit -1
+fi
+
+filelock=/usr/local/shakecast/var/reset_notification.lock
+
+if [ -e "$filelock" ]; then
+	echo "Lock detected! Some other process is running a setup. Exiting!"
+	exit -1
+fi
+
+timestamp=`date`
+echo "pid:$$ date:$timestamp" > $filelock
+
+sqlitedb="/usr/local/shakecast/etc/shakecast.sqlite3"
+
+if [ -f "$sqlitedb" ]; then
+
+	org_id=`sqlite3 etc/shakecast.sqlite3 "select org_id from dispd_port_seq where org_id = '$1';"`
+		rc1=$?
+
+	if [ "$rc1" -ne 0 ]; then
+		echo "${sqlitedb}: selects failed to retreive values from required table! Exiting!"
+		rm $filelock
+		exit -1
+	fi
+else
+	echo "No sqlite3 database: $sqlitedb. Exiting!"
+	exit -1
+fi
+
+default_pass='sc'
+
+echo "update notification set delivery_status = 'DISABLED' where delivery_status = 'PENDING';" | mysql -u $1 --password="$default_pass" $1
+
+echo "update notification_request set disabled = NULL;" | mysql -u $1 --password="$default_pass" $1
+
+echo
+echo "    Notification request table enabled for domain $1"
+echo 
+
+rm $filelock
+

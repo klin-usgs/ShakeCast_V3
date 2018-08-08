@@ -110,7 +110,7 @@ sub screen_capture {
     
     my $rv = `/bin/touch $tmpfile`;
     #$rv = `$wkhtmltopdf --javascript-delay 8000 $proxy --width 1024 --height 534 '$url' $tmpfile`;
-    $rv = `$wkhtmltopdf --javascript-delay 8000 --width 1024 --height 534 '$url' $tmpfile`;
+    $rv = `$wkhtmltopdf --javascript-delay 12000 --width 1024 --height 534 '$url' $tmpfile`;
     
     SC->log(0, "Screen Capture: $event_id-$event_version ".$rv);
 

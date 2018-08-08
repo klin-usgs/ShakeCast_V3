@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<html>
+<head>
+	
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
     <link rel="shortcut icon" href="images/sc_logo.png">
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js" integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA==" crossorigin=""></script>
 
     <title>Earthquake List</title>
 
@@ -16,6 +20,8 @@
     <!-- Custom styles for this template -->
 	<link rel="stylesheet" href="./bootstrap3/css/navbar-fixed-top.css">
 	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./leaflet/leaflet.css" />
+	<link rel="stylesheet" href="./leaflet/MarkerCluster-sc.css" />
 	<link rel="stylesheet" href="./css/jquery-ui.css">
 	  
     <!-- Just for debugging purposes. Don't actually copy this line! -->
@@ -122,84 +128,65 @@
     <footer class="footer">
       <div class="container">
         <ul class="footer-links">
-          <li><a href="http://earthquake.usgs.gov">&copy; USGS 2017</a></li>
+          <li><a href="http://earthquake.usgs.gov">&copy; USGS 2013</a></li>
           <li class="muted">&middot;</li>
-          <!-- <li><a href="?dest=index">Desktop</a></li>
-          <!-- <li class="muted">&middot;</li> -->
-          <!-- <li><a href="?dest=mobile">Mobile</a></li> -->
-					<li>Rev. 		<TMPL_VAR NAME=SOFTWARE_REVISION></li>
+          <li>Desktop</li>
+          <!-- <li class="muted">&middot;</li>
+          <li><a href="?dest=mobile">Mobile</a></li> -->
         </ul>
      </div>
     </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript">
-      var prefix;
-      var script = '<script type="text/javascript" src="';
-      var loc = new String(window.parent.document.location);
-      if (loc.indexOf("https://")!= -1)
-	prefix = "https://";
-      else
-	prefix = "http://";
-      script += prefix + 'maps.google.com/maps/api/js?key=<TMPL_VAR NAME=GM_KEY>"><' + '/script>';
-      document.write(script);
-    </script>
+
     <script type="text/javascript" src="./js/jquery.min.js"></script>
     <script type="text/javascript" src="./bootstrap3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
-    <script type="text/javascript" src="./js/shakemap.js"></script>
-    <script type="text/javascript" src="./js/loadXML.js"></script>
-    <script type="text/javascript" src="./js/mapapp_list.js"></script>
-    <script type="text/javascript" src="./js/sc_constant.js"></script>
     <script type="text/javascript" src="./js/storage.js"></script>
-    <script type="text/javascript" src="./js/sc_markerclusterer.js"></script>
+    <script type="text/javascript" src="./leaflet/leaflet.markercluster-sc.js"></script>
  
     <script>
-      var latlng = new google.maps.LatLng(35,-120);
-      var map;
-      var sc_id = gup('event');
-      var type = gup('type') ? gup('type') : 'actual';
-      var age = gup('age') ? gup('age') : 'day';
-      var eq_des = [];
-      var start=0, length=0, total;
-		var markers = [];
-		var markerCluster;
-	        var marker_icon = [];
-      //var sm_url = 'scripts/event.pl/datatables';
+			var map = L.map('map_canvas');
+			var sc_id = gup('event');
+			var type = gup('type') ? gup('type') : 'actual';
+			var age = gup('age') ? gup('age') : 'day';
+			var eq_des = [];
+			var start=0, length=0, total;
+			var markers = [];
+			var markerCluster;
+			var marker_icon = [];
       var sm_url = 'scripts/r/event/datatables';
 			
 	    SC_DEF.init();
-        //var sm_url = 'scripts/shakemap.pl/from_id/' + sc_id;
-        var username = SC_DEF.user ? SC_DEF.user : 'guest';
-        var password = SC_DEF.pass ? SC_DEF.pass : 'guest';
-        var sm_url = 'scripts/r/user/from_id/'+username;
-        var submit_data = {
-        };
+			var submit_data = {};
 
       $(window).load(function() {
-	map = MAPAPP.init(SC_DEF);
-	//menu_update();
+				L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Vvd2FubGluIiwiYSI6ImNpdWhhd2FuYzAxMnUyb2wzYTU4NzNycGkifQ.9BJUDR37C1r6QgprU0pQrA', {
+					maxZoom: 18,
+					attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+					'Imagery � <a href="http://mapbox.com">Mapbox</a>',
+					id: 'mapbox.streets'
+				}).addTo(map);
+				L.control.scale({maxWidth: 150}).addTo(map);
 
-	if (!(type)) {
-	  type = SC_DEF.event_type ? SC_DEF.event_type : 'actual';
-	}
-	if (!(age)) {
-	  age = SC_DEF.recent_events ? parseInt(SC_DEF.recent_events) : 'week';
-	}
-	//sm_url = 'scripts/event.pl/datatables?type='+type+'&age='+age;
-	sm_url = 'scripts/r/event/datatables';
+				if (!(type)) {
+					type = SC_DEF.event_type ? SC_DEF.event_type : 'actual';
+				}
+				if (!(age)) {
+					age = SC_DEF.recent_events ? parseInt(SC_DEF.recent_events) : 'week';
+				}
+				//sm_url = 'scripts/event.pl/datatables?type='+type+'&age='+age;
+				sm_url = 'scripts/r/event/datatables';
 
-	if (type == 'actual') {
-	  $(".breadcrumb li").last().html(age.toUpperCase() + ' List');
-	  $("#list_"+age).addClass("active");
-	} else {
-	  $(".breadcrumb li").last().html(type.toUpperCase() + ' Event List');
-	  $("#list_"+type).addClass("active");
-	}
-	fnAccordion();
+				if (type == 'actual') {
+					$(".breadcrumb li").last().html(age.toUpperCase() + ' List');
+					$("#list_"+age).addClass("active");
+				} else {
+					$(".breadcrumb li").last().html(type.toUpperCase() + ' Event List');
+					$("#list_"+type).addClass("active");
+				}
+				fnAccordion();
       });
 			
       function fnAccordion ( )
@@ -216,7 +203,9 @@
 	  //MAPAPP.addMarker(data.facility_damage[key]);
 	  var event = data[i];
 	  event.opacity = 1-i/data.length;
+/*
 	  MAPAPP.addMarker(event);
+*/
 	  html_array = html_array.concat([
 	    '<h3 id="'+ event.shakemap_id + '-' + event.shakemap_version,
 	    '"><a href="?dest=event&event=' + event.shakemap_id + '-' + event.shakemap_version,
@@ -242,7 +231,9 @@
 	      var event = eq_des[id];
 	      var sLat = parseFloat(event.lat);
 	      var sLon = parseFloat(event.lon);
+/*
 	      google.maps.event.trigger(MAPAPP.facMarkers[event.event_id], 'click');
+*/
 	      if (markerCluster) {
 		markerCluster.removeMarkers(markers);
 		markers = [];
@@ -250,9 +241,11 @@
 	      load_marker(id);
 	  });
   
+/*
 	  google.maps.event.trigger(MAPAPP.facMarkers[data[0].event_id], 'click');
 	  map.setCenter(MAPAPP.facMarkers[data[0].event_id].getPosition());
-	  
+*/
+
 	  var event = data[0];
 	  $('#'+selector(event.shakemap_id) + '-' + event.shakemap_version).trigger('click');
 	  if (eqdata.start+eqdata.length >= eqdata.total) {
@@ -276,7 +269,9 @@
 		$("#map_canvas").width($("#main_pane").width());
 		$("#map_canvas").height(($("#map_canvas").width())/2);
 		//console.log($("#map_canvas").width());
+/*
 		google.maps.event.trigger(map, 'resize');
+*/
 		var cont_height = $("#map_canvas").height() + $(".accordion").height();
 		if ($("#sidebar").length) {
 			cont_height = ($("#sidebar").height() > cont_height) ? $("#sidebar").height() : cont_height;
@@ -399,8 +394,10 @@ function selector(sm_id) {
 		} // for
 		for (var fac in data) {
 		  var facility = data[fac];
+/*
 		  var latLng = new google.maps.LatLng(facility.latitude,
 		      facility.longitude);
+*/
 		  var icon_type =  facility.facility_type + facility.damage_level;
 		  icon_type = icon_type.toLowerCase();
 		  if (typeof marker_icon[icon_type] === "undefined") {
