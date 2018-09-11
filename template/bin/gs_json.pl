@@ -596,21 +596,23 @@ sub fetch_json_page
 		my $prop = $feature->{properties};
 		my $geom = $feature->{geometry}->{'coordinates'};
 		$active_eq{$prop->{'net'}.$prop->{'code'}} = 1;
-		next if ($eq_hash->{$prop->{'code'}} > $prop->{'updated'} && $event_check);
+		next if ($eq_hash->{$prop->{'code'}}->{'origin'} > $prop->{'updated'} && $event_check);
 		next if ($prop->{mag} < $mag_cutoff);
 
-		$eq_hash->{$prop->{'net'}.$prop->{'code'}} = $prop->{'updated'};
+		$eq_hash->{$prop->{'net'}.$prop->{'code'}}->{'origin'} = $prop->{'updated'};
 		my $ts =SC->time_to_ts($prop->{'time'}/1000);
 		my $eq_geom = {
 			event_timestamp => $ts,
 			event_region => $prop->{net},
+			types => $prop->{'types'},
 			lat	=>	$geom->[1],
 			lon	=>	$geom->[0],
 		};
 
 		#next unless (event_filter($eq_geom));
-		my $rc = event_filter($eq_geom);
+		my ($rc, $groups) = event_filter($eq_geom);
 		next unless ($rc);
+		$eq_hash->{$prop->{'net'}.$prop->{'code'}}->{'sc_groups'} = $groups;
 		# print episode information:
 		push @evt_list, $prop;
     }
@@ -649,25 +651,32 @@ sub event_filter {
 	return ($rc) unless ($time_cutoff > time() );
 
 	use Graphics_2D;
+	my $idp = [];
 	my $sth_lookup_poly = SC->dbh->prepare(qq{
-		select gp.profile_name, gp.geom
-		  from geometry_profile gp inner join shakecast_user su
-		  on gp.profile_name = su.username});
+		select su.shakecast_user, gp.geom
+		from geometry_profile gp inner join shakecast_user su
+		on gp.profile_name = su.username});
 
-    my $idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
-	return (1) unless (scalar @$idp >= 1);
+	$idp = SC->dbh->selectcol_arrayref($sth_lookup_poly, {Columns=>[1,2]});
+	if (SC->config->{'EQ_POLY'}) {
+		push @$idp, ('1', SC->config->{'EQ_POLY'});
+	}
+	#return (1) unless (scalar @$idp >= 1);
+	my @groups;
 	while (@$idp) {
 		my $profile_name = shift @$idp;
 		my $geom = shift @$idp;
+		#print "$profile_name","::","$geom\n";
 		my $polygon = load_geometry($profile_name,$geom);
-		#print "$facility::$lon::$lat\n";
 		if ($polygon->{POLY}->crossingstest([$xml->{'lon'}, $xml->{'lat'}])) {
 			$rc=1;
-			last;
+			push @groups, $profile_name;
+		} else {
+			$rc=1 if ($xml->{'types'} =~ /shakemap/i);
 		}
 	}
 
-	return $rc;
+	return ($rc, \@groups);
 }
 
 sub load_geometry {
@@ -681,7 +690,8 @@ sub load_geometry {
   my ($nc, $poly, $lat, $lon, $north_b, $south_b, $east_b, $west_b);
   my $box    = {};
   my $coords = [];
-  my @args = split /,/, $geom;
+  my @args = split /[\,\;\s\t\n]+/, $geom;
+
 
   $box->{ZONE}    = $zone;
   $box->{COORDS} = $coords;

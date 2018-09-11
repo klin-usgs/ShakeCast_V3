@@ -131,6 +131,7 @@ my ($pdf, $page, $rc) ;
 my ($earthquake, $default);
 my @mmi = ("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X+");
 my $grid_spec = sc_xml($event);
+my $earthquake = $grid_spec->{'event'};
 #print Dumper($grid_spec);
 my %damage_levels = (
     'GREY'     => 0,
@@ -148,7 +149,7 @@ foreach my $conf (@confs) {
 	my ($pdf_file) = $conf =~ /$temp_dir\/(.*)$/;
 	print "$pdf_file\n";
 	
-	($earthquake, $default) = load_default();
+	$default = load_default();
 	#print Dumper($directive);
 
 	$page = $pdf->openpage(1);
@@ -334,22 +335,27 @@ sub _max {
 # Load Default Parameters
 #
 sub load_default {
-	my $sta_file = "$sc_dir/$event/stationlist.xml";
-	$sta_file =~ s/_v(\d+)\//-$1\//;
-	my $xml =  XMLin($sta_file);
-	my $earthquake = $xml->{'earthquake'};
+	#my $sta_file = "$sc_dir/eq_product/$evid/event.xml";
+	#my $sta_file = "$sc_dir/$event/stationlist.xml";
+	#$sta_file =~ s/_v(\d+)\//-$1\//;
+	#my $xml =  XMLin($sta_file);
+	#my $earthquake = $xml->{'earthquake'};
+	#my $earthquake = XMLin($sta_file);
 
-	$earthquake->{timestamp} = sprintf ("%04d-%02d-%02d %02d:%02d:%02d GMT",
-	$earthquake->{'year'}, $earthquake->{'month'}, $earthquake->{'day'},
-	$earthquake->{'hour'}, $earthquake->{'minute'}, $earthquake->{'second'},
-	$earthquake->{'timezone'});
-
+	#$earthquake->{timestamp} = sprintf ("%04d-%02d-%02d %02d:%02d:%02d GMT",
+	#$earthquake->{'year'}, $earthquake->{'month'}, $earthquake->{'day'},
+	#$earthquake->{'hour'}, $earthquake->{'minute'}, $earthquake->{'second'},
+	#$earthquake->{'timezone'});
+	
+	$earthquake->{timestamp} = $earthquake->{event_timestamp};
 	my ($sec, $min, $hour, $d_mon, $mon, $year) = gmtime();
-	$earthquake->{process_time} = sprintf ("Created: %04d-%02d-%02d %02d:%02d:%02d GMT",
+	$earthquake->{process_time} = sprintf ("Created: %04d-%02d-%02dT%02d:%02d:%02dUTC",
 	$year+1900, $mon+1, $d_mon, $hour, $min, $sec);
 	
 	$earthquake->{evid} = $evid;
 	$earthquake->{version} = $version;
+	$earthquake->{mag} = $earthquake->{magnitude};
+	$earthquake->{locstring} = $earthquake->{event_description};
 	
 	my %default = (
 		'font_type' => {

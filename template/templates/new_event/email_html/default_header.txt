@@ -3,7 +3,7 @@
 ;
 From: ShakeCast V3 <%HEADER_FROM%>
 To: %HEADER_TO%
-Subject: %_ITEMNO% New Event(s), Max Magnitude: M%_MAX_MAGNITUDE%
+Subject: %EVENT_TYPE:ACTUAL;🌎;SCENARIO;🛑[Earthquake Scenario];HEARTBEAT;️ℹ  [Heartbeat Test];%%_ITEMNO% New Event(s), Max Magnitude: M%_MAX_MAGNITUDE%  
 Attach: /usr/local/shakecast/sc/images/header.jpg
 ; End -- header
 

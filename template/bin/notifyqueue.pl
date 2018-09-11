@@ -254,6 +254,40 @@ select s.shakemap_id, s.shakemap_version, g.grid_id,
 	 ss.grid_id = g.grid_id and
      ss.record_id > ?
 __SQL__
+     GET_NEW_EVENTS => { SQL => <<__SQL__ },
+select n.notification_request_id,
+       n.shakecast_user,
+       e.event_id,
+       e.event_version,
+	e.event_type,
+ 	udm.delivery_address
+  from notification_request n,
+       event e,
+       user_delivery_method udm
+ where (n.shakecast_user not in (select shakecast_user from geometry_user_profile)
+   and n.shakecast_user = udm.shakecast_user and n.delivery_method = udm.delivery_method)
+   and (n.disabled = 0 or n.disabled is null)
+   and e.seq > ?
+   and (n.event_type = 'ALL' or n.event_type = e.event_type or n.event_type is null)
+   and (n.limit_value is null or e.magnitude >= n.limit_value)
+   and (   (n.notification_type = 'NEW_EVENT' and e.event_status in ('normal', 'released')
+            and e.initial_version = 1)
+        or (n.notification_type = 'UPD_EVENT' and e.event_status in ('normal', 'released')
+            and e.initial_version = 0 and e.superceded_timestamp is null)
+        or (n.notification_type = 'CAN_EVENT' and e.event_status = 'cancelled'
+            and e.initial_version = 0 and e.superceded_timestamp is null))
+__SQL__
+     INSERT_NEW_EVENT => { SQL => <<__SQL__ },
+insert into notification (
+       delivery_status,
+       notification_request_id,
+       shakecast_user,
+       event_id,
+       event_version,
+       delivery_address,
+       queue_timestamp)
+values ('PENDING', ?, ?, ?, ?, ?, ?)
+__SQL__
      );
      
 =for nobody
@@ -1166,27 +1200,54 @@ sub scan_for_events {
     my $max_event_seq = $dbh->selectrow_array($SQL{GET_MAX_EVT_SEQ}->{STH});
     $max_event_seq = nz($max_event_seq);
     vvpr "last seq = $last_event_seq; max seq = $max_event_seq";
+    my $eq_hash = {};
+    eval {
+	use Storable;
+	my $eq_hash_file = $config->{DataRoot}.'/eq_product/eq.hash';
+	$eq_hash = retrieve($eq_hash_file) if (-e $eq_hash_file);
+    };
+
     if ($max_event_seq > $last_event_seq) {
-	foreach my $k (@event_scans) {
-	    vvpr "Scanning for user events...";
-	    my $sth = $dbh->prepare(dosubs($$k));
-	    my $nr = $sth->execute($last_event_seq);
-	    $nr += 0;
-	    vvpr "$nr row(s)";
-	    $n += $nr;
+	my $sth = $SQL{GET_NEW_EVENTS}->{STH};
+	$sth->execute($last_event_seq);
+	while (my $r = $sth->fetchrow_hashref('NAME_uc')) {
+		my $evid = $r->{EVENT_ID};
+		my $evt_version = $r->{EVENT_VERSION};
+		my $evt_type = $r->{EVENT_TYPE};
+		my $delivery_address = $r->{DELIVERY_ADDRESS};
+		my $n_request_id = $r->{NOTIFICATION_REQUEST_ID};
+		my $shakecast_user = $r->{SHAKECAST_USER};
+    		my $sysdate = "'" . SC->time_to_ts . "'";
+		
+		vvpr( join ':', ($n_request_id, $shakecast_user, $evid, 
+			$evt_version, $delivery_address, $sysdate));
+		next unless (grep(/^$shakecast_user$/, @{$eq_hash->{$evid}->{'sc_groups'}}) || $evt_type !~ /ACTUAL/i);
+		
+		$SQL{INSERT_NEW_EVENT}->{STH}->execute($n_request_id, $shakecast_user, $evid, 
+			$evt_version, $delivery_address, $sysdate);
+		$n++;
 	}
+
+#	foreach my $k (@event_scans) {
+#	    vvpr "Scanning for user events...";
+#	    my $sth = $dbh->prepare(dosubs($$k));
+#	    my $nr = $sth->execute($last_event_seq);
+#	    $nr += 0;
+#	    vvpr "$nr row(s)";
+#	    $n += $nr;
+#	}
 	
-	my $user_profile = get_user_profile();
-	foreach my $profile (@$user_profile) {
-		vvpr "Scanning for profile $profile events...";
-		foreach my $k (@event_scans_profile) {
-			my $sth = $dbh->prepare(dosubs($$k));
-			my $nr = $sth->execute($last_event_seq, $profile);
-			$nr += 0;
-			vvpr "$nr row(s)";
-			$n += $nr;
-		}
-	}
+#	my $user_profile = get_user_profile();
+#	foreach my $profile (@$user_profile) {
+#		vvpr "Scanning for profile $profile events...";
+#		foreach my $k (@event_scans_profile) {
+#			my $sth = $dbh->prepare(dosubs($$k));
+#			my $nr = $sth->execute($last_event_seq, $profile);
+#			$nr += 0;
+#			vvpr "$nr row(s)";
+#			$n += $nr;
+#		}
+#	}
 	vvpr "total $n event notification(s) queued";
 	set_parm('LAST_EVENT_SEQ', $max_event_seq); # also commits
     }

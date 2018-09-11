@@ -287,6 +287,7 @@ SELECT s.shakemap_id,
         g.lat_max AS bound_north,   
         g.lon_min AS bound_west,    
         g.lon_max AS bound_east,    
+	g.grid_id,
        r.aggregate
   FROM ((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
@@ -317,6 +318,7 @@ SELECT s.shakemap_id,
        s.generation_timestamp,
        e.event_id,
        e.event_version,
+       e.event_type,
        e.event_name,
        e.magnitude,
        e.event_location_description,
@@ -356,6 +358,7 @@ SELECT s.shakemap_id,
         g.lat_max AS bound_north,   
         g.lon_min AS bound_west,    
         g.lon_max AS bound_east,    
+	g.grid_id,
        r.aggregate
   FROM ((((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id =
@@ -567,6 +570,7 @@ SELECT s.shakemap_id,
         g.lat_max AS bound_north,  
         g.lon_min AS bound_west,   
         g.lon_max AS bound_east,   
+	g.grid_id,
        r.aggregate
   FROM (((((((notification n
     INNER JOIN notification_request r ON
@@ -633,6 +637,7 @@ SELECT s.shakemap_id,
         g.lat_max AS bound_north, 
         g.lon_min AS bound_west,   
         g.lon_max AS bound_east,   
+	g.grid_id,
        r.aggregate
   FROM (((((((((notification n
     INNER JOIN notification_request r ON n.notification_request_id = r.notification_request_id)
@@ -705,6 +710,9 @@ SELECT attribute_name, attribute_value FROM facility_attribute WHERE facility_id
 __SQL__
       SELECT_FACILITY_FEATURE => { SQL => <<__SQL__ },
 SELECT geom_type, geom FROM facility_feature WHERE facility_id = ?
+__SQL__
+      SELECT_FACILITY_METRIC => { SQL => <<__SQL__ },
+SELECT dist FROM facility_shaking WHERE facility_id = ? and grid_id = ?
 __SQL__
       SELECT_TEMPLATE => { SQL => <<__SQL__ },
 SELECT file_name FROM message_format WHERE message_format = ?
@@ -1352,6 +1360,7 @@ sub add_derived_values {
     add_exceedance_ratio($r);
 	add_facility_attribute($r);
 	add_facility_feature($r);
+	add_facility_metric($r);
     # put others here...
 }
 
@@ -1400,6 +1409,20 @@ sub add_facility_feature {
     }
 }
 
+
+sub add_facility_metric {
+    my $r = shift;
+
+    if ($r->{FACILITY_ID}) {
+		my $sth = $SQL{SELECT_FACILITY_METRIC}->{STH};
+		$sth->execute($r->{FACILITY_ID}, $r->{GRID_ID});
+		my $ff = $sth->fetchrow_hashref('NAME_uc');
+		if ($ff) {
+			$r->{DIST} = $ff->{DIST}; 
+		}
+		$sth->finish;
+    }
+}
 
 sub epr {
     SC->log(0, @_);
@@ -1456,28 +1479,47 @@ sub executescript {
 
 sub expand {
     my ($allow_conditionals, $fname, @rr) = @_;
-    my ($skipping, @lines);
+    my ($skipping, @lines, @if_stack);
    
     unless (open TMPLT, $fname) {
     error "Can't open template <$fname>: $!";
     return undef;
     }
+    $skipping = 0;
+    push @if_stack, $skipping;
     while (my $line = <TMPLT>) {
     if ($allow_conditionals) {
         next if $line =~ /^;/;
         if ($line =~ /^\#ifdef\s+(\w+)/) {
-        if (isdefined($1, @rr)) { $skipping = 0 }
-        else { $skipping = 1 }
-        }
-        elsif ($line =~ /^\#ifndef\s+(\w+)/) {
-        if (isdefined($1, @rr)) { $skipping = 1 }
-        else { $skipping = 0 }
-        }
-        elsif ($line =~ /^\#else\s*$/) {
-        $skipping = ! $skipping;
-        }
-        elsif ($line =~ /^\#endif\s*$/) {
-        $skipping = 0;
+          my $pre_skipping = pop @if_stack;
+	  push @if_stack, $pre_skipping;
+          if (isdefined($1, @rr) && $pre_skipping == 0) { 
+	    $skipping = 0 
+	  } else { 
+	    $skipping = 1 
+	  }
+	  push @if_stack, $skipping;
+        } elsif ($line =~ /^\#ifndef\s+(\w+)/) {
+	  push @if_stack, $skipping;
+          if (isdefined($1, @rr) || $skipping == 1) { 
+	    $skipping = 1 
+	  } else { 
+	    $skipping = 0 
+	  }
+        } elsif ($line =~ /^\#else\s*$/) {
+          my $pre_skipping = pop @if_stack;
+          $pre_skipping = pop @if_stack;
+	  push @if_stack, $pre_skipping;
+	  if ($pre_skipping == 1) {
+            $skipping = 1;
+	  } else {
+            $skipping = ! $skipping;
+	  }
+	  push @if_stack, $skipping;
+        } elsif ($line =~ /^\#endif\s*$/) {
+          $skipping = pop @if_stack;
+          $skipping = pop @if_stack;
+	  push @if_stack, $skipping;
         }
         else {
         next if $skipping;
