@@ -128,7 +128,8 @@ my $eq_hash_file = "$json_dir/eq.hash";
 my $eq_hash = retrieve($eq_hash_file) if (-e $eq_hash_file);
 
 my @req_prod = ('grid.xml', 'stationlist.xml', 'intensity.jpg', 'info.xml',
-	'ii_overlay.png');
+	'ii_overlay.png', 'intensity_overlay.png', 'cont_mi.json',
+        'info.json');
 my $prod_hash_file = $config->{'RootDir'}.'/db/product.hash';
 my $prod_hash; 
 if (-e $prod_hash_file) {
