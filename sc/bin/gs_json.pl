@@ -304,6 +304,7 @@ sub parse_shakemap
 		#my $content_url = "http://" . $server . $shakemap->{'url'};
 		my $content_url = $shakemap->{'url'};
 		next unless (_retrieve($content_url, $event));
+		$mirror = 'ii_overlay.png' if ($mirror =~ /intensity_overlay/);
 		my $resp = $ua->mirror($content_url, $mirror_dir.'/'.$mirror);
 		$rv=1 if ($resp->is_success);
 		if ($mirror =~ /.xml.zip$/) {
