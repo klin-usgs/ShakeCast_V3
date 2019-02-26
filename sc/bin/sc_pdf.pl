@@ -334,22 +334,22 @@ sub _max {
 # Load Default Parameters
 #
 sub load_default {
-	my $sta_file = "$sc_dir/$event/stationlist.xml";
+	my $sta_file = "$sc_dir/$event/event.xml";
 	$sta_file =~ s/_v(\d+)\//-$1\//;
-	my $xml =  XMLin($sta_file);
-	my $earthquake = $xml->{'earthquake'};
+	#my $xml =  XMLin($sta_file);
+	$earthquake =  XMLin($sta_file);
+	#$earthquake = $xml->{'earthquake'};
+	#print Dumper($earthquake);
 
 	$earthquake->{timestamp} = sprintf ("%04d-%02d-%02d %02d:%02d:%02d GMT",
 	$earthquake->{'year'}, $earthquake->{'month'}, $earthquake->{'day'},
 	$earthquake->{'hour'}, $earthquake->{'minute'}, $earthquake->{'second'},
 	$earthquake->{'timezone'});
-
-	my ($sec, $min, $hour, $d_mon, $mon, $year) = gmtime();
-	$earthquake->{process_time} = sprintf ("Created: %04d-%02d-%02d %02d:%02d:%02d GMT",
-	$year+1900, $mon+1, $d_mon, $hour, $min, $sec);
-	
+	$earthquake->{timestamp} = $earthquake->{event_timestamp}.' GMT';
 	$earthquake->{evid} = $evid;
 	$earthquake->{version} = $version;
+	$earthquake->{mag} = $earthquake->{magnitude};
+	$earthquake->{locstring} = $earthquake->{event_location_description};
 	
 	my %default = (
 		'font_type' => {
