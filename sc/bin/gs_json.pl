@@ -683,7 +683,8 @@ sub fetch_json_page
 
 # returns a list of all products that should be polled for new events, etc.
 sub product_list {
-	my @products;
+    my @products = ('grid.xml', 1, 'stationlist.xml', 1, 'intensity.jpg', 1,
+	'info.xml', 1, 'ii_overlay.png', 1, 'intensity_overlay.png', 1);
 	
     undef $SC::errstr;
     eval {
