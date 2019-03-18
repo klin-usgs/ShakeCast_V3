@@ -1,5 +1,5 @@
 <tr>
-  <td><img src="http://maps.google.com/maps/api/staticmap?center=%LAT%,%LON%&zoom=5&size=200x200&maptype=terrain&sensor=false&markers=icon:http://earthquake.usgs.gov/research/software/shakecast/icons/epicenter.png|%LAT%,%LON%">
+  <td><img src="https://maps.googleapis.com/maps/api/staticmap?center=%LAT%,%LON%&zoom=5&size=200x200&maptype=terrain&sensor=false&markers=%LAT%,%LON%&key=AIzaSyAiXBtTt8LMdG0bHG0ftEcUJMPL1kvyuOo">
   <td>%EVENT_ID%
   <td>%EVENT_TIMESTAMP%
   <td>%MAGNITUDE%
