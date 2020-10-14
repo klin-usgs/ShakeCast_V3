@@ -13,7 +13,7 @@ use Shake::Regression::Youngs97;
 use Shake::Regression::Youngs97_interface;
 use Shake::Regression::Youngs97_intraslab;
 use Shake::Regression::AB02;
-use Shake::Regression::AB95_table;
+#use Shake::Regression::AB95_table;
 use Shake::Regression::AB02_interface;
 use Shake::Regression::AB02_intraslab;
 use Shake::Regression::Temp;
